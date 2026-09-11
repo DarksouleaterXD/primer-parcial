@@ -1,909 +1,404 @@
-# Plan maestro PUDS y casos de uso
+# Plan maestro PUDS — Primer Parcial
 
-## 1. Propósito
+Planificación definitiva: **12 casos de uso en 3 ciclos**, con uno a tres incrementos por CU. Define cobertura futura; el avance real está en [STATUS](../../STATUS.md). Solo CU-0.1 está autorizado para esta entrega.
 
-Este es el mapa lineal de implementación del producto. Aplica el Proceso Unificado de Desarrollo de Software: está dirigido por casos de uso, centrado en la arquitectura y trabaja de forma iterativa e incremental.
+El proceso es dirigido por casos de uso, centrado en arquitectura, iterativo e incremental. Cada CU se prueba, documenta y cierra antes del siguiente; una excepción requiere aprobación trazable. La reagrupación no adelanta canvas, realtime, generación o IA respecto del modelo canónico, validador y Command Bus.
 
-Cada ciclo produce un incremento usable. Cada caso de uso se implementa, prueba, documenta y cierra antes de iniciar el siguiente. Este archivo define el orden; el detalle real de una implementación terminada queda en `CU-X-nombre.md`.
+## Fuentes, actores y convenciones
 
-El documento de producto permanece como visión estable. `docs/STATUS.md` registra el avance real y nunca debe inferirse a partir de este plan.
-
-## 2. Actores
+- [Producto aprobado](../../product/product-05-astro-nestjs.md): visión estable.
+- [ADR-0001](../../decisions/ADR-0001-initial-technical-boundaries.md): precisiones aprobadas que resuelven las contradicciones de la variante.
+- [Plan anterior íntegro](history/initial-30-use-cases.md): registro histórico de los 30 IDs, conservado para auditar esta reorganización. Sus ciclos y documentos propuestos no son el plan vigente.
+- [Benchmarks](../../benchmarks/external-services.md): puertas obligatorias con resultados todavía no ejecutados.
 
 | Actor | Responsabilidad |
 |---|---|
+| Equipo de desarrollo | Preparar, verificar y documentar la solución |
 | Visitante | Conocer el producto, registrarse e iniciar sesión |
-| Modelador | Crear, editar, validar, guardar, importar y generar desde un proyecto UML |
-| Propietario | Autorizar acceso y controlar sus proyectos; en el MVP es la autoridad de acceso |
+| Modelador | Editar, validar, guardar, importar y generar desde UML |
+| Propietario | Administrar sus proyectos y autorizar acceso MVP |
 | Colaborador autorizado | Participar en una sesión realtime permitida |
-| Usuario de aplicación generada | Operar CRUD y asistente de texto/voz del sistema producido |
-| Sistema anfitrión | Ejecutar API, PostgreSQL, IA, STT, generación y realtime en local/LAN |
-| Enterprise Architect | Sistema externo que intercambia XMI 2.1 |
+| Usuario de aplicación generada | Operar CRUD y asistentes de texto/voz |
+| Sistema anfitrión | Ejecutar API, PostgreSQL, generación, realtime, IA y STT local/LAN |
+| Enterprise Architect | Intercambiar XMI 2.1 |
+| Docente/evaluador | Reproducir la demostración y revisar evidencia |
 
-## 3. Convenciones
+Los nuevos IDs van de CU-0 a CU-11. No se renumera un CU cerrado: esta migración reorganiza planificación sin implementación. Cada documento individual vive en `docs/puds/use-cases/CU-X-nombre.md`. Los incrementos pertenecen al mismo objetivo, no son CUs ocultos.
 
-- ID estable: `CU-0`, `CU-1`, etc. No se renumera un CU cerrado.
-- Documento de cierre: `docs/puds/use-cases/CU-X-nombre.md`.
-- Un CU grande puede tener máximo tres incrementos. No son CUs ocultos: todos forman parte del mismo objetivo y documento.
-- Dependencia significa que el CU anterior debe estar cerrado o tener una excepción explícita.
-- `Automática` abarca unitarias, integración, contrato, compilación o E2E según corresponda.
-- `Manual` indica comprobación humana guiada y evidencia mínima.
-- Todo CU actualiza `docs/STATUS.md`, su documento individual y cualquier fuente que haya quedado desactualizada.
+Estados: `Pendiente`, `Planificado`, `En implementación`, `En validación`, `Bloqueado`, `Terminado`. Prueba automática puede ser unitaria, integración, contrato, compilación o E2E; prueba manual exige pasos y evidencia humana. Todos los CUs actualizan su documento, STATUS y fuentes afectadas.
 
-Estados permitidos: `Pendiente`, `Planificado`, `En implementación`, `En validación`, `Bloqueado` y `Terminado`.
+## Mapa de entrega
 
-## 4. Definición global de terminado
-
-Un CU está terminado únicamente cuando:
-
-1. cumple todos sus criterios obligatorios;
-2. sus incrementos están integrados en la rama acordada;
-3. build, lint, tipos y pruebas del alcance están verdes;
-4. se ejecutaron las comprobaciones manuales definidas;
-5. no existen errores silenciosos ni secretos incluidos;
-6. el documento `CU-X-nombre.md` describe exactamente lo implementado;
-7. `docs/STATUS.md` está actualizado;
-8. benchmarks o ADR obligatorios están cerrados;
-9. el documento termina con comandos concretos de commit y push.
-
-No basta con crear archivos, mocks o interfaces sin comportamiento verificable.
-
-## 5. Mapa de ciclos
-
-| Ciclo | Fase PUDS predominante | Casos de uso | Incremento usable |
+| Ciclo | Fase PUDS predominante | Casos | Incremento usable al cerrar |
 |---|---|---|---|
-| 0. Inicio ejecutable | Inicio | CU-0 | Web y API vacías conectadas, health y CI |
-| 1. Editor UML local | Elaboración | CU-1 a CU-5 | Editor manual en memoria, validación y Undo/Redo |
-| 2. Proyectos privados persistentes | Elaboración/Construcción | CU-6 a CU-8 | Cuenta, ownership, guardado y reapertura |
-| 3. Colaboración LAN | Construcción | CU-9 a CU-11 | Edición simultánea, presencia y recuperación |
-| 4. Generación backend determinista | Construcción | CU-12 a CU-16 | Backend Spring compilable, CRUD, OpenAPI, Postman y manifiesto |
-| 5. Aplicación generada web y Android | Construcción | CU-17 a CU-20 | CRUD web/PWA/Android ejecutable y portable |
-| 6. Asistentes de texto seguros | Construcción | CU-21 a CU-24 | Operación textual validada en la app generada y en UML |
-| 7. Voz local | Construcción | CU-25 a CU-26 | Comandos por voz en ambos contextos |
-| 8. Interoperabilidad, visión y transición | Construcción/Transición | CU-27 a CU-29 | XMI, imagen a UML y demostración completa offline |
+| 1. Editor UML con proyectos privados | Inicio / Elaboración / Construcción | CU-0 a CU-3 | Cuenta y editor manual con validación, Undo/Redo, ownership y proyectos que se guardan y reabren |
+| 2. Colaboración, interoperabilidad y generación | Construcción | CU-4 a CU-7 | Dos clientes LAN, presencia, XMI y aplicación Spring + web/PWA/Android generada y ejecutable |
+| 3. Inteligencia, visión y cierre offline | Construcción / Transición | CU-8 a CU-11 | Texto, voz e imagen validados y demostración integral preparada sin Internet |
 
----
+# Ciclo 1 — Editor UML con proyectos privados
 
-# Ciclo 0 — Inicio ejecutable
-
-## Objetivo del ciclo
-
-Eliminar riesgos de entorno y demostrar la comunicación mínima entre frontend y backend antes de construir dominio. El incremento debe poder clonarse, configurarse y ejecutarse siguiendo una guía para principiantes.
+Objetivo: convertir la base ejecutable en una herramienta privada de diagramación y persistencia. Entrega usable: registro/login, editor CASE, diagnósticos, Undo/Redo y conservación real del modelo y layout entre sesiones.
 
 ## CU-0 — Inicializar la base ejecutable del proyecto
 
-**Actor iniciador:** equipo de desarrollo.
-**Dependencias:** ninguna.
-**Resultado:** repositorio base, web Astro/Preact y API NestJS/PostgreSQL levantadas, health comprobable y web conectada a la API.
+**Actor:** equipo de desarrollo. **Dependencias:** ninguna. **Origen:** anterior 0.
+**Resultado:** monorepositorio reproducible con web Astro/Preact, API NestJS/PostgreSQL, health y comunicación real comprobada al cerrar el CU.
 
 ### Incrementos
 
-1. **Repositorio y herramientas:** confirmar nombre y cuenta/organización de GitHub, aprobar monorepo o registrar ADR alternativo, crear estructura, versiones fijadas, configuración, variables de ejemplo y scripts comunes.
-2. **Aplicaciones conectadas:** levantar `apps/web` y `apps/api`, implementar health simple, configurar CORS/URL por entorno y mostrar desde la web el estado real de la API.
-3. **Calidad y documentación:** checks mínimos, smoke test, CI, guía de instalación/arranque y plantillas documentales.
+1. **CU-0.1 — Repositorio, configuración y documentación inicial:** identidad Primer Parcial / `primer-parcial`, npm workspaces, Node 24, entorno Windows/PowerShell, Compose local, ADR, permisos OpenCode y planificación 12/3. Sin aplicaciones, dependencias ni lockfile.
+2. **CU-0.2 — Aplicaciones y servicios conectados:** inicializar `apps/web` y `apps/api`, instalar dependencias y generar lockfile; TypeORM/PostgreSQL, health, contrato inicial `@nestjs/swagger`, URL/CORS por entorno y pantalla que consume el estado real de API.
+3. **CU-0.3 — Calidad, reproducibilidad y cierre:** checks, smoke, CI, pruebas manuales, build por usuario/CI, guías de instalación/arranque, evidencia y cierre.
 
-### Flujo principal
+### Flujo, alternativas y errores
 
-1. El desarrollador clona e instala usando versiones documentadas.
-2. Configura variables a partir de ejemplos sin secretos.
-3. Inicia PostgreSQL, API y web.
-4. Consulta el health de la API.
-5. Abre la web y observa que la API está disponible.
-
-### Alternativas y errores
-
-- Si falta una herramienta, la guía indica instalación y verificación.
-- Si PostgreSQL no está disponible, la API informa el componente fallido sin revelar credenciales.
-- Si la URL o CORS es incorrecto, la web muestra error recuperable, no un falso estado saludable.
+El desarrollador obtiene el repositorio local, verifica versiones, configura entorno y, desde CU-0.2, instala e inicia PostgreSQL, API y web. Consulta health y observa la comunicación desde navegador. Herramienta ausente requiere recuperación documentada; PostgreSQL caído se informa sin credenciales; URL/CORS incorrectos producen error recuperable, nunca un falso saludable. GitHub solo se requiere al crear/publicar el remoto.
 
 ### Aceptación y pruebas
 
-- Clonado limpio reproducible; versiones reales compatibles con Node 24 LTS y NestJS 11.
-- Health responde de manera estable y distingue vida de dependencias cuando se implemente readiness.
-- La pantalla consume la API; no usa un valor hardcodeado.
-- Tests unitarios/smoke, build, lint y tipos verdes en local y CI.
-- La API principal publica su contrato inicial con `@nestjs/swagger` y se actualiza en los CUs que agreguen rutas.
-- Prueba manual desde navegador documentada con URL y resultado esperado.
+- CU-0.1: JSON/Markdown coherentes, 12 CUs/3 ciclos, trazabilidad completa, benchmarks remapeados, Compose validado sin motor, diff limpio y ausencia de secretos, lockfile y aplicaciones prematuras.
+- Cierre CU-0: clonado limpio reproducible, versiones compatibles con Node 24/NestJS 11, health estable y distinción vida/dependencias cuando se implemente readiness; estado web real, contrato principal publicado y actualizado con nuevas rutas.
+- Unitarias/smoke, lint, tipos, build y CI verdes al cierre; navegador con URL/resultado documentados. Build pendiente de CU-0.3, no aplicable a CU-0.1.
 
-### Documentación
+**Documentación:** [CU-0-inicializar-base.md](CU-0-inicializar-base.md), README raíz, arquitectura, desarrollo, entorno, ADR y STATUS. Auth, UML y CRUD quedan fuera de CU-0.
 
-Crear `CU-0-inicializar-base.md`, README de raíz, guía de desarrollo, variables de entorno, arquitectura inicial y actualizar estado. No se implementa dominio UML, auth ni CRUD en CU-0.
+## CU-1 — Gestionar cuenta y sesión
 
----
-
-# Ciclo 1 — Editor UML local
-
-## Objetivo del ciclo
-
-Entregar un editor de clases UML usable en una sola sesión local. Al finalizar se puede crear un modelo, editarlo desde el canvas, validarlo y deshacer/rehacer sin persistencia ni colaboración.
-
-## CU-1 — Crear y mantener el documento UML canónico
-
-**Actor:** Modelador.
-**Dependencia:** CU-0.
-**Resultado:** `ProjectDocument` tipado con `UmlModel` semántico y `DiagramLayout` visual separado.
+**Actor:** visitante. **Dependencia:** CU-0. **Origen:** anterior 6.
+**Resultado:** landing, registro, login, JWT, logout y rutas protegidas.
 
 ### Incrementos
 
-1. Definir IDs, metadatos, revisión, timestamps, clases, atributos/propiedades, operaciones, visibilidad, tipos, enums, paquetes y perfil de generación.
-2. Definir asociaciones, agregación, composición, generalización, extremos y multiplicidades; separar layout y serialización versionada.
+1. Persistencia/migración de usuario, auditoría TypeORM, bcrypt, Passport/JWT, validación Zod y errores seguros.
+2. Landing y pantallas de autenticación CASE, manejo de sesión, rutas protegidas y accesibilidad responsive.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El sistema crea un documento vacío, agrega elementos mediante fábricas de dominio y produce una representación serializable estable. IDs duplicados, referencias rotas o datos visuales mezclados con semántica se rechazan.
+El visitante registra credenciales válidas, inicia sesión y accede al área privada; puede cerrar sesión. El área de proyectos se integra funcionalmente en CU-3. Duplicados, credenciales incorrectas, payload inválido y token vencido reciben respuestas uniformes sin enumeración sensible.
 
 ### Aceptación y pruebas
 
-- Ninguna dependencia de UI, NestJS, TypeORM o IA dentro del dominio.
-- Round-trip de serialización conserva semántica y layout.
-- Fixtures cubren todo el subconjunto UML obligatorio y metadatos propios diferenciados.
-- Tests unitarios de invariantes, IDs, multiplicidad y versionado.
+- Contraseñas nunca almacenadas ni registradas en texto plano; secretos por entorno.
+- Unitarias/integración y E2E de registro, login, logout, expiración y acceso anónimo.
+- Revisión manual accesible/responsive e identidad visual de landing y paneles de auth.
 
-### Documentación
+**Documentación:** futuro `CU-1-cuenta-sesion.md`, modelo de amenazas mínimo, esquema/migraciones de usuario y guía de variables.
 
-Crear `CU-1-documento-uml-canonico.md` y documentar modelo de dominio, perfil propio y formato versionado aprobado.
+## CU-2 — Modelar diagramas UML manualmente
 
-## CU-2 — Validar un modelo UML
-
-**Actor:** Modelador y todos los adaptadores del sistema.
-**Dependencia:** CU-1.
-**Resultado:** un motor único devuelve diagnósticos navegables y decide si una operación puede continuar.
+**Actor:** modelador; validador compartido con todos los adaptadores. **Dependencia:** CU-1; fundamento ejecutable CU-0. **Origen:** anteriores 1–5.
+**Resultado:** documento canónico serializable y editor manual en memoria, sin persistencia ni colaboración aún.
 
 ### Incrementos
 
-1. Contrato de diagnóstico: severidad, código, mensaje, path lógico y elemento.
-2. Reglas del subconjunto UML y políticas por contexto: edición, guardado, importación y generación.
+1. **Modelo y validación:** `CanonicalUmlModel`, `ProjectDocument`, `DiagramLayout`, fábricas, IDs, UUID/metadatos/revisión/timestamps y serialización versionada. UML 2.5.1: clases, atributos/propiedades, operaciones, visibilidad, tipos, enums, paquetes, asociaciones/agregación/composición/generalización, extremos y multiplicidades. Perfil de generación separado de UML: `entity`, `auditable`, `readOnly`, `searchable`, `crud`, `required`, `unique`, `sortable`, `defaultSort`. Motor único y diagnóstico con severity, code, mensaje, path lógico y elemento; reglas/políticas de edición, guardado, importación y generación.
+2. **Comandos e historial:** contratos desacoplados del transporte, `UmlCommandBus`/executor para clases, atributos, enums, relaciones, multiplicidades, herencia, movimiento y metadatos. Intenciones atómicas identificables; historial configurable de 100 operaciones, estrategia snapshot o compensación y costo documentados.
+3. **Workspace:** shell CASE, grid, nodos custom D3/SVG, zoom/pan/selección/ajuste a contenido, auto-layout ELK; toolbox e inspector de clases, atributos, operaciones, enums y perfil. Relaciones UML, multiplicidades, handles, `MoveNode`, diagnósticos navegables, menús contextuales y Undo/Redo visible.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El actor solicita validar; el motor recorre el modelo; presenta errores y advertencias; errores bloqueantes impiden la acción correspondiente. Un fallo interno del validador nunca se interpreta como modelo válido.
+Se crea documento vacío, se valida y serializa. La UI/adaptador emite comandos; el bus valida forma/precondiciones, executor calcula resultado y validador acepta o devuelve error tipado sin mutación parcial. El canvas proyecta el documento aceptado; nunca se persisten objetos gráficos como dominio. La consola técnica enfoca elementos con diagnóstico.
+
+IDs duplicados, referencias rotas, colisiones, elementos inexistentes o mezcla visual/semántica se rechazan. Fallo interno del validador no equivale a validez. Advertencias no bloquean por defecto; errores bloquean por contexto. Undo/Redo restaura semántica, layout y revisión local definida; una nueva edición invalida redo, comandos rechazados y presencia no ingresan al historial, exceso de capacidad descarta historia según política.
 
 ### Aceptación y pruebas
 
-- El mismo motor se reutiliza desde todos los consumidores.
-- Códigos estables, mensajes comprensibles y navegación por elemento.
-- Advertencias no bloquean por defecto; errores sí cuando corresponde.
-- Tabla de reglas y pruebas unitarias positivas/negativas por regla.
+- Dominio sin dependencias UI/NestJS/TypeORM/IA; round-trip preserva semántica/layout. Fixtures de todo el subconjunto y perfil; invariantes, IDs, multiplicidad y versionado.
+- Mismo validador para consumidores, códigos estables y tabla de reglas positivas/negativas; navegación por elemento.
+- Ninguna mutación pública evita el bus; pruebas de éxito, precondición, colisión, inexistente, referencia rota y atomicidad. Contratos reutilizables en realtime/IA.
+- Historial vacío, 100+, secuencias mixtas, fallo y restauración exacta probados.
+- Identidad CASE clara y responsive según producto; etiquetas, multiplicidades y relaciones legibles. Unit/component de adaptadores/inspector; Playwright de diagramación, validación y Undo/Redo. Manual de accesibilidad, tablet y móvil de revisión.
 
-### Documentación
+**Documentación:** futuro `CU-2-modelado-uml-manual.md`, dominio/formato, perfil, catálogo de diagnósticos y comandos, estrategia de historial, guía UI y capturas autorizadas; deuda visual explícita sin falsear aceptación funcional.
 
-Crear `CU-2-validar-modelo-uml.md` y catálogo de diagnósticos.
+## CU-3 — Gestionar proyectos UML persistentes
 
-## CU-3 — Editar el UML mediante comandos
-
-**Actor:** Modelador.
-**Dependencias:** CU-1 y CU-2.
-**Resultado:** todas las mutaciones manuales pasan por `UmlCommandBus` y producen resultado/revisión controlados.
+**Actor:** propietario. **Dependencias:** CU-1 y CU-2. **Origen:** anteriores 7–8.
+**Resultado:** crear/listar/abrir/renombrar/eliminar proyectos privados; guardar/reabrir semántica y layout con revisión optimista.
 
 ### Incrementos
 
-1. Contratos, executor y comandos de clase/atributo/enum.
-2. Comandos de relaciones, multiplicidades, generalización, movimiento y metadatos.
+1. Administración y ownership: UUID, `ownerId`, metadatos/timestamps, migraciones TypeORM y política de borrado.
+2. Repositorio TypeORM, transacción de `ProjectDocument` versionado, validación de guardado, carga y autosave/manual según plan aprobado; conflicto y recuperación UI.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-Una UI/adaptador crea un comando; el bus valida forma y precondiciones; el executor calcula el documento resultante; el validador comprueba; se acepta o se devuelve un error tipado. Un comando inválido no deja mutación parcial.
-
-### Aceptación y pruebas
-
-- Ninguna mutación pública evita el bus.
-- Cada intención es atómica e identificable.
-- Tests de éxito, precondición, elemento inexistente, colisión, referencia rota y atomicidad.
-- El contrato conceptual puede reutilizarse en realtime e IA sin acoplar transporte.
-
-### Documentación
-
-Crear `CU-3-editar-uml-con-comandos.md` y catálogo inicial de comandos.
-
-## CU-4 — Deshacer y rehacer ediciones locales
-
-**Actor:** Modelador.
-**Dependencia:** CU-3.
-**Resultado:** historial local configurable, inicialmente de 100 operaciones, con Undo/Redo correcto.
-
-### Flujo y errores
-
-Tras ejecutar comandos, el actor deshace o rehace. Una nueva edición después de deshacer invalida la rama de redo. Los comandos rechazados y presencia no entran al historial. Al alcanzar el límite se elimina historia antigua de manera definida.
+El propietario ve solo sus proyectos, crea/abre/edita y guarda con `baseRevision`; servidor valida y persiste nueva revisión. ID ajeno/inexistente no filtra existencia. Eliminar exige confirmación y política de recuperación/irreversibilidad. Base obsoleta rechaza guardado y permite recargar documento autoritativo sin sobrescritura silenciosa.
 
 ### Aceptación y pruebas
 
-- Restauración exacta de semántica, layout y revisión local definida.
-- Límites vacío, 100+, secuencias mixtas y comando fallido probados.
-- La estrategia elegida —snapshot o compensación— y su costo quedan documentados.
+- Autorización filtrada en toda consulta backend; integración/E2E con dos usuarios comprueba aislamiento.
+- Round-trip PostgreSQL real conserva modelo/layout; validación bloquea cuando corresponde.
+- Concurrencia, rollback, versión de formato y documento corrupto cubiertos. E2E cerrar navegador/reabrir/comprobar diagrama y revisión manual del flujo.
 
-### Documentación
+**Documentación:** futuro `CU-3-proyectos-persistentes.md`, esquema/migraciones, contratos/transacciones, borrado, autosave y recuperación.
 
-Crear `CU-4-deshacer-rehacer.md` y registrar estrategia de historial.
+# Ciclo 2 — Colaboración, interoperabilidad y generación
 
-## CU-5 — Diagramar visualmente en el workspace UML
+Objetivo: extender la herramienta privada a sesiones LAN autorizadas, intercambio UML y generación determinista. Entrega usable: dos clientes colaborando, presencia, XMI compatible y artefacto completo backend/web/PWA/Android reproducible.
 
-**Actor:** Modelador.
-**Dependencias:** CU-2, CU-3 y CU-4.
-**Resultado:** canvas D3/SVG proyecta el documento y permite diagramación manual completa del subconjunto MVP.
+## CU-4 — Colaborar en proyectos UML por LAN
+
+**Actores:** propietario, colaborador autorizado, participantes, anfitrión y clientes LAN. **Dependencia:** CU-3 y fundamentos de CU-2. **Origen:** anteriores 9–11.
+**Resultado:** edición incremental autoritativa, presencia efímera y recuperación de red.
 
 ### Incrementos
 
-1. Shell CASE, grid, nodos custom, zoom, pan, selección, ajuste a contenido y auto-layout ELK inicial.
-2. Toolbox e inspector para clases, atributos, operaciones, enums y metadatos; movimiento emite `MoveNode`.
-3. Relaciones UML, multiplicidades, generalización, diagnósticos navegables, menús contextuales y Undo/Redo visible.
+1. Gateway NestJS `ws`, cliente WebSocket nativo, autenticación/unión al proyecto y protocolo versionado; una operación por intención con `baseRevision`, bus/validador, persistencia inmediata y broadcast. Rechazo obsoleto, idempotencia y recuperación autoritativa.
+2. Lista de sesiones, selección, cursor/etiqueta, elemento en edición, última actividad y log compacto; frecuencia limitada, throttling y expiración por timeout/desconexión.
+3. Operación LAN: host/puertos/firewall/origen autorizados, reconexión, política de cambios no enviados y recuperación tras caída/reinicio del anfitrión.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El actor elige una herramienta, crea o selecciona elementos, edita propiedades y relaciones; la UI emite comandos; el canvas vuelve a proyectar el documento aceptado. Errores aparecen en consola técnica y permiten enfocar el elemento. La UI no muta objetos D3 como dominio.
+Cliente autenticado recibe documento/revisión inicial, envía operación, recibe aceptación/nueva revisión; otros reciben la operación aceptada. No se transmite todo el documento en cada edición. Operación obsoleta, duplicada o no autorizada no causa mutación indebida. Ante divergencia se resincroniza; presencia excesiva se limita y nunca se guarda como proyecto. La UI informa caída, conserva pendientes según política y evita duplicación al reconectar.
 
 ### Aceptación y pruebas
 
-- Identidad visual CASE clara, no dashboard genérico; responsive según producto.
-- Relaciones, handles, etiquetas y multiplicidades legibles.
-- Unit/component tests para adaptadores e inspector; Playwright para flujo manual, validación y Undo/Redo.
-- Prueba manual de accesibilidad básica, tablet y móvil de revisión.
+- Servidor como única autoridad; coherencia persistencia/broadcast ante fallos; integración/E2E de orden, conflicto, duplicado y reconexión con dos clientes.
+- Presencia no afecta dominio, historial ni revisión; tests de expiración, throttling, desconexión y múltiples pestañas, E2E visual.
+- Sin Internet tras preparación; cortes de red, reinicio y dos dispositivos reales cuando disponibles, configuración segura documentada. PostgreSQL permanece en loopback: LAN expone servicios autorizados, no la BD.
+- MVP validable con sesiones autorizadas del propietario. Membresías/invitaciones avanzadas (roles, expiración, tokens controlados) siguen como evolución, sin prometer acceso no autorizado ni CRDT completo.
 
-### Documentación
+**Documentación:** futuro `CU-4-colaboracion-lan.md`, protocolo/secuencias, conflicto/idempotencia, presencia/frecuencia, guía anfitrión/cliente y matriz de fallos.
 
-Crear `CU-5-workspace-uml.md`, guía de interfaz y capturas/evidencia autorizada. Registrar deuda visual sin falsear aceptación funcional.
+## CU-5 — Importar y exportar diagramas XMI
 
----
-
-# Ciclo 2 — Proyectos privados persistentes
-
-## Objetivo del ciclo
-
-Convertir el editor local en una aplicación privada que conserva proyectos y layout entre sesiones, con autorización por propietario y revisión optimista.
-
-## CU-6 — Registrarse e iniciar sesión
-
-**Actor:** Visitante.
-**Dependencia:** CU-0.
-**Resultado:** landing, registro, login, sesión JWT y logout con contraseñas protegidas.
+**Actores:** modelador y Enterprise Architect. **Dependencia:** CU-4 en orden de entrega; modelo/validador/bus de CU-2. **Origen:** anterior 27.
+**Resultado:** intercambio XMI 2.1 del subconjunto UML soportado.
 
 ### Incrementos
 
-1. Persistencia de usuario, bcrypt, Passport/JWT, validación Zod y errores seguros.
-2. Landing y pantallas de auth con identidad visual, manejo de sesión y rutas protegidas.
+1. Parser streaming `saxes`, modelo intermedio y límites XML.
+2. Adaptación/validación a canónico, preview y reporte de elementos no soportados; aplicación confirmada por Command Bus.
+3. Exportación `xmlbuilder2`, round-trip semántico y verificación real con Enterprise Architect.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El visitante registra credenciales válidas, inicia sesión y entra a proyectos. Duplicados, credenciales incorrectas, token vencido o payload inválido producen respuestas uniformes sin enumeración sensible.
-
-### Aceptación y pruebas
-
-- Contraseña nunca se almacena ni registra en texto plano.
-- Auth unit/integration y E2E de registro, login, logout, expiración y acceso anónimo.
-- UI accesible y responsive; secretos solo por entorno.
-
-### Documentación
-
-Crear `CU-6-autenticacion.md`, modelo de amenazas mínimo y guía de variables.
-
-## CU-7 — Administrar proyectos propios
-
-**Actor:** Propietario.
-**Dependencias:** CU-1 y CU-6.
-**Resultado:** crear, listar, abrir, renombrar y eliminar proyectos autorizados.
-
-### Flujo y errores
-
-El propietario ve solo sus proyectos, crea uno, lo abre o administra. Un ID inexistente o ajeno se responde sin filtrar existencia. Eliminar exige confirmación y política de recuperación/irreversibilidad documentada.
+Se importa sin ejecutar entidades externas; se adapta, valida y muestra preview/diagnósticos antes de confirmar. Desconocidos se informan, no se inventan. Exportación parte del modelo canónico válido.
 
 ### Aceptación y pruebas
 
-- Toda consulta filtra autorización en backend, no solo UI.
-- UUID, ownerId, metadatos y timestamps persistidos con migración TypeORM.
-- Integration/E2E con dos usuarios comprueba aislamiento.
+- Subconjunto/limitaciones explícitos; protección XXE, archivos enormes y referencias rotas.
+- Fixtures import/export y round-trip semántico normalizado; manual ida/vuelta con versión documentada de EA.
 
-### Documentación
+**Documentación:** futuro `CU-5-interoperabilidad-xmi.md`, matriz de compatibilidad y procedimiento EA.
 
-Crear `CU-7-proyectos-propios.md`, esquema de datos, migración y política de borrado.
+## CU-6 — Generar el backend desde UML
 
-## CU-8 — Guardar y reabrir el documento con revisión
-
-**Actor:** Propietario.
-**Dependencias:** CU-2 y CU-7.
-**Resultado:** semántica y layout se guardan/reabren sin pérdida, usando revisión optimista.
+**Actores:** modelador, consumidor de API, usuario técnico, generador/asistente como consumidores del manifiesto. **Dependencia:** CU-5 en orden; modelo validado de CU-2. **Origen:** anteriores 12–16.
+**Resultado:** `RelationalModel` determinista y backend Spring compilable con CRUD, OpenAPI, Postman y Domain Manifest.
 
 ### Incrementos
 
-1. Repositorio TypeORM y transacción de guardado de `ProjectDocument` versionado.
-2. Carga, autosave/manual según decisión del plan, conflicto de revisión y recuperación UI.
+1. **Mapeo y esqueleto:** preview de tablas, columnas, PK/FK, constraints/unique, índices y relaciones. Clases/atributos/tipos/enums/IDs/nulabilidad; 1:1, 1:N, N:M, composición, herencia y nombres deterministas. Eta genera Java 21/Spring Boot 4.x/Gradle en directorio seguro, con build, configuración y paquetes.
+2. **Persistencia y API:** entidades JPA/enums/repositorios, migración/configuración/constraints; servicios, DTOs/mappers, errores, Jakarta Validation/Jackson y controladores Spring Web MVC. Create/read/update/delete/list, pagination/sorting/filtering/search/count y navegación de relaciones por metadatos; `auditable` usa Spring Data JPA para `createdAt`/`updatedAt`.
+3. **Contratos y metadatos:** `springdoc-openapi`, schemas/parámetros/errores y exportación OpenAPI 3.1 cuando sea compatible; Postman derivado determinísticamente con variables/tests básicos. Domain Manifest tipado/versionado: entidades, atributos/tipos, aliases, campos search/sort, relaciones, validaciones, capacidades CRUD, operaciones permitidas y mapeo lógico para ejecutor.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El actor abre un proyecto, edita y guarda con `baseRevision`; el servidor valida y persiste una nueva revisión. Si la base es obsoleta, rechaza y ofrece recargar el documento autoritativo sin sobrescritura silenciosa.
+Modelo válido → mapper/vista previa → plantillas → proyecto → ejecución PostgreSQL/API → OpenAPI → Postman/manifiesto. Ambigüedad exige completar metadatos; IA nunca decide persistencia. Ruta insegura, conflicto de archivo o plantilla fallida aborta sin falso artefacto exitoso. Entrada inválida, duplicado, referencia ausente o filtro no permitido produce error coherente. Manifiesto inconsistente se rechaza; capacidad no declarada no está permitida.
 
 ### Aceptación y pruebas
 
-- Round-trip real contra PostgreSQL conserva modelo y layout.
-- Validación bloquea persistencia cuando corresponde.
-- Tests de concurrencia, rollback, versión de formato y documento corrupto.
-- E2E de cerrar navegador, reabrir y comprobar el diagrama.
+- Mismo modelo/configuración da salida equivalente; reglas/precedencias y fixtures por cardinalidad. Colisiones de nombres, ciclos, IDs faltantes y tipos no soportados probados.
+- Eta/helpers/entradas separados, sin concatenación extensa; protección path traversal. Compilación Java 21/Gradle, smoke context y tests reales del artefacto; PostgreSQL real para todas las cardinalidades.
+- Regeneración idempotente según política sin pisar personalizaciones silenciosamente; se corrigen mapper/plantillas, no archivos producidos.
+- OpenAPI válido para su versión y cobertura runtime completa; limitación 3.1 comprobada se documenta/prueba. Postman importable con variables, sin hosts fijos ni secretos; contract tests runtime ↔ OpenAPI ↔ colección. Swagger Nest reservado a API principal.
+- Manifiesto ↔ UML ↔ API trazables, sin campos internos expuestos; fixtures de aliases/permisos CRUD/search/sort/relaciones. Revisión manual de preview, artefactos y colección.
 
-### Documentación
+**Documentación:** futuro `CU-6-backend-generado.md`, especificación UML→relacional, estructura/toolchain Spring, capacidades/errores/regeneración, guía OpenAPI/Postman y esquema/versionado/derivación del manifiesto.
 
-Crear `CU-8-persistencia-versionada.md`, contratos, transacciones, estrategia de autosave y recuperación.
+## CU-7 — Generar y ejecutar el frontend web y Android
 
----
-
-# Ciclo 3 — Colaboración LAN
-
-## Objetivo del ciclo
-
-Permitir dos clientes autorizados sobre un anfitrión local, con servidor autoritativo, operaciones incrementales, presencia efímera y recuperación de divergencias.
-
-## CU-9 — Editar colaborativamente en tiempo real
-
-**Actor:** Propietario o colaborador autorizado.
-**Dependencias:** CU-3 y CU-8.
-**Resultado:** operaciones WebSocket aceptadas/rechazadas por revisión, persistidas y difundidas.
+**Actores:** modelador, usuario técnico, usuario de aplicación generada y anfitrión. **Dependencia:** CU-6. **Origen:** anteriores 17–20.
+**Resultado:** aplicación generada Astro/Preact con CRUD real, PWA/Capacitor Android y paquete exportable coherente.
 
 ### Incrementos
 
-1. Gateway `ws`, autenticación de conexión, unión al proyecto y protocolo versionado.
-2. Envío de una operación por intención con `baseRevision`, ejecución por Command Bus, persistencia inmediata y broadcast.
-3. Rechazo obsoleto, idempotencia, reconexión y recuperación del documento autoritativo.
+1. **Frontend y CRUD:** Eta genera esqueleto, cliente tipado cuando corresponda, configuración, navegación, listados/detalle/formularios por metadatos. CRUD con validaciones/confirmaciones, búsqueda/filtros/sorting/paginación/count, select/autocomplete N:1 y listas/navegación 1:N.
+2. **PWA y Android:** manifest/assets/service worker/política de caché, Astro estático; Capacitor, endpoint seguro y build Android reproducible.
+3. **Exportación y ejecución:** backend, frontend, Android, OpenAPI, Postman y manifiesto empaquetados, README generado, checksums/metadatos de revisión del modelo/generador/plantillas y smoke offline preparado.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El cliente conecta, recibe estado/revisión, envía una operación y recibe aceptación con nueva revisión; los demás reciben la operación aceptada. Una operación obsoleta o no autorizada se rechaza sin mutación; el cliente resincroniza.
-
-### Aceptación y pruebas
-
-- No se transmite el documento completo por cada edición.
-- El servidor es la única autoridad y reutiliza validador/Command Bus.
-- Integration/E2E con dos clientes para orden, conflicto, duplicado, desconexión y reconexión.
-- Persistencia y broadcast son coherentes ante fallos.
-
-### Documentación
-
-Crear `CU-9-colaboracion-realtime.md`, protocolo WebSocket, secuencias y política de conflicto.
-
-## CU-10 — Ver presencia de participantes
-
-**Actor:** participante de sesión.
-**Dependencia:** CU-9.
-**Resultado:** lista de sesiones, selección, cursor, elemento en edición y última actividad sin cambiar revisión.
-
-### Flujo y errores
-
-Los clientes emiten presencia limitada; el servidor la distribuye; la UI muestra etiquetas, cursores e indicadores. La presencia expira por desconexión o timeout. Paquetes excesivos se limitan y nunca se persisten como proyecto.
+Se genera desde contratos/manifiesto, se configura endpoint y PostgreSQL, se inicia artefacto y se opera CRUD. Inferencia: String→input, Integer/Long/Decimal→number, Boolean→checkbox/switch, Date→date picker, DateTime→datetime picker, Enum→select, Text→textarea, N:1→select/autocomplete, 1:N→tabla relacionada. Tipo no soportado produce diagnóstico. Loading/vacío/error/validación son visibles; borrado confirma; fallo de compilación/incompatibilidad se vincula a modelo/plantilla e impide declarar éxito.
 
 ### Aceptación y pruebas
 
-- Presencia separada de dominio, historial y revisión.
-- Throttling, expiración, desconexión y múltiples pestañas probados.
-- E2E visual con dos clientes y log compacto.
+- Generación determinista, build real limpio desde directorio vacío; component tests y snapshots/fixtures semánticos estables.
+- E2E contra backend/PostgreSQL generados, relaciones consistentes; manual responsive y flujo completo en al menos dos dominios fixture.
+- PWA instala/actualiza sin HTML/API obsoletos peligrosos; build Android real y smoke en emulador/dispositivo cuando disponible; funciones dependientes del anfitrión LAN explícitas.
+- Paquete trazable y smoke CRUD con red externa desconectada tras descargar dependencias; sin lógica empresarial inventada.
 
-### Documentación
+**Documentación:** futuro `CU-7-frontend-web-android.md`, matriz tipo→control, guía usuario/limitaciones, instalación PWA/Android/emulador/dispositivo, README generado y matriz de artefactos.
 
-Crear `CU-10-presencia.md` y contrato/política de frecuencia y expiración.
+# Ciclo 3 — Inteligencia, visión y cierre offline
 
-## CU-11 — Operar y recuperarse en red local
+Objetivo: añadir entradas probabilísticas sobre contratos y ejecutores deterministas ya estables. Entrega usable: operación textual y por voz en ambos contextos, imagen→UML revisable y demostración integral sin Internet una vez preparados modelos/dependencias.
 
-**Actor:** Sistema anfitrión y clientes LAN.
-**Dependencias:** CU-9 y CU-10.
-**Resultado:** acceso documentado desde otros equipos, pérdida temporal de red manejada y restablecimiento coherente.
+## CU-8 — Operar mediante lenguaje natural
 
-### Flujo y errores
-
-El anfitrión publica servicios en interfaz LAN autorizada; otro cliente abre la web y colabora. Si pierde red, la UI informa estado, conserva cambios aún no enviados según política y resincroniza sin duplicar al reconectar.
-
-### Aceptación y pruebas
-
-- Funciona sin Internet con dependencias ya instaladas.
-- Configuración de host, puertos, firewall y origen queda explicada de forma segura.
-- Pruebas de corte, reconexión, anfitrión reiniciado y dos dispositivos reales cuando estén disponibles.
-- No se promete edición multiusuario no autorizada; invitaciones avanzadas siguen fuera de MVP.
-
-### Documentación
-
-Crear `CU-11-operacion-lan.md`, guía para anfitrión/cliente y matriz de fallos.
-
----
-
-# Ciclo 4 — Generación backend determinista
-
-## Objetivo del ciclo
-
-Transformar un UML válido en artefactos backend reproducibles: modelo relacional, aplicación Spring compilable, CRUD, OpenAPI, Postman y Domain Manifest.
-
-## CU-12 — Transformar UML a modelo relacional
-
-**Actor:** Modelador.
-**Dependencia:** CU-2.
-**Resultado:** vista previa determinista de tablas, columnas, PK, FK, índices, constraints y relaciones.
+**Actores:** modelador y usuario de aplicación generada. **Dependencia:** CU-7, bus/editor de CU-2 y API/manifiesto de CU-6. **Origen:** anteriores 21–24. **Puertas de cierre:** B-TXT-APP y B-TXT-UML.
+**Resultado:** texto propone planes cerrados, legibles, validables y ejecutables en contexto; nunca HTTP/SQL/mutación directa desde texto.
 
 ### Incrementos
 
-1. Clases, atributos, tipos, enums, IDs, nulabilidad, unique e índices.
-2. Reglas 1:1, 1:N, N:M, composición, herencia y nombres deterministas.
+1. **Lenguaje/ejecución:** `AssistantCommand` versionado, pequeño/tipado, `LIST`, `GET`, `SEARCH`, `CREATE`, `UPDATE`, `DELETE`, `COUNT`; parser/validator, allow-lists de operación/entidad/campo, tipos/relaciones y confirmación destructiva. Executor determinista con cliente permitido y planes de máximo tres pasos, validación entre pasos.
+2. **Texto en aplicación generada:** adaptador Ollama/Qwen3.5 0.8B, contexto limitado, prompt/config versionados, salida estructurada, timeout/cancelación; dataset/evaluador/baseline B-TXT-APP, iteración de una variable y comparación. Consola muestra solicitud, plan, confirmación, ejecución/resultado e historial.
+3. **Texto en CASE:** intención UML cerrada, resolver de nombres/referencias y adaptación a `UmlCommand` existente; consola/preview/confirmación, ambigüedad, dataset/evaluador y comparación B-TXT-UML.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El actor solicita transformar un modelo válido; el mapper produce `RelationalModel` y diagnósticos. Ambigüedad no cubierta se rechaza con instrucción para completar metadatos; la IA no decide.
-
-### Aceptación y pruebas
-
-- Mismo modelo/configuración produce salida equivalente.
-- Reglas y precedencias documentadas con fixtures por relación.
-- Colisiones de nombre, ciclos, IDs faltantes y tipos no soportados probados.
-
-### Documentación
-
-Crear `CU-12-mapeo-relacional.md` y especificación completa UML → relacional.
-
-## CU-13 — Generar el esqueleto Spring Boot
-
-**Actor:** Modelador.
-**Dependencia:** CU-12.
-**Resultado:** proyecto Java 21/Spring Boot 4.x/Gradle generado por Eta y compilable.
-
-### Flujo y errores
-
-El actor elige generar; se valida el modelo, se crea un directorio limpio/seguro y se renderizan estructura, build, configuración y paquetes. Una ruta insegura, conflicto no permitido o plantilla fallida aborta sin artefacto engañoso.
+Texto → propuesta → validación → aclaración/rechazo o plan → confirmación cuando corresponde → executor permitido / bus UML → resultado. UML confirma antes de mutar; acciones destructivas de ambos asistentes siempre confirman. Cancelación previa no muta. Historial visible no autoriza repetición automática. Modelo ausente, caído, timeout o respuesta inválida dejan estado estable con recuperación; referencia arbitraria se rechaza. Expresiones recientes/últimos se resuelven con metadatos de auditoría, no reglas inventadas.
 
 ### Aceptación y pruebas
 
-- No hay concatenación manual extensa; plantillas, helpers y entradas están separados.
-- Generación reproducible y segura contra path traversal.
-- Compilación real con Java 21/Gradle y smoke context test.
+- Contrato independiente de frases/URLs; cero SQL/código/URL arbitrarios ejecutables. Pruebas exhaustivas de allow-list, tipos, relaciones, confirmación, planes y fallo intermedio; auditoría sin contenido sensible.
+- Ambas puertas con dataset, ejecución y resultados reales; unitarias con adaptador declarado simulado y smoke real Ollama. Inyección de prompt, inexistentes, ambigüedad y servicio caído probados.
+- Nunca se oculta plan mutador; E2E texto→plan→confirmación→API→resultado y texto→plan→confirmación→bus→canvas; rechazo/cancelación no mutan. IA no toca canvas/documento. Manual guiado de las consolas.
 
-### Documentación
+**Documentación:** futuro `CU-8-lenguaje-natural.md`, esquema/semántica/seguridad, guías de asistentes/modelos, catálogo UML, prompts/config y benchmarks.
 
-Crear `CU-13-generar-esqueleto-spring.md`, estructura generada y requisitos de toolchain.
+## CU-9 — Operar mediante comandos de voz
 
-## CU-14 — Generar persistencia y API CRUD
-
-**Actor:** Modelador y usuario técnico del artefacto.
-**Dependencias:** CU-12 y CU-13.
-**Resultado:** backend generado ejecuta entidades, relaciones, validación y operaciones CRUD ampliadas.
+**Actores:** modelador y usuario de aplicación generada; anfitrión ejecuta STT por defecto. **Dependencia:** CU-8. **Origen:** anteriores 25–26. **Puerta:** B-STT.
+**Resultado:** audio breve → texto corregible → los mismos planes/validadores/confirmaciones del canal texto.
 
 ### Incrementos
 
-1. Entidades JPA, enums, repositorios, migración/configuración y constraints.
-2. Servicios, DTOs/mappers, errores y controladores CRUD.
-3. Listado, paginación, sorting, filtering, search, count y navegación de relaciones según metadatos.
+1. Captura/permisos/límites/cancelación, adaptador anfitrión `whisper.cpp`, selección de modelo/parámetros mediante B-STT, estados/error/timeout y guía de micrófonos.
+2. Voz→`UmlCommand` en CASE con revisión de transcripción, plan, validación y confirmación.
+3. Voz→`AssistantCommand` en aplicación generada, integración y comprobación offline de ambos contextos.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El generador crea código desde modelos válidos. El usuario inicia PostgreSQL y backend y opera la API. Entradas inválidas, duplicados, referencias ausentes y filtros no permitidos producen errores coherentes.
+Se graba, transcribe, revisa/corrige y envía al canal texto del contexto correcto; se revisa/confirma plan y ejecuta. Audio vacío/largo/inválido, permiso denegado, timeout o servicio caído no mutan. Comandos breves, no reuniones largas, diarización, transcripción profesional ni ruido extremo como objetivo inicial.
 
 ### Aceptación y pruebas
 
-- Compilación y tests reales del proyecto generado.
-- Integration tests con PostgreSQL para todas las cardinalidades.
-- El metadato `auditable` genera `createdAt` y `updatedAt` mediante mecanismos de Spring Data JPA; el proyecto principal conserva su propia auditoría TypeORM.
-- No se edita el resultado para hacerlo compilar; se corrigen mapper o plantillas.
-- Regenerar es idempotente según política documentada y no pisa personalizaciones no gestionadas silenciosamente.
+- B-STT completa en hardware objetivo o limitación explícita aprobada; smoke real offline y unit/integration con fixtures de audio autorizados.
+- Mismos validador, plan y confirmación que texto; E2E éxito, transcripción errónea corregible, cancelación, destructiva y servicio ausente.
+- Manual con micrófono real y edge cases de benchmark; consentimiento/privacidad de audio documentados.
 
-### Documentación
+**Documentación:** futuro `CU-9-comandos-voz.md`, instalación/STT, benchmark, privacidad/micrófonos y guías de ambos asistentes.
 
-Crear `CU-14-backend-crud-generado.md`, capacidades, errores y estrategia de regeneración.
+## CU-10 — Crear diagramas UML desde imágenes
 
-## CU-15 — Producir OpenAPI y colección Postman
-
-**Actor:** Modelador o consumidor de API.
-**Dependencia:** CU-14.
-**Resultado:** OpenAPI 3.1 verificable del backend generado y Postman Collection derivada.
+**Actor:** modelador. **Dependencia:** CU-9 en entrega y modelo/validador/bus de CU-2 estables. **Origen:** anterior 28. **Puerta:** B-VLM.
+**Resultado:** Sharp + Gemma 3 4B/Ollama proponen modelo estructurado revisable y aplicable mediante comandos.
 
 ### Incrementos
 
-1. Anotaciones/configuración `springdoc-openapi`, schemas, parámetros, errores y exportación.
-2. Conversión determinista a Postman con variables de entorno y pruebas básicas sin secretos.
+1. Carga segura y Sharp, variantes controladas de preprocesamiento.
+2. Adaptador Ollama/Gemma, prompt versionado, esquema, normalización y preview de diferencias/diagnósticos/incertidumbres; carga del modelo bajo demanda.
+3. Dataset B-VLM, comparación, revisión/corrección y aplicación confirmada por Command Bus.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-Con el backend generado, el actor obtiene OpenAPI y Postman. La colección deriva de OpenAPI; inconsistencias o endpoints no representados fallan la verificación.
-
-### Aceptación y pruebas
-
-- Documento valida contra su versión y cubre operaciones generadas.
-- Postman importa correctamente y referencia variables, no hosts fijos.
-- Contract tests comparan runtime, OpenAPI y colección.
-- `@nestjs/swagger` queda reservado a la API NestJS principal.
-
-### Documentación
-
-Crear `CU-15-openapi-postman.md` y guía de generación/uso.
-
-## CU-16 — Generar Domain Manifest
-
-**Actor:** generador y asistente.
-**Dependencias:** CU-12, CU-14 y CU-15.
-**Resultado:** manifiesto tipado de entidades, aliases, campos, relaciones, validaciones y operaciones permitidas.
-
-### Flujo y errores
-
-El generador deriva el manifiesto del modelo/OpenAPI; valida consistencia; lo incluye junto a la aplicación. Una capacidad no declarada se considera no permitida.
+Imagen autorizada → validación de archivo → preprocesamiento → propuesta → normalización/validador → revisión/corrección/confirmación → comandos. Se reconocen clases, atributos, relaciones, multiplicidades y herencia; salida inválida nunca se aplica. Incertidumbres no se inventan silenciosamente.
 
 ### Aceptación y pruebas
 
-- Esquema versionado y validable.
-- Trazabilidad manifiesto ↔ UML ↔ API; no expone campos internos accidentalmente.
-- Fixtures cubren aliases, permisos CRUD, search/sort y relaciones.
-
-### Documentación
-
-Crear `CU-16-domain-manifest.md`, esquema, versionado y reglas de derivación.
-
----
-
-# Ciclo 5 — Aplicación generada web y Android
-
-## Objetivo del ciclo
-
-Generar una interfaz funcional que consuma la API Spring, inferir controles CRUD y producir salida PWA/Android reproducible.
-
-## CU-17 — Generar el frontend Astro/Preact
-
-**Actor:** Modelador.
-**Dependencias:** CU-15 y CU-16.
-**Resultado:** proyecto Astro/Preact compilable, navegación y páginas CRUD base derivadas.
-
-### Incrementos
-
-1. Esqueleto, cliente tipado cuando corresponda, configuración y navegación por entidades.
-2. Listado, detalle y formularios inferidos por tipo, validación y metadatos.
-
-### Aceptación y pruebas
-
-- Build real y generación determinista mediante Eta.
-- Regla de UI por tipo cubierta; unsupported type produce diagnóstico.
-- Component tests y snapshots/fixtures semánticos, no frágiles al formato irrelevante.
-
-### Documentación
-
-Crear `CU-17-frontend-generado.md` y matriz tipo → control.
-
-## CU-18 — Operar el CRUD desde el frontend generado
-
-**Actor:** Usuario de aplicación generada.
-**Dependencias:** CU-14 y CU-17.
-**Resultado:** CRUD, búsqueda, filtros, orden, paginación y relaciones funcionan end-to-end.
-
-### Incrementos
-
-1. Crear, listar, ver, editar y eliminar con errores y confirmaciones.
-2. Búsqueda, filtros, sorting, paginación y count.
-3. Select/autocomplete N:1, listados 1:N y navegación de relaciones.
-
-### Aceptación y pruebas
-
-- E2E contra backend y PostgreSQL generados, no mocks.
-- Estados loading, vacío, error y validación visibles.
-- Acciones destructivas confirmadas y relaciones consistentes.
-- Prueba manual responsive y flujo completo en al menos dos dominios fixture.
-
-### Documentación
-
-Crear `CU-18-crud-web-generado.md`, guía del usuario y limitaciones de inferencia.
-
-## CU-19 — Empaquetar como PWA y Android
-
-**Actor:** Modelador/usuario técnico.
-**Dependencia:** CU-18.
-**Resultado:** frontend estático/PWA instalable y proyecto Capacitor Android compilable.
-
-### Incrementos
-
-1. Manifest, assets, service worker/política de caché y build estático.
-2. Capacitor, configuración segura del endpoint y build Android reproducible.
-
-### Aceptación y pruebas
-
-- PWA instala y actualiza sin servir HTML/API obsoletos de forma peligrosa.
-- Build Android real; smoke test en emulador o dispositivo cuando esté disponible.
-- Se documenta claramente qué funciones requieren al anfitrión LAN.
-
-### Documentación
-
-Crear `CU-19-pwa-android.md` y guías de instalación/emulador/dispositivo.
-
-## CU-20 — Exportar y ejecutar la aplicación generada
-
-**Actor:** Modelador y sistema anfitrión.
-**Dependencias:** CU-14, CU-18 y CU-19.
-**Resultado:** paquete coherente con backend, frontend, Android, OpenAPI, Postman y manifiesto, ejecutable sin Internet tras preparación.
-
-### Flujo y errores
-
-El actor genera/exporta, sigue README del artefacto, configura PostgreSQL y arranca. Un fallo de compilación o incompatibilidad impide declarar éxito y enlaza diagnóstico con el modelo/plantilla.
-
-### Aceptación y pruebas
-
-- Generación y build limpios desde un directorio vacío.
-- Checksums/metadatos permiten rastrear revisión de modelo, generador y plantillas.
-- Smoke E2E de CRUD con red externa desconectada.
-
-### Documentación
-
-Crear `CU-20-exportar-aplicacion.md`, README generado y matriz de artefactos.
-
----
-
-# Ciclo 6 — Asistentes de texto seguros
-
-## Objetivo del ciclo
-
-Introducir lenguaje natural solo después de estabilizar contratos deterministas. Ningún texto se convierte directamente en HTTP, SQL o mutación.
-
-## CU-21 — Validar y ejecutar AssistantCommand
-
-**Actor:** Usuario de aplicación generada.
-**Dependencias:** CU-14 y CU-16.
-**Resultado:** lenguaje cerrado `LIST`, `GET`, `SEARCH`, `CREATE`, `UPDATE`, `DELETE`, `COUNT` y planes cortos validados contra manifiesto.
-
-### Incrementos
-
-1. Esquema versionado, parser/validator, allow-lists, tipos, relaciones y confirmación destructiva.
-2. Executor determinista y planes de máximo tres pasos con validación entre pasos.
-
-### Flujo y errores
-
-Se recibe un comando estructurado; se valida operación, entidad, campo, tipo y relación; se solicita confirmación si corresponde; el executor usa un cliente permitido del backend; se muestra resultado. Cualquier referencia arbitraria se rechaza.
-
-### Aceptación y pruebas
-
-- Sin dependencia de frases ni URLs dentro del contrato.
-- 0 SQL/código/URL arbitrarios ejecutables.
-- Tests exhaustivos de allow-list, tipo, relación, confirmación, plan y fallo intermedio.
-- Auditoría suficiente sin registrar contenido sensible.
-
-### Documentación
-
-Crear `CU-21-assistant-command.md`, esquema, seguridad y semántica de operaciones.
-
-## CU-22 — Interpretar solicitudes de texto para la aplicación generada
-
-**Actor:** Usuario de aplicación generada.
-**Dependencias:** CU-21 y benchmark B-TXT-APP.
-**Resultado:** Ollama/Qwen propone `AssistantCommand` válido usando Domain Manifest.
-
-### Incrementos
-
-1. Adaptador Ollama, prompt versionado, salida estructurada y timeouts/cancelación.
-2. Dataset/evaluador y baseline B-TXT-APP.
-3. Iteración de prompt/parámetros, comparación y configuración seleccionada.
-
-### Flujo y errores
-
-El usuario escribe; el adaptador limita contexto; el modelo propone estructura; el validador acepta, pide aclaración o rechaza; solo luego puede ejecutarse. Timeout, modelo ausente o respuesta inválida dejan el sistema estable y explican recuperación.
-
-### Aceptación y pruebas
-
-- Puerta B-TXT-APP completada y enlazada; resultados reales.
-- Pruebas unitarias con adaptador simulado y smoke real con Ollama.
-- Inyección de prompt, entidades inexistentes, ambigüedad y modelo caído probados.
-
-### Documentación
-
-Crear `CU-22-texto-aplicacion-generada.md`; actualizar benchmark, prompt/config y guía de modelos.
-
-## CU-23 — Usar el asistente en la aplicación generada
-
-**Actor:** Usuario de aplicación generada.
-**Dependencia:** CU-22.
-**Resultado:** consola de asistente muestra solicitud, plan legible, confirmación, ejecución y resultado.
-
-### Flujo y errores
-
-El usuario envía texto, revisa plan y confirma si es destructivo; la UI ejecuta y muestra resultados/errores. Puede cancelar antes de mutar. El historial visible no autoriza repetir acciones automáticamente.
-
-### Aceptación y pruebas
-
-- Nunca se oculta el plan que mutará datos.
-- Delete y cambios destructivos respetan confirmación.
-- E2E texto → plan → confirmación → API → resultado y rutas de rechazo/cancelación.
-
-### Documentación
-
-Crear `CU-23-ui-asistente-generado.md` y guía de interacción/seguridad.
-
-## CU-24 — Editar UML mediante texto en la herramienta CASE
-
-**Actor:** Modelador.
-**Dependencias:** CU-3, CU-5 y benchmark B-TXT-UML.
-**Resultado:** texto en la consola CASE se resuelve a `UmlCommand`, se previsualiza y se confirma antes de mutar.
-
-### Incrementos
-
-1. Esquema de intención UML, resolver de referencias y adaptación a comandos existentes.
-2. Consola, plan/confirmación, benchmark B-TXT-UML y manejo de ambigüedad.
-
-### Aceptación y pruebas
-
-- La IA no toca canvas ni documento; solo propone comandos cerrados.
-- Puerta B-TXT-UML completada con resultados reales.
-- E2E texto → plan → confirmación → Command Bus → canvas; cancelación no muta.
-
-### Documentación
-
-Crear `CU-24-texto-a-uml.md`; actualizar catálogo de comandos, benchmark y prompts.
-
----
-
-# Ciclo 7 — Voz local
-
-## Objetivo del ciclo
-
-Capturar comandos breves mediante `whisper.cpp`, seleccionar una configuración con evidencia y reutilizar exactamente los flujos de texto seguros.
-
-## CU-25 — Transcribir comandos breves localmente
-
-**Actor:** Modelador o usuario de aplicación generada.
-**Dependencia:** benchmark B-STT.
-**Resultado:** grabación controlada se convierte en texto o rechazo seguro, sin Internet.
-
-### Incrementos
-
-1. Captura de audio, permisos, límites, cancelación y adaptador al servicio anfitrión.
-2. Integración `whisper.cpp`, selección de modelo/parámetros mediante B-STT.
-3. Estados UI, error/timeout y guía de micrófonos/pruebas manuales.
-
-### Aceptación y pruebas
-
-- Puerta B-STT completada en hardware objetivo o limitación explícita aprobada.
-- Audio vacío, demasiado largo, formato inválido, permiso negado y servicio caído no mutan nada.
-- Smoke real offline; unit/integration con fixtures de audio autorizados.
-
-### Documentación
-
-Crear `CU-25-speech-to-text.md`; actualizar benchmark, instalación y privacidad de audio.
-
-## CU-26 — Operar UML y aplicación generada por voz
-
-**Actor:** Modelador y usuario de aplicación generada.
-**Dependencias:** CU-23, CU-24 y CU-25.
-**Resultado:** audio → texto → plan estructurado → validación → confirmación → ejecución en el contexto correcto.
-
-### Incrementos
-
-1. Voz a `UmlCommand` en la herramienta CASE.
-2. Voz a `AssistantCommand` en la aplicación generada.
-
-### Aceptación y pruebas
-
-- Mismo validador, plan y confirmación que el canal texto.
-- E2E de éxito, transcripción errónea corregible, cancelación, destructiva y servicio no disponible.
-- Pruebas manuales con micrófono real y edge cases del benchmark.
-
-### Documentación
-
-Crear `CU-26-operacion-por-voz.md` y actualizar guías de ambos asistentes.
-
----
-
-# Ciclo 8 — Interoperabilidad, visión y transición
-
-## Objetivo del ciclo
-
-Completar XMI, incorporar imagen después del pipeline determinista y demostrar el flujo objetivo íntegro sin Internet.
-
-## CU-27 — Importar y exportar XMI 2.1
-
-**Actor:** Modelador y Enterprise Architect.
-**Dependencias:** CU-1 y CU-2.
-**Resultado:** subconjunto UML documentado intercambia XMI 2.1 mediante adaptadores seguros.
-
-### Incrementos
-
-1. Parser streaming con `saxes`, modelo intermedio y límites de seguridad XML.
-2. Adaptación/validación a canónico y reporte de elementos no soportados.
-3. Exportación con `xmlbuilder2`, round-trip y pruebas reales con Enterprise Architect.
-
-### Flujo y errores
-
-El actor importa un archivo; el sistema parsea sin ejecutar entidades externas, adapta y valida, muestra preview/diagnósticos y solo aplica tras confirmación. Exportar parte del modelo válido. Elementos desconocidos se informan, no se inventan.
-
-### Aceptación y pruebas
-
-- Subconjunto y limitaciones explícitos; protección contra XXE, archivos enormes y referencias rotas.
-- Fixtures import/export y round-trip semántico normalizado.
-- Prueba manual de ida/vuelta con una versión documentada de Enterprise Architect.
-
-### Documentación
-
-Crear `CU-27-interoperabilidad-xmi.md`, matriz de compatibilidad y procedimiento EA.
-
-## CU-28 — Crear UML desde una imagen
-
-**Actor:** Modelador.
-**Dependencias:** CU-2, CU-3 y benchmark B-VLM.
-**Resultado:** Sharp + Gemma proponen un modelo estructurado validado, revisable y aplicable por comandos.
-
-### Incrementos
-
-1. Carga segura y pipeline Sharp con variantes de preprocesamiento.
-2. Adaptador Ollama/Gemma, prompt versionado, esquema y preview con incertidumbres.
-3. Dataset B-VLM, comparación, revisión/corrección y aplicación por Command Bus.
-
-### Flujo y errores
-
-El actor carga una imagen autorizada; el sistema valida archivo, preprocesa, obtiene propuesta, normaliza y valida; muestra diferencias/diagnósticos; el actor corrige o confirma; se emiten comandos. Una salida inválida nunca se aplica.
-
-### Aceptación y pruebas
-
-- Puerta B-VLM completada con métricas por clases, atributos y relaciones.
+- B-VLM completa con métricas por clases, atributos y relaciones.
 - Archivo malicioso, imagen no UML, baja calidad, timeout y modelo ausente probados.
-- Pruebas manuales con foto, pizarra, captura digital y casos ambiguos.
+- Manual con foto, pizarra, captura digital y ambiguos; conservar solo material autorizado/no sensible.
 
-### Documentación
+**Documentación:** futuro `CU-10-imagenes-uml.md`, benchmark, prompts/preprocesamiento, límites y privacidad de imágenes.
 
-Crear `CU-28-imagen-a-uml.md`; actualizar benchmark, prompts, límites y privacidad de imágenes.
+## CU-11 — Preparar y verificar la solución completa offline
 
-## CU-29 — Ejecutar la demostración completa offline
-
-**Actor:** Equipo de desarrollo, docente/evaluador y Sistema anfitrión.
-**Dependencias:** CU-0 a CU-28.
-**Resultado:** release candidata reproduce el flujo objetivo completo sin Internet después de preparación.
+**Actores:** equipo, docente/evaluador y anfitrión. **Dependencias:** CU-0 a CU-10. **Origen:** anterior 29. **Puerta:** B-OFFLINE.
+**Resultado:** release candidata y demostración reproducibles sin Internet después de preparación.
 
 ### Incrementos
 
-1. Instalación limpia, empaquetado de dependencias/modelos permitidos y suite B-OFFLINE.
-2. Flujo funcional completo: UML, guardado, colaboración, presencia, generación, compilación, CRUD, texto, voz, XMI e imagen.
-3. Corrección de regresiones, documentación final, métricas y release candidata.
+1. Instalación limpia/preparada, empaquetado de dependencias/modelos permitidos y suite B-OFFLINE.
+2. Flujo integral: UML/clases relacionadas, validación, guardado/reapertura desde otro cliente, colaboración/presencia, relacional, generación backend/OpenAPI/Postman/manifiesto/frontend/Android, compilación, CRUD, texto/voz equivalentes, XMI e imagen; repetición offline.
+3. Corrección de regresiones, documentación final, métricas, deuda/notas de release y candidata.
 
-### Flujo y errores
+### Flujo, alternativas y errores
 
-El evaluador sigue una receta desde equipo limpio/preparado, desconecta Internet y ejecuta el guion objetivo. Cada fallo queda registrado con paso, evidencia y recuperación; no se omite para declarar éxito.
+Evaluador sigue receta en equipo limpio/preparado, desconecta Internet y ejecuta guion; cada fallo registra paso/evidencia/recuperación, sin omitirlo para declarar éxito. Reinicio del anfitrión y repetición del arranque verifican autonomía local.
 
 ### Aceptación y pruebas
 
-- B-OFFLINE al 100 % de flujos esenciales o excepción explícita que impida declarar MVP completo.
-- Todas las suites automáticas verdes y artefactos generados compilables.
-- Demostración en dos clientes LAN y dispositivo/emulador Android cuando esté disponible.
-- Documentación representa la release real y permite preparar el Word final sin reconstruir decisiones desde memoria.
+- B-OFFLINE al 100 % de flujos esenciales; excepción explícita impide declarar MVP completo.
+- Suites automáticas verdes y artefactos compilables; dos clientes LAN y dispositivo/emulador Android cuando disponible.
+- Manual integral, recursos/latencias reales y documentación fiel apta para Word académico sin reconstruir decisiones de memoria. No imponer dominio de ejemplo fijo a estudiantes.
 
-### Documentación
+**Documentación:** futuro `CU-11-solucion-offline.md`, STATUS, instalación/usuario/demo, benchmarks, matriz producto→CU→prueba→evidencia, deuda y release.
 
-Crear `CU-29-demostracion-offline.md`; cerrar estado, guías de instalación/usuario/demo, benchmarks, matriz de trazabilidad, deuda y notas de release.
+## Matriz histórica — 30 IDs anteriores → 12 CUs vigentes
 
----
+Cada fila conserva un alcance identificable dentro de los incrementos, aceptación, pruebas y documentación anteriores. El [registro íntegro](history/initial-30-use-cases.md) permite contrastar los flujos y criterios originales sin pérdida de información; sus nombres de archivos son propuestas históricas, ahora absorbidas por el documento del CU nuevo.
 
-# 6. Matriz de dependencias críticas
+| ID anterior | Capacidad histórica | CU nuevo | Incremento / trazabilidad |
+|---|---|---|---|
+| 0 | Base ejecutable | CU-0 | CU-0.1 a CU-0.3 |
+| 1 | Documento UML canónico | CU-2 | CU-2.1, dominio/formato/perfil |
+| 2 | Validación UML | CU-2 | CU-2.1, catálogo de diagnósticos |
+| 3 | Edición por comandos | CU-2 | CU-2.2, catálogo/atomicidad |
+| 4 | Undo/Redo | CU-2 | CU-2.2, historial/límites |
+| 5 | Workspace visual | CU-2 | CU-2.3, UI/Playwright/manual |
+| 6 | Registro/sesión | CU-1 | CU-1.1–CU-1.2, auth/landing |
+| 7 | Proyectos propios | CU-3 | CU-3.1, ownership/migraciones |
+| 8 | Persistencia versionada | CU-3 | CU-3.2, transacciones/recuperación |
+| 9 | Colaboración realtime | CU-4 | CU-4.1 y CU-4.3, protocolo/conflictos |
+| 10 | Presencia | CU-4 | CU-4.2, frecuencia/expiración |
+| 11 | Operación LAN | CU-4 | CU-4.3, anfitrión/clientes/fallos |
+| 12 | Mapeo relacional | CU-6 | CU-6.1, reglas/fixtures |
+| 13 | Esqueleto Spring | CU-6 | CU-6.1, Eta/toolchain/compilación |
+| 14 | Persistencia/API CRUD generada | CU-6 | CU-6.2, JPA/auditoría/relaciones |
+| 15 | OpenAPI/Postman | CU-6 | CU-6.3, contratos/colección |
+| 16 | Domain Manifest | CU-6 | CU-6.3, esquema/derivación |
+| 17 | Frontend Astro/Preact | CU-7 | CU-7.1, inferencia/UI |
+| 18 | CRUD web generado | CU-7 | CU-7.1, E2E/dos dominios |
+| 19 | PWA/Android | CU-7 | CU-7.2, caché/Capacitor |
+| 20 | Exportar/ejecutar aplicación | CU-7 | CU-7.3, paquete/checksums/offline |
+| 21 | AssistantCommand/executor | CU-8 | CU-8.1, seguridad/planes |
+| 22 | Texto para app generada | CU-8 | CU-8.2, B-TXT-APP |
+| 23 | UI asistente generado | CU-8 | CU-8.2, confirmación/E2E |
+| 24 | Texto→UML | CU-8 | CU-8.3, B-TXT-UML |
+| 25 | Speech-to-Text | CU-9 | CU-9.1, B-STT |
+| 26 | Operación por voz | CU-9 | CU-9.2–CU-9.3, ambos contextos |
+| 27 | XMI 2.1 | CU-5 | CU-5.1–CU-5.3, EA/round-trip |
+| 28 | Imagen→UML | CU-10 | CU-10.1–CU-10.3, B-VLM |
+| 29 | Demostración offline | CU-11 | CU-11.1–CU-11.3, B-OFFLINE |
 
-| Capacidad | Fundamento obligatorio |
+## Dependencias críticas y cobertura de producto
+
+| Capacidad | Fundamento obligatorio / CU responsable |
 |---|---|
-| Canvas | Modelo canónico + validador + Command Bus |
-| Persistencia | Modelo versionado + validador + auth/ownership |
-| Realtime | Command Bus + persistencia + revisión optimista |
-| Generación | Modelo válido + mapper relacional determinista |
-| Frontend generado | Backend/OpenAPI + Domain Manifest |
-| Asistentes | Manifiesto/comandos cerrados + executor determinista |
-| Voz | Canal de texto seguro ya terminado |
-| Imagen | Modelo/validador/Command Bus estables |
-| Cierre offline | Todos los flujos y modelos instalados |
+| Landing, cuenta y sesión | CU-0 → CU-1 |
+| UML 2.5.1, perfil y documento/layout | CU-2.1; conservación real CU-3 |
+| Canvas D3/SVG y ELK, identidad CASE/responsive | Modelo + validador + bus + historial de CU-2 antes de CU-2.3 |
+| Persistencia y ownership | Auth CU-1 + modelo versionado/validador CU-2 → CU-3 |
+| Realtime y presencia | Bus + persistencia + revisión optimista → CU-4 |
+| XMI/EA | Modelo, validación y bus → CU-5 |
+| Generación y auditoría declarativa | Modelo válido + mapper determinista → CU-6; JPA separada de TypeORM |
+| OpenAPI/Postman/manifiesto | CU-6; contrato principal en CU-0.2 |
+| CRUD ampliado y relaciones | CU-6 backend + CU-7 frontend |
+| Frontend/PWA/Android/exportación | API/OpenAPI + Domain Manifest → CU-7 |
+| Lenguaje cerrado/planes/seguridad | Manifiesto/comandos cerrados + executor → CU-8 |
+| Texto Ollama/Qwen | CU-8; B-TXT-APP y B-TXT-UML |
+| Voz whisper.cpp | Texto seguro cerrado → CU-9; B-STT |
+| Imagen Sharp/Gemma | Modelo/validador/bus estables → CU-10; B-VLM |
+| Local/LAN/offline | CU-4, CU-7 y cierre integral CU-11; B-OFFLINE |
+| Testing y demostración | Todos los CUs; consolidación CU-11 |
 
-# 7. Receta para planificar un CU
+## Receta — plan → aprobación → prompt → implementación → pruebas → corrección → cierre
 
-Cuando el usuario pida “plan para CU-X”, la respuesta debe:
+1. **Plan:** inspeccionar AGENTS, producto, ADR, estado, CU, código y diff. Explicar resultado usable, precondiciones, alcance/exclusiones, riesgos/rollback, decisiones fijadas y nuevas. Proponer uno a tres incrementos, orden técnico y archivos probables; detallar dominio, contratos, datos, UI, seguridad/errores según corresponda. Definir pruebas automáticas/manuales, resultados esperados, documentación y cierre, sin implementar.
+2. **Aprobación:** usuario aprueba plan/decisiones e incremento. Una contradicción material no resuelta exige detenerse y consultarla.
+3. **Prompt:** autocontenido, con rol/resultado, fuentes exactas, rama/CU/incremento, estado comprobado, restricciones/stack, pasos, flujos/errores, pruebas/comandos, documentación y reporte. No inventar contratos ni ampliar alcance silenciosamente.
+4. **Implementación:** solo incremento aprobado, adaptadores hacia dominio, cambios pequeños integrados. No acciones externas ni Git de escritura sin autorización explícita.
+5. **Pruebas:** ejecutar las del plan, reportar salida real; el usuario realiza manuales y aporta evidencia. Mocks declarados no sustituyen pruebas reales obligatorias. Benchmarks conservan baseline/dataset y cambian una variable por experimento.
+6. **Corrección:** diagnosticar, corregir, añadir regresión automatizable y actualizar documento del CU/STATUS/fuentes afectadas en cada iteración. Repetir hasta cumplir aceptación.
+7. **Cierre:** comprobar incrementos integrados, aceptación/manuales, lint/tipos/pruebas/build verdes cuando hay código, benchmarks/ADR obligatorios resueltos, secretos ausentes, documentación fiel y deuda explícita. El agente no ejecuta builds: aporta evidencia usuario/CI. CU-0.1 solo verifica configuración; build pendiente CU-0.3. Actualizar STATUS y entregar comandos finales concretos de commit/push. Solo después pasar al siguiente CU.
 
-1. verificar `AGENTS.md`, estado, CU, código y diffs;
-2. explicar en lenguaje simple qué quedará funcionando;
-3. listar precondiciones y decisiones ya fijadas;
-4. separar alcance y fuera de alcance;
-5. proponer uno a tres incrementos con demostración por incremento;
-6. detallar dominio, API/contratos, persistencia, UI, seguridad y errores que apliquen;
-7. enumerar pasos de implementación en orden y archivos probables sin fingir que ya existen;
-8. definir pruebas automáticas y manuales con resultado esperado;
-9. enumerar documentación que se crea/actualiza;
-10. identificar decisiones nuevas que necesitan aprobación;
-11. indicar definición de terminado y estrategia de commit, sin implementar todavía.
+Corrección de un CU ya cerrado: registrar nueva iteración en ese CU y estado, nuevo commit `fix(cu-X): ...`, sin alterar evidencia ni commit histórico. Nunca se considera implementado un mock, simulación no declarada o prueba omitida.
 
-# 8. Receta para generar el prompt del agente
-
-Después de aprobar el plan, el prompt debe ser autocontenido y ordenar al agente:
-
-1. leer las fuentes exactas y comprobar el estado;
-2. trabajar solo en la rama, CU e incremento aprobados;
-3. respetar las invariantes y stack;
-4. implementar los pasos y manejar flujos alternativos;
-5. no ampliar alcance ni cambiar contratos silenciosamente;
-6. ejecutar comandos de calidad y reportar salida real;
-7. crear/actualizar `CU-X-nombre.md`, estado y docs afectadas;
-8. no inventar benchmarks ni marcar pruebas no ejecutadas;
-9. detenerse y preguntar ante contradicción material, secreto, permiso o decisión no aprobada;
-10. entregar resumen de cambios, pruebas, manual pendiente, riesgos y comandos sugeridos.
-
-# 9. Plantilla del documento individual de CU
+## Plantilla de documento individual `CU-X-nombre.md`
 
 ```markdown
 # CU-X — Nombre
@@ -911,106 +406,32 @@ Después de aprobar el plan, el prompt debe ser autocontenido y ordenar al agent
 ## Estado y trazabilidad
 ## Objetivo y resultado usable
 ## Actores, precondiciones y dependencias
-## Alcance implementado / fuera de alcance
-## Decisiones de análisis y diseño
-## Incremento 1..3
+## Alcance real y fuera de alcance
+## Decisiones de análisis y diseño aprobadas
+## Incrementos (uno a tres; estado y aceptación por incremento)
 ## Flujo principal
 ## Flujos alternativos y errores
 ## Contratos, datos y migraciones
 ## Archivos relevantes
-## Pruebas automáticas ejecutadas
-## Pruebas manuales y evidencia
-## Benchmarks, si aplica
-## Documentación actualizada
-## Desviaciones y deuda
+## Riesgos del entorno, desviaciones, deuda y recuperación
+## Criterios de aceptación
+## Pruebas automáticas previstas y ejecutadas (comando, resultado real)
+## Pruebas manuales y evidencia (pasos, fecha, resultado)
+## Benchmarks y decisiones, si aplica
+## Documentación creada o actualizada
 ## Cómo ejecutar y verificar
 ## Historial de iteraciones y correcciones
 ## Commit y push
 ```
 
-La última sección usa rutas/archivos reales, por ejemplo:
+## Documentación transversal y decisiones de inicio
 
-```bash
-git status
-git diff --check
-git add <archivos-reales-del-CU>
-git commit -m "feat(cu-X): descripcion concreta"
-git push -u origin feature/cu-X-slug
-```
+Crear solo cuando el CU la necesita: arquitectura/ADR, UML/perfil/diagnósticos/comandos, HTTP/WebSocket/errores, datos/migraciones, relacional/generadores, OpenAPI/Postman/manifiesto, instalación local/LAN/offline, manual/demo, seguridad/privacidad/amenazas y benchmarks/datasets/corridas. Trazar producto → CU → prueba → evidencia para el Word académico; distinguir intención de implementación.
 
-Si se modifica un CU anterior más adelante:
+Decisiones externas resueltas: Primer Parcial, slug `primer-parcial`, futuro repositorio público `DarksouleaterXD/primer-parcial`, monorepositorio npm workspaces, Windows/PowerShell, Node 24 y PostgreSQL `18.6-alpine` por Compose loopback. Credenciales GitHub no bloquean local. CI concreta y su ejecución se completan en CU-0.3; Docker no operativo es riesgo de CU-0.2. Ver [contexto de continuidad](../../PROJECT_CONTEXT.md).
 
-```bash
-git status
-git diff --check
-git add <archivos-reales-de-la-correccion-y-documentacion>
-git commit -m "fix(cu-X): descripcion concreta"
-git push
-```
+## Regla de commit y push al final de cada CU
 
-Los placeholders deben reemplazarse por valores reales antes de entregar los comandos al usuario. Nunca se recomienda `git add .` sin revisar qué incluye.
+El documento individual termina con comandos PowerShell concretos, archivos reales revisados y rama `feature/cu-X-slug` o `fix/cu-X-slug`. Usar commits convencionales pequeños y trazables (`feat`, `fix`, `test`, `docs` con scope `cu-X`), sin atribución IA y por unidad entregable con pruebas/docs correspondientes. Nunca `git add .` sin revisar; nunca push sin solicitud del usuario.
 
-# 10. Documentos transversales esperados
-
-Se crean solo cuando un CU los necesita y siempre reflejan implementación real:
-
-- arquitectura y ADR;
-- dominio UML, perfil y validaciones;
-- protocolos HTTP/WebSocket y errores;
-- modelo de datos y migraciones;
-- mapeo relacional y reglas de generación;
-- OpenAPI, Postman y Domain Manifest;
-- instalación local/LAN/offline;
-- manual de usuario y demostración;
-- seguridad, privacidad y modelo de amenazas;
-- benchmarks, datasets, corridas y comparaciones;
-- trazabilidad producto → CU → prueba → evidencia.
-
-# 11. Decisiones pendientes antes de CU-0
-
-El producto no fija estos datos externos. Deben resolverse en el plan de CU-0, no asumirse durante la ejecución:
-
-- nombre definitivo del producto y del repositorio;
-- cuenta u organización de GitHub y visibilidad;
-- monorepo recomendado o repos separados mediante ADR;
-- gestor de paquetes y estrategia de workspace compatibles con el stack;
-- forma local de PostgreSQL —recomendada mediante contenedor reproducible si el equipo lo soporta—;
-- sistema operativo y herramientas disponibles en el equipo del usuario;
-- estrategia de CI según proveedor/repositorio.
-
-Estas decisiones no cambian la visión funcional, pero condicionan comandos, estructura y automatización. El plan de CU-0 debe ofrecer una recomendación clara y explicar cómo verificar cada requisito.
-
-# 12. Trazabilidad inicial de producto
-
-Esta matriz demuestra cobertura planificada; no implica que una capacidad esté implementada.
-
-| Requisito o decisión del producto | CU principal | Apoyo/verificación |
-|---|---|---|
-| Landing, registro e inicio de sesión | CU-6 | CU-0, CU-7 |
-| Identidad CASE, responsive y workspace | CU-5 | CU-6, CU-23, CU-24 |
-| `ProjectDocument`, UML y layout separado | CU-1 | CU-8 |
-| UML 2.5.1 y perfil de generación | CU-1 | CU-12, CU-16 |
-| D3/SVG y auto-layout ELK | CU-5 | CU-3, CU-4 |
-| Diagramación manual | CU-3, CU-5 | CU-2, CU-4 |
-| Validador único y diagnósticos | CU-2 | Todos los adaptadores/generadores |
-| Command Bus y Undo/Redo | CU-3, CU-4 | CU-9, CU-24, CU-28 |
-| Imagen con Sharp y Gemma | CU-28 | B-VLM |
-| Voz con whisper.cpp | CU-25, CU-26 | B-STT |
-| IA local con Ollama/Qwen | CU-22, CU-24 | B-TXT-APP, B-TXT-UML |
-| XMI 2.1 y Enterprise Architect | CU-27 | CU-1, CU-2 |
-| Colaboración autoritativa y revisión | CU-9 | CU-8, CU-11 |
-| Presencia efímera | CU-10 | CU-9 |
-| Offline y LAN | CU-11, CU-20, CU-29 | B-OFFLINE |
-| TypeORM/PostgreSQL, auth y ownership | CU-6 a CU-8 | CU-0 |
-| UML a modelo relacional | CU-12 | CU-1, CU-2 |
-| Backend Spring Boot generado | CU-13, CU-14 | CU-12 |
-| CRUD, filtros, orden, paginación y relaciones | CU-14, CU-18 | CU-16 |
-| Auditoría declarativa | CU-1, CU-14 | CU-16 |
-| OpenAPI 3.1 y Postman | CU-15 | CU-0 para API principal |
-| Frontend Astro/Preact generado | CU-17, CU-18 | CU-15, CU-16 |
-| PWA y Capacitor Android | CU-19 | CU-20, CU-29 |
-| Domain Manifest | CU-16 | CU-21, CU-22 |
-| Lenguaje cerrado y operaciones compuestas | CU-21 | CU-22, CU-23 |
-| Seguridad del asistente | CU-21 a CU-24 | Benchmarks de texto |
-| Testing de backend, frontend, E2E y generadores | Todos los CUs | CU-29 consolida |
-| Flujo de demostración objetivo | CU-29 | CU-0 a CU-28 |
+Secuencia a concretar **al cerrar el CU**: `git status`, `git diff --check`, `git diff`, `git log --oneline -10`, checks del CU, `git add <archivos-reales>`, `git commit -m "feat(cu-X): descripcion concreta"`, `git push -u origin feature/cu-X-slug`. En correcciones: mensaje `fix(cu-X): ...` y push de un commit nuevo. Los marcadores de esta receta deben reemplazarse antes de entregar comandos ejecutables. En CU-0.1 la sección final de CU-0 queda pendiente; no se ejecuta Git de escritura.

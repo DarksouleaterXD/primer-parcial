@@ -18,11 +18,11 @@ Un experimento puede comparar alternativas, pero no cambia el baseline automáti
 
 | Puerta | Debe completarse antes de cerrar | Resultado que habilita |
 |---|---|---|
-| B-TXT-UML | CU-24 | Prompt y parámetros de texto → `UmlCommand` |
-| B-TXT-APP | CU-22 | Prompt y parámetros de texto → `AssistantCommand` |
-| B-STT | CU-25 | Modelo y parámetros de `whisper.cpp` para comandos breves |
-| B-VLM | CU-28 | Prompt, preprocesamiento y parámetros de imagen → UML |
-| B-OFFLINE | CU-29 | Configuración reproducible sin Internet y consumo aceptable |
+| B-TXT-UML | CU-8 | Prompt y parámetros de texto → `UmlCommand` |
+| B-TXT-APP | CU-8 | Prompt y parámetros de texto → `AssistantCommand` |
+| B-STT | CU-9 | Modelo y parámetros de `whisper.cpp` para comandos breves |
+| B-VLM | CU-10 | Prompt, preprocesamiento y parámetros de imagen → UML |
+| B-OFFLINE | CU-11 | Configuración reproducible sin Internet y consumo aceptable |
 
 Durante desarrollo se permite un baseline provisional. El CU no se marca terminado si su puerta obligatoria no tiene dataset, ejecución, resultados y decisión documentada.
 

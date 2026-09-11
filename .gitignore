@@ -1,0 +1,40 @@
+# Dependencias, compilación y cachés locales
+node_modules/
+dist/
+build/
+.astro/
+.cache/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+*.log
+
+# Entorno real: solo el ejemplo explícito puede versionarse
+.env
+.env.*
+*.env
+*.env.*
+!.env.example
+
+# Material sensible y exportaciones locales
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets/
+backups/
+*.dump
+
+# Archivos del sistema/editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# package-lock.json se versionará desde CU-0.2; no se ignora.
