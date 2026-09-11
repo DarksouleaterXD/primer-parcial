@@ -118,3 +118,13 @@ No se marca una capacidad como implementada si solo existe un mock, una prueba o
 - No ampliar el subconjunto UML, XMI, asistente o generador dentro de un CU sin actualizar antes alcance y aceptación.
 - Invitaciones y membresías multiusuario avanzadas permanecen fuera del MVP mientras el producto no las promueva explícitamente; la colaboración MVP puede validarse con sesiones autorizadas del propietario.
 - La funcionalidad esencial debe poder ejecutarse sin Internet una vez instalados dependencias y modelos locales.
+## OpenSpec change gate
+
+- Todo cambio de código, configuración o dependencias requiere un cambio OpenSpec activo.
+- Crear proposal.md, specs, design.md y tasks.md constituye planificación, no autorización para implementar.
+- El agente nunca debe ejecutar o iniciar `/opsx-apply` automáticamente.
+- La implementación solamente comienza cuando el usuario autoriza explícitamente el cambio después de revisar todos sus artefactos.
+- Durante apply solamente se implementan tareas explícitas y pendientes de tasks.md.
+- Si aparece una necesidad no documentada, el agente debe detenerse y proponer `/opsx-update`.
+- No se permite anticipar trabajo de otro incremento o caso de uso.
+- El agente no ejecutará git add, commit, push ni creación de repositorios remotos.

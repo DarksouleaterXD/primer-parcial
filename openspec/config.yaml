@@ -1,0 +1,58 @@
+schema: spec-driven
+
+context: |
+  Proyecto: Primer Parcial.
+  Rama activa: feature/cu-0-inicializar-base.
+  Arquitectura: monorepositorio con npm workspaces.
+  Stack aprobado: Node.js 24, Astro, TypeScript, Preact,
+  NestJS 11 sobre Express, TypeORM y PostgreSQL.
+
+  Fuentes de verdad del proyecto:
+  - docs/puds/use-cases/README.md
+  - docs/puds/use-cases/CU-0-inicializar-base.md
+  - docs/architecture/README.md
+  - docs/decisions/ADR-0001-initial-technical-boundaries.md
+  - docs/STATUS.md
+  - docs/product/product-05-astro-nestjs.md
+
+  Un cambio OpenSpec corresponde exactamente a un incremento aprobado.
+  No se deben anticipar funcionalidades de otros incrementos o casos de uso.
+  Las ideas opcionales deben registrarse como fuera de alcance, no implementarse.
+
+rules:
+  proposal:
+    - "Definir explícitamente alcance y fuera de alcance."
+    - "No ampliar el cambio con mejoras opcionales o preventivas."
+    - "Identificar el incremento y caso de uso correspondiente."
+    - "Indicar qué documentos existentes sustentan el cambio."
+
+  specs:
+    - "Cada requisito debe describir un comportamiento observable."
+    - "Usar escenarios GIVEN, WHEN y THEN."
+    - "No incluir requisitos pertenecientes a otro incremento."
+    - "Cada requisito debe poder verificarse mediante una prueba."
+
+  design:
+    - "Cada componente y dependencia debe estar justificado por un requisito."
+    - "No crear abstracciones preparadas para funcionalidades futuras."
+    - "Preferir la solución mínima que satisfaga los requisitos."
+    - "Registrar explícitamente las alternativas descartadas."
+
+  tasks:
+    - "Cada tarea debe enlazarse con un requisito aprobado."
+    - "No incluir refactorizaciones ni mejoras opcionales."
+    - "Indicar archivos afectados y validación esperada."
+    - "La última tarea debe comprobar que no exista trabajo fuera de alcance."
+
+operations:
+  apply:
+    guidance:
+      - "Implementar exclusivamente las tareas pendientes de tasks.md."
+      - "No agregar dependencias que no estén justificadas en design.md."
+      - "Si aparece una necesidad nueva, detenerse y solicitar actualizar los artefactos."
+      - "No comenzar el siguiente incremento ni otro caso de uso."
+      - "No ejecutar git add, commit o push."
+
+  archive:
+    guidance:
+      - "Archivar solamente después de ejecutar verify y resolver hallazgos críticos."
