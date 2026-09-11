@@ -6,6 +6,7 @@ context: |
   Arquitectura: monorepositorio con npm workspaces.
   Stack aprobado: Node.js 24, Astro, TypeScript, Preact,
   NestJS 11 sobre Express, TypeORM y PostgreSQL.
+  Antes de generar o modificar artefactos OpenSpec, el agente debe leer la documentación del caso de uso e incremento activo y los ADR aplicables.
 
   Fuentes de verdad del proyecto:
   - docs/puds/use-cases/README.md
