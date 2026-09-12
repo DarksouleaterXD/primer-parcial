@@ -1,13 +1,13 @@
 # Arquitectura aprobada — Primer Parcial
 
-**Estado:** arquitectura objetivo, sin componentes de aplicación implementados. CU-0.1 aporta configuración/documentación. Consultá [STATUS](../STATUS.md), [producto](../product/product-05-astro-nestjs.md) y [ADR-0001](../decisions/ADR-0001-initial-technical-boundaries.md).
+**Estado:** CU-0.2 implementa y valida la base web/API/PostgreSQL. Consultá [STATUS](../STATUS.md), [producto](../product/product-05-astro-nestjs.md) y [ADR-0001](../decisions/ADR-0001-initial-technical-boundaries.md).
 
 ## Dos aplicaciones distintas
 
 | Contexto | Stack aprobado | Estado |
 |---|---|---|
-| Herramienta CASE: web principal | Astro, TypeScript, islas Preact, Shoelace, D3/SVG, ELK.js, Nanostores, WebSocket nativo | No implementado |
-| Herramienta CASE: API | Node 24, NestJS 11/Express, TypeORM/PostgreSQL, Passport/JWT/bcrypt, Zod/`nestjs-zod`, `@nestjs/swagger` | No implementado |
+| Herramienta CASE: web principal | Astro, TypeScript, islas Preact, Shoelace, D3/SVG, ELK.js, Nanostores, WebSocket nativo | Base CU-0.2: página Astro e isla `ApiStatus`; resto pendiente |
+| Herramienta CASE: API | Node 24, NestJS 11/Express, TypeORM/PostgreSQL, Passport/JWT/bcrypt, Zod/`nestjs-zod`, `@nestjs/swagger` | Base CU-0.2: health, CORS y OpenAPI; resto pendiente |
 | Realtime principal | NestJS Gateway con adaptador `ws`, servidor autoritativo | No implementado |
 | Interoperabilidad | UML 2.5.1, XMI 2.1, `saxes`/`xmlbuilder2`, Enterprise Architect | No implementado |
 | Generadores | Mapper determinista y plantillas Eta | No implementado |
@@ -42,10 +42,11 @@ Manual / texto / voz / imagen / XMI
 
 ```text
 primer-parcial/
-├── apps/                   [futuro, no creado]
-│   ├── web/                [CU-0.2: Astro/Preact]
-│   └── api/                [CU-0.2: NestJS]
-├── packages/               [futuro: solo con contratos/dominio reales]
+├── apps/
+│   ├── web/                [CU-0.2: Astro/Preact + ApiStatus]
+│   └── api/                [CU-0.2: NestJS health]
+├── packages/
+│   └── contracts/          [CU-0.2: contrato de health]
 ├── docs/                   [documentación existente y de CU-0.1]
 │   ├── architecture/
 │   ├── benchmarks/
@@ -58,10 +59,10 @@ primer-parcial/
 └── compose.yaml            [configurado: solo PostgreSQL local]
 ```
 
-No se crean paquetes vacíos por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Workspaces `apps/*` y `packages/*` reservan la topología, no demuestran que existan aplicaciones.
+No se crean paquetes vacíos por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Los workspaces contienen solo la base ejecutable de CU-0.2.
 
 ## Infraestructura local objetivo y orden
 
-PostgreSQL `18.6-alpine` solo publica `127.0.0.1:5432`, con volumen nombrado montado en `/var/lib/postgresql` y healthcheck `pg_isready`. Variables vienen del entorno con fallback de desarrollo sintético; `.env.example` es versionable y archivos reales son ignorados. El motor está pendiente de operatividad; no hay prueba de conexión ni persistencia en CU-0.1.
+PostgreSQL `18.6-alpine` solo publica `127.0.0.1:5432`, con volumen nombrado montado en `/var/lib/postgresql` y healthcheck `pg_isready`. Variables vienen del entorno con fallback de desarrollo sintético; `.env.example` es versionable y archivos reales son ignorados. CU-0.2 comprobó el motor, el healthcheck, el endpoint disponible y el endpoint no disponible sin borrar el volumen.
 
-CU-0.2 inicializa web/API/BD, health y contrato principal; CU-0.3 verifica calidad/build/CI. Dentro de CU-2 se estabilizan canónico→validador→bus antes del canvas. CU-3 incorpora proyectos, CU-4 LAN, CU-5 XMI, CU-6/7 generación y CU-8/9/10 asistentes/visión; CU-11 verifica conjunto offline. LAN no requiere exponer PostgreSQL: el anfitrión media acceso por sus servicios autorizados. GitHub no es dependencia de ejecución local.
+CU-0.2 implementa web/API/BD, health y contrato principal; su build fue comprobado manualmente. CU-0.3 verifica CI, E2E, reproducción limpia y el cierre de CU-0. Dentro de CU-2 se estabilizan canónico→validador→bus antes del canvas. CU-3 incorpora proyectos, CU-4 LAN, CU-5 XMI, CU-6/7 generación y CU-8/9/10 asistentes/visión; CU-11 verifica conjunto offline. LAN no requiere exponer PostgreSQL: el anfitrión media acceso por sus servicios autorizados. GitHub no es dependencia de ejecución local.

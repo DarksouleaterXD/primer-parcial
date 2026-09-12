@@ -22,9 +22,11 @@ See `proposal.md` for motivation and `specs/` for the behavior contract. CU-0.1 
 
 `apps/web`, `apps/api` and `packages/contracts` are the only workspaces created. The root package owns the sole `package-lock.json` and delegates development, test, lint, typecheck and build commands to those workspaces.
 
+Node.js `24.11.1` remains the approved runtime. The root devDependencies pin `@nestjs/cli` to the exact version `11.0.24`; this Nest CLI 11 release resolves `@angular-devkit/core` and related DevKit packages at `19.2.27`, whose Node engine accepts Node 24.11.1. Dependencies are installed only from the root so npm produces the sole lockfile there. Before work continues, installation must complete without an Angular DevKit `EBADENGINE` error.
+
 `packages/contracts` exports only the health representation `{ status: "available" | "unavailable" }` and has no import from Astro, Preact, NestJS or TypeORM. This directly supports [base-executable-workspaces: Los workspaces contienen solo los componentes de CU-0.2], [base-executable-workspaces: La raíz ofrece comandos verificables de CU-0.2], [base-executable-workspaces: La instalación usa un único lockfile raíz] and [api-health: La API expone su salud con dependencia verificada].
 
-Alternatives discarded: duplicating response types in web and API would let the two consumers drift; a broader shared domain or utility package would create unneeded future abstractions; workspace-level lockfiles would violate the single-install requirement.
+Alternatives discarded: duplicating response types in web and API would let the two consumers drift; a broader shared domain or utility package would create unneeded future abstractions; workspace-level lockfiles would violate the single-install requirement. Updating Node, using `latest` or a version range for the Nest CLI, or adding transitive dependency overrides would make the approved runtime or dependency resolution unstable and are excluded.
 
 ### API principal mínima con disponibilidad desacoplada del arranque
 

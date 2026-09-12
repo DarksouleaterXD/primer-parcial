@@ -123,19 +123,19 @@ El primer caso es `CU-0 — Inicializar la base ejecutable del proyecto`. Al ter
 
 El plan de CU-0 está aprobado con tres incrementos:
 
-1. **CU-0.1 — Repositorio, configuración y documentación inicial:** único incremento autorizado en esta sesión. Configuración raíz, Compose y permisos OpenCode, plan 12/3, ADR, guías y validación estática. Código de aplicaciones no iniciado.
-2. **CU-0.2 — Aplicaciones y servicios conectados:** futura inicialización Astro/NestJS, instalación/lockfile, PostgreSQL/TypeORM, health, OpenAPI principal y comunicación web→API. Requiere autorización específica posterior y resolver el motor Docker.
+1. **CU-0.1 — Repositorio, configuración y documentación inicial:** terminado. Configuración raíz, Compose y permisos OpenCode, plan 12/3, ADR, guías y validación estática.
+2. **CU-0.2 — Aplicaciones y servicios conectados:** terminado y validado. Incluye Astro/NestJS, lockfile, PostgreSQL/TypeORM para readiness, health, OpenAPI principal, comunicación web→API y build manual correcto.
 3. **CU-0.3 — Calidad, reproducibilidad y cierre:** checks/tests/CI, manuales y evidencia de build proporcionada por usuario/CI; cierre documental completo y comandos finales de commit/push.
 
-Configuración local aprobada: PostgreSQL `18.6-alpine` con volumen nombrado, healthcheck y publicación exclusiva en `127.0.0.1:5432`. Docker CLI está disponible, pero el motor no está operativo según diagnóstico previo/estado informado; CU-0.1 solo valida Compose sin iniciar contenedores. Revalidar ocupación de 5432 antes de CU-0.2: un diagnóstico previo detectó un servicio, no comprobado de nuevo aquí. No detenerlo ni cambiar su configuración sin identificarlo y acordarlo.
+Configuración local aprobada: PostgreSQL `18.6-alpine` con volumen nombrado, healthcheck y publicación exclusiva en `127.0.0.1:5432`. CU-0.2 comprobó Docker Engine `29.7.2`, Compose `v5.5.1`, la base healthy y la recuperación controlada del servicio sin borrar el volumen.
 
 ## Continuar en futuras sesiones
 
 1. Leer completos AGENTS, este contexto, STATUS, producto, plan maestro y benchmarks; después el [CU-0 activo](puds/use-cases/CU-0-inicializar-base.md) y ADR-0001.
 2. Comprobar `git status --short --branch` y `git branch --show-current`. Si no está en `feature/cu-0-inicializar-base`, detenerse y reportarlo. Inspeccionar cambios existentes como posible trabajo del usuario.
-3. Consultar evidencia del CU y estado: configuración no equivale a aplicación ejecutable. No asumir dependencias instaladas, pruebas realizadas, remoto publicado ni build verde.
-4. Solicitar/recibir el prompt aprobado de CU-0.2 antes de implementarlo. Mientras tanto no instalar, crear lockfile/apps/paquetes futuros, iniciar contenedores ni implementar health/TypeORM/OpenAPI.
-5. Revalidar entorno para el siguiente incremento, sin asumir que el motor o puerto ya se resolvieron. Completar sus pruebas reales y actualizar documentos en cada corrección.
+3. Consultar evidencia del CU y estado: CU-0.2 ya es ejecutable y tiene build correcto, pero no asumir reproducción limpia, CI ni remoto publicado.
+4. No implementar CU-0.3 sin su prompt y autorización explícitos.
+5. Revalidar entorno para el siguiente incremento y completar sus pruebas reales antes de actualizar documentos; no anticipar capacidades posteriores.
 6. Mantener `opencode.json` apuntando al documento del CU activo cuando cambie el CU. Reiniciar OpenCode para cargar cambios de configuración; no habilitar auto-aprobación. Commit/push y acciones GitHub requieren solicitud explícita y ajuste consciente de la política que actualmente los deniega.
 
 Las comprobaciones iniciales están en [desarrollo](development/README.md); resultados y pendientes en [STATUS](STATUS.md) y el documento del CU, no en supuestos heredados de otro chat.

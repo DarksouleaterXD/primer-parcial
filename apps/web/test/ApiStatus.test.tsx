@@ -4,6 +4,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiStatus } from "../src/components/ApiStatus";
 
 const apiOrigin = "http://api.example.test";
+const integrationMode = process.env.API_INTEGRATION_MODE;
+const integrationOrigin = process.env.PUBLIC_API_ORIGIN;
+const describeIntegration = integrationMode && integrationOrigin ? describe : describe.skip;
 
 afterEach(() => {
   cleanup();
@@ -78,5 +81,17 @@ describe("ApiStatus", () => {
     await vi.advanceTimersByTimeAsync(50);
 
     expect(await screen.findByText("API no disponible")).toBeTruthy();
+  });
+});
+
+describeIntegration("ApiStatus integration", () => {
+  it(`shows the real API ${integrationMode} state`, async () => {
+    render(<ApiStatus apiOrigin={integrationOrigin!} />);
+
+    expect(
+      await screen.findByText(
+        integrationMode === "available" ? "API disponible" : "API no disponible",
+      ),
+    ).toBeTruthy();
   });
 });
