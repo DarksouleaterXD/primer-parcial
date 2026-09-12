@@ -4,13 +4,15 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "target": "ES2024",
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "outDir": "./dist",
     "declaration": true,
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "incremental": true,
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
