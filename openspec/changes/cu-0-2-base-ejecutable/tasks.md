@@ -20,9 +20,9 @@ Detener y revisar este bloque antes de iniciar el frontend.
 
 Detener y revisar este bloque antes de las comprobaciones integradas.
 
-- [ ] 3.1 Crear la aplicación Astro con TypeScript y Preact, y entregar a la isla `ApiStatus` el origen público de la API mediante entorno; verificar que la página carga la isla y que el origen no queda hardcodeado. [web-api-status: La web consulta el health configurado] Archivos: `apps/web/src/pages/**`, `apps/web/src/components/ApiStatus.*`, `apps/web/.env.example`, configuración Astro/TypeScript.
-- [ ] 3.2 Implementar el ciclo único de `ApiStatus`: comprobando durante la solicitud, disponible solo ante `200` y contrato válido, y no disponible ante `503` o respuesta inválida; verificar cada transición con pruebas de componente. [web-api-status: La web comunica el ciclo de disponibilidad] Archivos: `apps/web/src/components/ApiStatus.*`, `apps/web/test/**`.
-- [ ] 3.3 Incorporar cancelación por timeout y manejo de rechazo de red en `ApiStatus`, sin reintento, polling ni estado saludable falso; verificar timeout y error de red con pruebas controladas. [web-api-status: La web trata timeout y fallos de red como no disponibles] Archivos: `apps/web/src/components/ApiStatus.*`, `apps/web/test/**`.
+- [x] 3.1 Crear la aplicación Astro con TypeScript y Preact, y entregar a la isla `ApiStatus` el origen público de la API mediante entorno; verificar que la página carga la isla y que el origen no queda hardcodeado. [web-api-status: La web consulta el health configurado] Archivos: `apps/web/src/pages/**`, `apps/web/src/components/ApiStatus.*`, `apps/web/.env.example`, configuración Astro/TypeScript.
+- [x] 3.2 Implementar el ciclo único de `ApiStatus`: comprobando durante la solicitud, disponible solo ante `200` y contrato válido, y no disponible ante `503` o respuesta inválida; verificar cada transición con pruebas de componente. [web-api-status: La web comunica el ciclo de disponibilidad] Archivos: `apps/web/src/components/ApiStatus.*`, `apps/web/test/**`.
+- [x] 3.3 Incorporar cancelación por timeout y manejo de rechazo de red en `ApiStatus`, sin reintento, polling ni estado saludable falso; verificar timeout y error de red con pruebas controladas. [web-api-status: La web trata timeout y fallos de red como no disponibles] Archivos: `apps/web/src/components/ApiStatus.*`, `apps/web/test/**`.
 
 ## 4. Bloque 4 — Verificación y documentación
 

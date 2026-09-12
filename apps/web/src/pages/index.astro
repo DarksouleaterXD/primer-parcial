@@ -1,5 +1,8 @@
 ---
+import { ApiStatus } from "../components/ApiStatus";
+
 const title = "Primer Parcial";
+const apiOrigin = import.meta.env.PUBLIC_API_ORIGIN;
 ---
 
 <!doctype html>
@@ -12,6 +15,7 @@ const title = "Primer Parcial";
   <body>
     <main>
       <h1>{title}</h1>
+      <ApiStatus client:load apiOrigin={apiOrigin} />
     </main>
   </body>
 </html>
