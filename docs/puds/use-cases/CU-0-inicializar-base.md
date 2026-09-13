@@ -5,7 +5,7 @@
 - **Estado del CU: En implementación.**
 - CU-0.1 — Repositorio, configuración y documentación inicial: terminado y verificado el 2026-09-10.
 - CU-0.2 — Aplicaciones y servicios conectados: terminado y validado el 2026-09-12.
-- CU-0.3 — Calidad, reproducibilidad y cierre: en implementación; Bloques 1 y 2 terminados, E2E, revisión manual, CI real y cierre pendientes.
+- CU-0.3 — Calidad, reproducibilidad y cierre: en implementación; Bloques 1 a 3 terminados, CI real y cierre pendientes.
 - Rama de trabajo: `feature/cu-0-inicializar-base`.
 - Trazabilidad: CU anterior 0 → CU nuevo 0, ciclo 1. Consultar [plan maestro](README.md), [estado](../../STATUS.md) y [ADR-0001](../../decisions/ADR-0001-initial-technical-boundaries.md).
 
@@ -35,7 +35,7 @@ Las fronteras aprobadas en ADR-0001 se preservan: esta base no implementa autent
 |---|---|---|
 | CU-0.1 | Plan 12/3, ADR, contexto, configuración raíz, Compose y verificación estática | Terminado |
 | CU-0.2 | Workspaces, lockfile, PostgreSQL, API, health/OpenAPI/CORS y comunicación real web→API | Terminado |
-| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | En implementación: Bloques 1 y 2 terminados; Bloques 3 y 4 pendientes |
+| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | En implementación: Bloques 1 a 3 terminados; Bloque 4 pendiente |
 
 ## Flujos y errores
 
@@ -131,11 +131,36 @@ No se corrigió ni reordenó la receta durante esta ejecución: cualquier correc
 
 La reproducción completa satisface la tarea 2.2. El contenedor Compose aislado queda detenido para conservar el volumen temporal sin ejecutar operaciones de borrado; no pertenece al checkout original y no está publicado en ningún puerto.
 
+### CU-0.3 — Bloque 3, E2E Chromium automatizada — 2026-09-12
+
+| Comprobación | Resultado real |
+|---|---|
+| Navegador | Playwright `1.61.0` con Chromium instalado localmente; no se instalaron Firefox ni WebKit |
+| Comando | `npm run test:e2e` ejecutó 2 escenarios con 1 worker y finalizó `2 passed` en 59.7 s |
+| Disponible | Con `postgres` healthy, Chromium abrió `http://127.0.0.1:4321` y `ApiStatus` mostró `API disponible` |
+| No disponible | La suite registró que el servicio `postgres` del Compose del proyecto estaba iniciado, ejecutó solo `docker compose stop postgres`, abrió una página nueva y comprobó `API no disponible` |
+| Recuperación | La suite ejecutó `docker compose up -d --wait postgres`, comprobó `pg_isready`, abrió una página nueva y comprobó `API disponible` |
+| Restauración | El `finally` restauró el estado inicial iniciado; `docker compose ps` y `pg_isready` posteriores confirmaron `primer-parcial-postgres-1` healthy en `127.0.0.1:5432` |
+| Límites | Sin mocks, polling, reintentos, Page Objects, fixtures genéricos, screenshots, vídeos, traces, contenedores/volúmenes borrados ni PostgreSQL externo afectado |
+
+### CU-0.3 — Bloque 3, revisión manual de navegador — 2026-09-12
+
+| Comprobación | Resultado real |
+|---|---|
+| URL y orígenes | `http://localhost:4321`, con `WEB_ORIGIN=http://localhost:4321` y `PUBLIC_API_ORIGIN=http://localhost:3000` |
+| Disponible | Con PostgreSQL healthy, la aplicación cargó y `ApiStatus` mostró `API disponible` |
+| No disponible | Tras `docker compose stop postgres` y una recarga manual, `ApiStatus` mostró `API no disponible` |
+| Recuperación | Tras `docker compose up -d --wait postgres`, `pg_isready` correcto y una recarga manual, `ApiStatus` volvió a mostrar `API disponible` |
+| Resultado | Revisión manual correcta; PostgreSQL quedó restaurado y healthy |
+| Incidencia inicial | La API no inició porque `WEB_ORIGIN` no estaba exportado en esa terminal; se configuraron únicamente las variables documentadas y se repitió la revisión sin modificar código |
+
+La evidencia manual es independiente de los dos escenarios E2E Chromium y satisface la tarea 3.3.
+
 ## Pruebas manuales y recuperación
 
 La prueba runtime inició API con `WEB_ORIGIN=http://localhost:4321` y web con `PUBLIC_API_ORIGIN=http://localhost:3000`. Se observó que la página web contenía la isla `ApiStatus`; las pruebas condicionales confirmaron las dos salidas contra la API real.
 
-La caída controlada usó exclusivamente `docker compose stop postgres`; no se eliminó contenedor ni volumen. La restauración usó `docker compose up -d --wait`. Una comprobación manual pendiente de CU-0.3 debe abrir la web en navegador, registrar URL/resultado y repetir el arranque desde entorno limpio.
+La caída E2E y manual controlada usó exclusivamente `docker compose stop postgres`; no se eliminó contenedor ni volumen. La restauración usó `docker compose up -d --wait` y `pg_isready`. La revisión manual del 2026-09-12 confirmó ambos estados y recuperación con los orígenes documentados.
 
 ## Archivos relevantes
 
@@ -148,7 +173,7 @@ La caída controlada usó exclusivamente `docker compose stop postgres`; no se e
 
 ## Riesgos, deuda y fuera de alcance
 
-- CU-0.3 debe añadir E2E, revisión manual de navegador, evidencia CI real y cierre documental del CU.
+- CU-0.3 debe añadir evidencia CI real y cierre documental del CU.
 - No hay autenticación, UML, persistencia de proyectos, colaboración, XMI, generación, voz, visión ni IA.
 - La prueba de integración web se activa solo con sus variables de entorno; el test raíz la omite deliberadamente para no depender de servicios locales.
 - Los valores de ejemplos no son aptos para despliegue ni sustituyen secretos reales.
@@ -166,6 +191,8 @@ Seguir [la guía de desarrollo](../../development/README.md) desde `D:\project-p
 | 2026-09-12 | CU-0.3 Bloques 1 y 2 parcial | Tooling CI/Playwright versionado. Receta limpia creada y snapshot `50cd2e1` validado; ejecución bloqueada de forma segura porque el PostgreSQL original ocupaba `127.0.0.1:5432`. |
 | 2026-09-12 | CU-0.3 Bloque 2, segundo intento | Snapshot `0932c6b` instaló, pasó lint/tipos y falló los tests porque la receta inicia PostgreSQL después de la suite; temporal y recursos aislados fueron limpiados. |
 | 2026-09-12 | CU-0.3 Bloque 2, tercer intento | Snapshot `6bfe68f` inició el PostgreSQL aislado antes de los checks y completó instalación, calidad, build, `pg_isready` y health disponible; temporal eliminado y servicio aislado detenido. |
+| 2026-09-12 | CU-0.3 Bloque 3, E2E | Dos escenarios Chromium contra la web/API/PostgreSQL reales pasaron: disponible, no disponible y recuperación; PostgreSQL original restaurado healthy. |
+| 2026-09-12 | CU-0.3 Bloque 3, manual | Una persona verificó disponible, no disponible y recuperación en `http://localhost:4321`; el primer arranque sin `WEB_ORIGIN` se corrigió con las variables documentadas, sin cambios de código. |
 
 ## Comandos finales de commit y push
 

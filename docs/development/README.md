@@ -66,6 +66,14 @@ La receta verifica Node, npm, Docker y el único `package-lock.json` raíz; ejec
 
 PostgreSQL conserva el puerto contractual `127.0.0.1:5432`. Si ese puerto, el `3100`, Docker o el snapshot no están disponibles, la receta aborta y no toca los servicios ni archivos del checkout. Al finalizar detiene únicamente su servicio Compose aislado y elimina únicamente su propio directorio temporal, salvo que se agregue `-KeepTemporaryDirectory` para inspección.
 
+## Revisión manual de navegador
+
+Esta revisión es distinta de `npm run test:e2e` y requiere una persona que observe el navegador. Con PostgreSQL healthy, exportá los orígenes y ejecutá `npm run dev`; abrí `http://localhost:4321` y registrá la fecha, URL y el texto `API disponible`.
+
+Después, desde otra terminal en la raíz, ejecutá `docker compose stop postgres`, abrí una nueva pestaña o recargá la página y registrá `API no disponible`. Restaurá solo el servicio con `docker compose up -d --wait`, comprobá `pg_isready`, abrí una nueva pestaña o recargá y registrá nuevamente `API disponible`.
+
+La evidencia manual debe indicar la fecha, URL, ambos estados, recuperación y resultado. No se considera realizada hasta que una persona aporte esas observaciones; no uses `docker compose down -v` ni borres datos o volúmenes.
+
 Para detener solo el contenedor local sin borrar datos:
 
 ```powershell
