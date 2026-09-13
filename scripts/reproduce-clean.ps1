@@ -223,10 +223,6 @@ try {
   Push-Location $temporaryDirectory
   try {
     Invoke-Native -Command npm -Arguments @("ci")
-    Invoke-Native -Command npm -Arguments @("run", "lint")
-    Invoke-Native -Command npm -Arguments @("run", "typecheck")
-    Invoke-Native -Command npm -Arguments @("run", "test")
-    Invoke-Native -Command npm -Arguments @("run", "build")
   } finally {
     Pop-Location
   }
@@ -235,6 +231,16 @@ try {
   Invoke-Compose -Arguments @("up", "-d", "--wait", "postgres")
   $postgresStarted = $true
   Invoke-Compose -Arguments @("exec", "-T", "postgres", "pg_isready", "-U", $syntheticEnvironment.POSTGRES_USER, "-d", $syntheticEnvironment.POSTGRES_DB)
+
+  Push-Location $temporaryDirectory
+  try {
+    Invoke-Native -Command npm -Arguments @("run", "lint")
+    Invoke-Native -Command npm -Arguments @("run", "typecheck")
+    Invoke-Native -Command npm -Arguments @("run", "test")
+    Invoke-Native -Command npm -Arguments @("run", "build")
+  } finally {
+    Pop-Location
+  }
 
   $apiOutputPath = Join-Path $temporaryDirectory "api-clean-reproduction.out.log"
   $apiErrorPath = Join-Path $temporaryDirectory "api-clean-reproduction.err.log"
