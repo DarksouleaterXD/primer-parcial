@@ -1,6 +1,6 @@
 # Desarrollo local en Windows / PowerShell
 
-**Estado:** CU-0.2 aporta una base web/API/PostgreSQL ejecutable y tiene evidencia de build. La reproducción limpia es trabajo pendiente de CU-0.3. El documento [CU-0](../puds/use-cases/CU-0-inicializar-base.md) conserva la evidencia y límites de cada incremento.
+**Estado:** CU-0.2 aporta una base web/API/PostgreSQL ejecutable. CU-0.3 verificó reproducción limpia, checks locales, E2E Chromium y revisión manual; falta evidencia de CI real en un runner autorizado. El documento [CU-0](../puds/use-cases/CU-0-inicializar-base.md) conserva la evidencia y límites de cada incremento.
 
 ## Requisitos
 
@@ -48,6 +48,8 @@ Los ejemplos `.env.example` solo contienen valores sintéticos. Compose puede le
 npm run lint
 npm run typecheck
 npm run test
+npm run test:e2e
+npm run build
 docker compose ps
 ```
 

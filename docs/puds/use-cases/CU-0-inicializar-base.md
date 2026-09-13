@@ -5,7 +5,7 @@
 - **Estado del CU: En implementación.**
 - CU-0.1 — Repositorio, configuración y documentación inicial: terminado y verificado el 2026-09-10.
 - CU-0.2 — Aplicaciones y servicios conectados: terminado y validado el 2026-09-12.
-- CU-0.3 — Calidad, reproducibilidad y cierre: en implementación; Bloques 1 a 3 terminados, CI real y cierre pendientes.
+- CU-0.3 — Calidad, reproducibilidad y cierre: en implementación; checks locales y revisión de alcance terminados, CI real y cierre pendientes.
 - Rama de trabajo: `feature/cu-0-inicializar-base`.
 - Trazabilidad: CU anterior 0 → CU nuevo 0, ciclo 1. Consultar [plan maestro](README.md), [estado](../../STATUS.md) y [ADR-0001](../../decisions/ADR-0001-initial-technical-boundaries.md).
 
@@ -35,7 +35,7 @@ Las fronteras aprobadas en ADR-0001 se preservan: esta base no implementa autent
 |---|---|---|
 | CU-0.1 | Plan 12/3, ADR, contexto, configuración raíz, Compose y verificación estática | Terminado |
 | CU-0.2 | Workspaces, lockfile, PostgreSQL, API, health/OpenAPI/CORS y comunicación real web→API | Terminado |
-| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | En implementación: Bloques 1 a 3 terminados; Bloque 4 pendiente |
+| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | En implementación: checks locales y alcance correctos; CI real pendiente |
 
 ## Flujos y errores
 
@@ -156,6 +156,17 @@ La reproducción completa satisface la tarea 2.2. El contenedor Compose aislado 
 
 La evidencia manual es independiente de los dos escenarios E2E Chromium y satisface la tarea 3.3.
 
+### CU-0.3 — Bloque 4, verificación local y alcance — 2026-09-12
+
+| Comprobación | Resultado real |
+|---|---|
+| Corrección E2E | La configuración E2E cambió su origen de `http://127.0.0.1:4321` a `http://localhost:4321`, que es el origen CORS documentado. Con procesos locales reutilizados configurados para `localhost`, el origen anterior hacía que la isla mostrase `API no disponible`. |
+| Checks raíz | Con PostgreSQL healthy, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e` y `npm run build` finalizaron correctamente. Los tests fueron API 5, web 6 con 1 integración condicional omitida y contracts 1; E2E Chromium ejecutó 2 escenarios correctos en 15.5 s. |
+| Verificaciones estructurales | `openspec validate cu-0-3-calidad-reproducibilidad-cierre --strict` y `git diff --check` correctos; `pg_isready` confirmó PostgreSQL healthy al finalizar. |
+| Dependencias y secretos | Existe solo el `package-lock.json` raíz, `npm ls @nestjs/cli --depth=0` devolvió `11.0.24`, Playwright listó Chromium sin Firefox ni WebKit y no se detectaron secretos con los patrones de control. |
+| Alcance | El diff de CU-0.3 solo contiene CI, reproducción, E2E, su dependencia/configuración y documentación. No añade despliegue, publicación, remoto, CU-1, auth, UML, colaboración, XMI, generación, IA, offline ni refactorización preventiva; `docs/development/validate-cu-0.1.mjs` no tiene cambios. |
+| CI real | `git remote -v` no devolvió ningún remoto y no existe runner autorizado ni resultado CI accesible. No se creó remoto, no se hizo push ni se inventó evidencia; CU-0 permanece en implementación. |
+
 ## Pruebas manuales y recuperación
 
 La prueba runtime inició API con `WEB_ORIGIN=http://localhost:4321` y web con `PUBLIC_API_ORIGIN=http://localhost:3000`. Se observó que la página web contenía la isla `ApiStatus`; las pruebas condicionales confirmaron las dos salidas contra la API real.
@@ -173,7 +184,7 @@ La caída E2E y manual controlada usó exclusivamente `docker compose stop postg
 
 ## Riesgos, deuda y fuera de alcance
 
-- CU-0.3 debe añadir evidencia CI real y cierre documental del CU.
+- Falta evidencia real de `.github/workflows/ci.yml` en un runner autorizado; hasta obtenerla no se cierra CU-0.
 - No hay autenticación, UML, persistencia de proyectos, colaboración, XMI, generación, voz, visión ni IA.
 - La prueba de integración web se activa solo con sus variables de entorno; el test raíz la omite deliberadamente para no depender de servicios locales.
 - Los valores de ejemplos no son aptos para despliegue ni sustituyen secretos reales.
@@ -193,6 +204,7 @@ Seguir [la guía de desarrollo](../../development/README.md) desde `D:\project-p
 | 2026-09-12 | CU-0.3 Bloque 2, tercer intento | Snapshot `6bfe68f` inició el PostgreSQL aislado antes de los checks y completó instalación, calidad, build, `pg_isready` y health disponible; temporal eliminado y servicio aislado detenido. |
 | 2026-09-12 | CU-0.3 Bloque 3, E2E | Dos escenarios Chromium contra la web/API/PostgreSQL reales pasaron: disponible, no disponible y recuperación; PostgreSQL original restaurado healthy. |
 | 2026-09-12 | CU-0.3 Bloque 3, manual | Una persona verificó disponible, no disponible y recuperación en `http://localhost:4321`; el primer arranque sin `WEB_ORIGIN` se corrigió con las variables documentadas, sin cambios de código. |
+| 2026-09-12 | CU-0.3 Bloque 4, local y alcance | Se alineó el origen E2E con el contrato CORS de `localhost`; lint, tipos, tests, E2E, build, OpenSpec, whitespace y alcance fueron correctos. CI real sigue bloqueado sin remoto ni runner autorizado. |
 
 ## Comandos finales de commit y push
 

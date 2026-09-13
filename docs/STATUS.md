@@ -8,7 +8,7 @@
 - Caso de uso activo: **CU-0 — Inicializar la base ejecutable**, en implementación.
 - CU-0.1 está terminado: configuración y documentación estáticas verificadas.
 - CU-0.2 está terminado y validado: workspaces, PostgreSQL, API NestJS, web Astro/Preact, contrato health, CORS, OpenAPI y build raíz.
-- CU-0.3 está en implementación: CI y tooling Playwright están versionados; la reproducción limpia, los E2E Chromium y la revisión manual disponible/no disponible/recuperación finalizaron correctamente. CI real y cierre continúan pendientes.
+- CU-0.3 está en implementación: reproducción limpia, checks locales finales, E2E Chromium y revisión manual correctos; CI está versionado, pero falta su ejecución real en un runner autorizado para cerrar CU-0.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
 - Rama de trabajo: `feature/cu-0-inicializar-base`. No hay acciones de publicación ni remoto creado por esta entrega.
 
@@ -43,15 +43,18 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 | Snapshot correcto | `6bfe68f8c81cf5af5402771875c07a26d1b87312`, con la receta que inicia PostgreSQL antes de checks |
 | Tercer intento | `npm ci`, PostgreSQL/`pg_isready`, lint, typecheck, tests, build y health disponible correctos desde `git archive` en un temporal aislado |
 | Limpieza correcta | Temporal eliminado y API temporal detenida; el contenedor Compose aislado quedó detenido sin borrar su volumen y el checkout original permaneció intacto |
-| E2E Chromium | `npm run test:e2e` pasó 2 escenarios en 59.7 s contra Astro/Preact, NestJS y PostgreSQL reales |
+| E2E Chromium final | `npm run test:e2e` pasó 2 escenarios en 15.5 s contra Astro/Preact, NestJS y PostgreSQL reales, con `http://localhost:4321` como origen coherente con CORS local |
 | Estados observados | Chromium mostró `API disponible`, luego `API no disponible` tras detener solo `postgres`, y `API disponible` en una nueva página tras `up -d --wait` y `pg_isready` |
 | Restauración E2E | El `finally` dejó `primer-parcial-postgres-1` healthy en el estado inicial iniciado; no se borraron contenedores, volúmenes ni datos |
 | Revisión manual | El 2026-09-12, una persona comprobó en `http://localhost:4321` los estados disponible, no disponible y recuperación con los orígenes documentados; PostgreSQL quedó healthy |
 | Incidencia manual | El primer inicio sin `WEB_ORIGIN` exportado no inició la API; se repitió correctamente tras definir solo `WEB_ORIGIN=http://localhost:4321` y `PUBLIC_API_ORIGIN=http://localhost:3000` |
+| Checks locales finales | PostgreSQL healthy y `pg_isready` correcto; `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run build`, `openspec validate cu-0-3-calidad-reproducibilidad-cierre --strict` y `git diff --check` correctos |
+| Control de alcance | Un único `package-lock.json`, `@nestjs/cli@11.0.24`, Chromium único; sin secretos detectados por patrones de control, sin cambios al validador histórico CU-0.1 ni capacidades fuera de CU-0.3 |
+| Bloqueo de CI real | `git remote -v` no devolvió ningún remoto y no hay runner autorizado ni resultado de workflow accesible; no se creó remoto, no se hizo push y CU-0 permanece en implementación |
 
 ## Pendientes y riesgos
 
-- CU-0.3 debe incorporar evidencia CI real y cierre documental del CU-0.
+- Falta ejecutar `.github/workflows/ci.yml` en un repositorio y runner autorizados y registrar su resultado real; hasta entonces CU-0 no puede cerrarse.
 - No se implementaron autenticación, UML, entidades de dominio, persistencia de proyectos, colaboración, XMI, generación ni IA.
 - `.env` y variantes reales siguen ignorados. Los valores de `.env.example` son sintéticos y no deben usarse fuera de desarrollo local.
 
@@ -75,3 +78,4 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 | 2026-09-12 | Se completó la reproducción limpia con la receta corregida. | Snapshot `6bfe68f` pasó instalación, PostgreSQL, checks, build y health desde `git archive`; temporal eliminado y sin alterar el checkout original. |
 | 2026-09-12 | Se ejecutó E2E Chromium contra el flujo real. | Dos escenarios verificaron disponible, no disponible y recuperación; PostgreSQL del proyecto quedó healthy al finalizar. |
 | 2026-09-12 | Se completó la revisión manual de navegador. | Disponible, no disponible y recuperación fueron observados en la URL local; PostgreSQL quedó healthy y no se modificó código. |
+| 2026-09-12 | Se repitieron los checks locales y se revisó el alcance final. | Lint, tipos, tests, E2E, build, OpenSpec y whitespace correctos; se alineó el origen E2E con `localhost` para evitar el rechazo CORS de servidores locales reutilizados. Sin remoto ni runner CI autorizado, CU-0 sigue abierto. |
