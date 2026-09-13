@@ -125,16 +125,16 @@ El plan de CU-0 está aprobado con tres incrementos:
 
 1. **CU-0.1 — Repositorio, configuración y documentación inicial:** terminado. Configuración raíz, Compose y permisos OpenCode, plan 12/3, ADR, guías y validación estática.
 2. **CU-0.2 — Aplicaciones y servicios conectados:** terminado y validado. Incluye Astro/NestJS, lockfile, PostgreSQL/TypeORM para readiness, health, OpenAPI principal, comunicación web→API y build manual correcto.
-3. **CU-0.3 — Calidad, reproducibilidad y cierre:** checks/tests/CI, manuales y evidencia de build proporcionada por usuario/CI; cierre documental completo y comandos finales de commit/push.
+3. **CU-0.3 — Calidad, reproducibilidad y cierre:** terminado y verificado el 2026-09-13. Incluye reproducción limpia, checks locales, E2E/manuales y GitHub Actions `Verify base executable` #3 correcto con Node `v24.11.1` y npm `11.6.2`.
 
 Configuración local aprobada: PostgreSQL `18.6-alpine` con volumen nombrado, healthcheck y publicación exclusiva en `127.0.0.1:5432`. CU-0.2 comprobó Docker Engine `29.7.2`, Compose `v5.5.1`, la base healthy y la recuperación controlada del servicio sin borrar el volumen.
 
 ## Continuar en futuras sesiones
 
-1. Leer completos AGENTS, este contexto, STATUS, producto, plan maestro y benchmarks; después el [CU-0 activo](puds/use-cases/CU-0-inicializar-base.md) y ADR-0001.
-2. Comprobar `git status --short --branch` y `git branch --show-current`. Si no está en `feature/cu-0-inicializar-base`, detenerse y reportarlo. Inspeccionar cambios existentes como posible trabajo del usuario.
-3. Consultar evidencia del CU y estado: CU-0.2 ya es ejecutable y tiene build correcto, pero no asumir reproducción limpia, CI ni remoto publicado.
-4. No implementar CU-0.3 sin su prompt y autorización explícitos.
+1. Leer completos AGENTS, este contexto, STATUS, producto, plan maestro y benchmarks; después el documento de CU que se active y ADR-0001.
+2. Comprobar `git status --short --branch` y `git branch --show-current`. Confirmar que la rama corresponde al CU o incremento aprobado antes de modificar código e inspeccionar cambios existentes como posible trabajo del usuario.
+3. Consultar evidencia del CU y estado: CU-0 está terminado, con reproducción limpia, checks locales, E2E, revisión manual y CI real correctos. No asumir capacidades de CU-1 o posteriores.
+4. CU-1 — Cuenta y sesión está no iniciado; no implementarlo sin su plan, prompt y autorización explícitos.
 5. Revalidar entorno para el siguiente incremento y completar sus pruebas reales antes de actualizar documentos; no anticipar capacidades posteriores.
 6. Mantener `opencode.json` apuntando al documento del CU activo cuando cambie el CU. Reiniciar OpenCode para cargar cambios de configuración; no habilitar auto-aprobación. Commit/push y acciones GitHub requieren solicitud explícita y ajuste consciente de la política que actualmente los deniega.
 

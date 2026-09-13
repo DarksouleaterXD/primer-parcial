@@ -1,6 +1,6 @@
 # Desarrollo local en Windows / PowerShell
 
-**Estado:** CU-0.2 aporta una base web/API/PostgreSQL ejecutable. CU-0.3 verificó reproducción limpia, checks locales, E2E Chromium y revisión manual; falta evidencia de CI real en un runner autorizado. El documento [CU-0](../puds/use-cases/CU-0-inicializar-base.md) conserva la evidencia y límites de cada incremento.
+**Estado:** CU-0 está terminado. CU-0.3 verificó reproducción limpia, checks locales, E2E Chromium, revisión manual y CI real con Node `24.11.1` y npm `11.6.2`. El documento [CU-0](../puds/use-cases/CU-0-inicializar-base.md) conserva la evidencia y límites de cada incremento.
 
 ## Requisitos
 
@@ -92,7 +92,7 @@ Restauralo con `docker compose up -d --wait`. No uses comandos de borrado de vol
 - `.env` y variantes reales están ignorados; `.env.example` se puede versionar porque sus datos no son secretos.
 - La raíz npm es privada y los workspaces viven en `apps/*` y `packages/*`.
 
-## Pendientes
+## Estado del CU-0
 
-- CU-0.3 cubre CI, E2E, reproducción limpia, build y cierre de CU-0.
-- GitHub futuro `DarksouleaterXD/primer-parcial` no es necesario para ejecutar localmente. No hagas commit ni push sin autorización explícita.
+- El workflow `Verify base executable` pasó en GitHub Actions #3 para `0a0337b2a283098f53e3392ec062d0644c1ac386`, con Node `v24.11.1` y npm `11.6.2`.
+- CU-1 todavía no fue iniciado. No hagas commit ni push sin autorización explícita.

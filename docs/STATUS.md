@@ -1,16 +1,16 @@
 # Estado real del proyecto
 
-Última actualización: 2026-09-12
+Última actualización: 2026-09-13
 
 ## Resumen
 
 - Producto: **Primer Parcial** (`primer-parcial`), con 12 CUs en 3 ciclos y mapa histórico 30→12 preservado.
-- Caso de uso activo: **CU-0 — Inicializar la base ejecutable**, en implementación.
+- CU-0 — Inicializar la base ejecutable: **terminado**.
 - CU-0.1 está terminado: configuración y documentación estáticas verificadas.
 - CU-0.2 está terminado y validado: workspaces, PostgreSQL, API NestJS, web Astro/Preact, contrato health, CORS, OpenAPI y build raíz.
-- CU-0.3 está en implementación: reproducción limpia, checks locales finales, E2E Chromium y revisión manual correctos; CI está versionado, pero falta su ejecución real en un runner autorizado para cerrar CU-0.
+- CU-0.3 está terminado: reproducción limpia, checks locales finales, E2E Chromium, revisión manual y CI real correctos.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
-- Rama de trabajo: `feature/cu-0-inicializar-base`. No hay acciones de publicación ni remoto creado por esta entrega.
+- Próximo caso de uso: **CU-1 — Cuenta y sesión**, no iniciado. La evidencia CI se obtuvo en `feature/cu-0-inicializar-base` del repositorio `DarksouleaterXD/primer-parcial`.
 
 ## Evidencia CU-0.2
 
@@ -28,7 +28,7 @@
 
 La verificación de tipos de Astro no informó errores, warnings ni hints. Vitest muestra una advertencia no bloqueante deprecada de Vite proveniente de `astro:dev-toolbar` sobre `optimizeDeps.esbuildOptions`.
 
-## Evidencia CU-0.3 parcial
+## Evidencia CU-0.3
 
 | Comprobación | Resultado real |
 |---|---|
@@ -50,11 +50,11 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 | Incidencia manual | El primer inicio sin `WEB_ORIGIN` exportado no inició la API; se repitió correctamente tras definir solo `WEB_ORIGIN=http://localhost:4321` y `PUBLIC_API_ORIGIN=http://localhost:3000` |
 | Checks locales finales | PostgreSQL healthy y `pg_isready` correcto; `npm run lint`, `npm run typecheck`, `npm run test`, `npm run test:e2e`, `npm run build`, `openspec validate cu-0-3-calidad-reproducibilidad-cierre --strict` y `git diff --check` correctos |
 | Control de alcance | Un único `package-lock.json`, `@nestjs/cli@11.0.24`, Chromium único; sin secretos detectados por patrones de control, sin cambios al validador histórico CU-0.1 ni capacidades fuera de CU-0.3 |
-| Bloqueo de CI real | `git remote -v` no devolvió ningún remoto y no hay runner autorizado ni resultado de workflow accesible; no se creó remoto, no se hizo push y CU-0 permanece en implementación |
+| CI real | Repositorio `DarksouleaterXD/primer-parcial`, rama `feature/cu-0-inicializar-base`, commit `0a0337b2a283098f53e3392ec062d0644c1ac386` (`fix(cu-0.3): pin CI Node and npm versions`), workflow `Verify base executable`, ejecución `#3` por `push`, resultado `Success` en 2m 1s |
+| Toolchain CI | El workflow exigió Node `v24.11.1` y npm `11.6.2` antes de `npm ci`; la ejecución real finalizó correctamente |
 
 ## Pendientes y riesgos
 
-- Falta ejecutar `.github/workflows/ci.yml` en un repositorio y runner autorizados y registrar su resultado real; hasta entonces CU-0 no puede cerrarse.
 - No se implementaron autenticación, UML, entidades de dominio, persistencia de proyectos, colaboración, XMI, generación ni IA.
 - `.env` y variantes reales siguen ignorados. Los valores de `.env.example` son sintéticos y no deben usarse fuera de desarrollo local.
 
@@ -62,7 +62,7 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 
 | Ciclo | Estado | Entrega usable esperada |
 |---|---|---|
-| 1. Editor UML con proyectos privados | CU-0 en implementación: CU-0.1 y CU-0.2 terminados; CU-0.3 y CU-1 a CU-3 pendientes | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
+| 1. Editor UML con proyectos privados | CU-0 terminado; CU-1 a CU-3 no iniciados | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
 | 2. Colaboración, interoperabilidad y generación | Pendiente: CU-4 a CU-7 | LAN/presencia, XMI y aplicación Spring/web/PWA/Android generada |
 | 3. Inteligencia, visión y cierre offline | Pendiente: CU-8 a CU-11 | Texto, voz, imágenes y demostración integral offline |
 
@@ -79,3 +79,4 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 | 2026-09-12 | Se ejecutó E2E Chromium contra el flujo real. | Dos escenarios verificaron disponible, no disponible y recuperación; PostgreSQL del proyecto quedó healthy al finalizar. |
 | 2026-09-12 | Se completó la revisión manual de navegador. | Disponible, no disponible y recuperación fueron observados en la URL local; PostgreSQL quedó healthy y no se modificó código. |
 | 2026-09-12 | Se repitieron los checks locales y se revisó el alcance final. | Lint, tipos, tests, E2E, build, OpenSpec y whitespace correctos; se alineó el origen E2E con `localhost` para evitar el rechazo CORS de servidores locales reutilizados. Sin remoto ni runner CI autorizado, CU-0 sigue abierto. |
+| 2026-09-13 | Se validó CI real y se cerró CU-0.3/CU-0. | `Verify base executable` #3 pasó por `push` en `DarksouleaterXD/primer-parcial`, rama `feature/cu-0-inicializar-base`, commit `0a0337b2a283098f53e3392ec062d0644c1ac386`; Node `v24.11.1`, npm `11.6.2`, 2m 1s. |

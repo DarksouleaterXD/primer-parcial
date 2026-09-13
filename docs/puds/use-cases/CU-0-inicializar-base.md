@@ -2,16 +2,16 @@
 
 ## Estado y trazabilidad
 
-- **Estado del CU: En implementación.**
+- **Estado del CU: Terminado.**
 - CU-0.1 — Repositorio, configuración y documentación inicial: terminado y verificado el 2026-09-10.
 - CU-0.2 — Aplicaciones y servicios conectados: terminado y validado el 2026-09-12.
-- CU-0.3 — Calidad, reproducibilidad y cierre: en implementación; checks locales y revisión de alcance terminados, CI real y cierre pendientes.
+- CU-0.3 — Calidad, reproducibilidad y cierre: terminado y verificado el 2026-09-13.
 - Rama de trabajo: `feature/cu-0-inicializar-base`.
 - Trazabilidad: CU anterior 0 → CU nuevo 0, ciclo 1. Consultar [plan maestro](README.md), [estado](../../STATUS.md) y [ADR-0001](../../decisions/ADR-0001-initial-technical-boundaries.md).
 
 ## Objetivo y resultado usable
 
-CU-0 deja una base local con PostgreSQL, API NestJS y web Astro/Preact. La web consulta el health de la API y comunica los estados disponible o no disponible. CU-0.2 está terminado; CI, E2E, reproducción limpia y cierre completo pertenecen a CU-0.3.
+CU-0 deja una base local con PostgreSQL, API NestJS y web Astro/Preact. La web consulta el health de la API y comunica los estados disponible o no disponible. CU-0.3 completó CI, E2E, reproducción limpia y cierre con evidencia real.
 
 ## Decisiones aplicadas
 
@@ -35,7 +35,7 @@ Las fronteras aprobadas en ADR-0001 se preservan: esta base no implementa autent
 |---|---|---|
 | CU-0.1 | Plan 12/3, ADR, contexto, configuración raíz, Compose y verificación estática | Terminado |
 | CU-0.2 | Workspaces, lockfile, PostgreSQL, API, health/OpenAPI/CORS y comunicación real web→API | Terminado |
-| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | En implementación: checks locales y alcance correctos; CI real pendiente |
+| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | Terminado y verificado el 2026-09-13 |
 
 ## Flujos y errores
 
@@ -165,7 +165,7 @@ La evidencia manual es independiente de los dos escenarios E2E Chromium y satisf
 | Verificaciones estructurales | `openspec validate cu-0-3-calidad-reproducibilidad-cierre --strict` y `git diff --check` correctos; `pg_isready` confirmó PostgreSQL healthy al finalizar. |
 | Dependencias y secretos | Existe solo el `package-lock.json` raíz, `npm ls @nestjs/cli --depth=0` devolvió `11.0.24`, Playwright listó Chromium sin Firefox ni WebKit y no se detectaron secretos con los patrones de control. |
 | Alcance | El diff de CU-0.3 solo contiene CI, reproducción, E2E, su dependencia/configuración y documentación. No añade despliegue, publicación, remoto, CU-1, auth, UML, colaboración, XMI, generación, IA, offline ni refactorización preventiva; `docs/development/validate-cu-0.1.mjs` no tiene cambios. |
-| CI real | `git remote -v` no devolvió ningún remoto y no existe runner autorizado ni resultado CI accesible. No se creó remoto, no se hizo push ni se inventó evidencia; CU-0 permanece en implementación. |
+| CI real | Repositorio `DarksouleaterXD/primer-parcial`, rama `feature/cu-0-inicializar-base`, commit `0a0337b2a283098f53e3392ec062d0644c1ac386` (`fix(cu-0.3): pin CI Node and npm versions`), workflow `Verify base executable`, ejecución `#3` por `push`, resultado `Success` en 2m 1s. El workflow exigió Node `v24.11.1` y npm `11.6.2` antes de `npm ci`. |
 
 ## Pruebas manuales y recuperación
 
@@ -184,7 +184,7 @@ La caída E2E y manual controlada usó exclusivamente `docker compose stop postg
 
 ## Riesgos, deuda y fuera de alcance
 
-- Falta evidencia real de `.github/workflows/ci.yml` en un runner autorizado; hasta obtenerla no se cierra CU-0.
+- CU-0 no tiene bloqueos pendientes. CU-1 permanece fuera de alcance y no iniciado.
 - No hay autenticación, UML, persistencia de proyectos, colaboración, XMI, generación, voz, visión ni IA.
 - La prueba de integración web se activa solo con sus variables de entorno; el test raíz la omite deliberadamente para no depender de servicios locales.
 - Los valores de ejemplos no son aptos para despliegue ni sustituyen secretos reales.
@@ -205,7 +205,8 @@ Seguir [la guía de desarrollo](../../development/README.md) desde `D:\project-p
 | 2026-09-12 | CU-0.3 Bloque 3, E2E | Dos escenarios Chromium contra la web/API/PostgreSQL reales pasaron: disponible, no disponible y recuperación; PostgreSQL original restaurado healthy. |
 | 2026-09-12 | CU-0.3 Bloque 3, manual | Una persona verificó disponible, no disponible y recuperación en `http://localhost:4321`; el primer arranque sin `WEB_ORIGIN` se corrigió con las variables documentadas, sin cambios de código. |
 | 2026-09-12 | CU-0.3 Bloque 4, local y alcance | Se alineó el origen E2E con el contrato CORS de `localhost`; lint, tipos, tests, E2E, build, OpenSpec, whitespace y alcance fueron correctos. CI real sigue bloqueado sin remoto ni runner autorizado. |
+| 2026-09-13 | CU-0.3 Bloque 4, CI real y cierre | GitHub Actions `Verify base executable` #3 pasó por `push` en `DarksouleaterXD/primer-parcial`, rama `feature/cu-0-inicializar-base`, commit `0a0337b2a283098f53e3392ec062d0644c1ac386`; registró Node `v24.11.1`, npm `11.6.2` y 2m 1s. CU-0.3 y CU-0 se cerraron. |
 
 ## Comandos finales de commit y push
 
-**Pendiente para el cierre de CU-0 tras CU-0.3.** No se ejecutaron `git add`, `git commit`, `git push` ni acciones GitHub en esta entrega.
+La corrección CI fue confirmada manualmente con `git commit -m "fix(cu-0.3): pin CI Node and npm versions"` y `git push origin feature/cu-0-inicializar-base`, que validaron el commit `0a0337b2a283098f53e3392ec062d0644c1ac386` mediante GitHub Actions `Verify base executable` #3.
