@@ -6,7 +6,7 @@ CU-0.2 dejó una base ejecutable validada localmente, pero CU-0 sigue abierto po
 
 ### Alcance
 
-- Definir CI mínimo para instalar con el único `package-lock.json`, iniciar solo PostgreSQL cuando las pruebas lo requieran y ejecutar lint, tipos, tests, E2E y build de la base actual. La evidencia real requiere un repositorio y runner autorizados; su ausencia bloquea el cierre sin crear remoto, hacer push ni publicar.
+- Definir CI mínimo con Node `24.11.1` y npm `11.6.2` exactos, mostrar ambas versiones antes de `npm ci`, instalar con el único `package-lock.json`, iniciar solo PostgreSQL cuando las pruebas lo requieran y ejecutar lint, tipos, tests, E2E y build de la base actual. La evidencia real requiere un repositorio y runner autorizados; su ausencia bloquea el cierre sin crear remoto, hacer push ni publicar.
 - Definir una receta y comprobación de reproducción limpia en un directorio temporal fuera del checkout, basada solo en un snapshot versionado y sin `node_modules`, `dist`, `.astro`, cobertura, outputs generados ni archivos `.env` reales.
 - Añadir E2E de navegador Chromium para el flujo existente `ApiStatus` → `GET /api/health` → PostgreSQL, incluyendo estados disponible, no disponible y recuperación; Playwright se justifica solo por esa interacción de navegador observable. La evidencia E2E no sustituye la revisión manual acotada de navegador.
 - Registrar evidencia real, revisión manual y deuda residual; cerrar CU-0 solo cuando todos los criterios se hayan satisfecho, sin iniciar CU-1.
@@ -16,6 +16,7 @@ CU-0.2 dejó una base ejecutable validada localmente, pero CU-0 sigue abierto po
 - Cambiar el contrato health, CORS, Swagger/OpenAPI, `ApiStatus`, la arquitectura web/API o el sistema de build actual.
 - Infraestructura de despliegue, publicación de paquetes, remoto GitHub, autenticación, UML, proyectos, colaboración, XMI, generación, IA, voz, imágenes u offline integral.
 - Modificar el verificador histórico `docs/development/validate-cu-0.1.mjs`; CU-0.3 define comprobaciones independientes.
+- Normalizar `package-lock.json` cuando ya pasa `npm ci` en Linux con el toolchain aprobado, agregar `@emnapi/core` o `@emnapi/runtime` como dependencias directas, ejecutar `npm audit fix` o cambiar dependencias funcionales para ocultar una deriva de toolchain de CI.
 
 ## Capabilities
 

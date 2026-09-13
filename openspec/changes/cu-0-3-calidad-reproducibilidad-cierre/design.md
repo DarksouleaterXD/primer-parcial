@@ -20,9 +20,11 @@ See `proposal.md` for motivation and `specs/base-executable-assurance/spec.md` f
 
 ### CI reuses the current root contract and Compose service
 
-Add one versioned CI workflow for the repository's supported Node 24/npm 11 environment. It installs strictly with `npm ci`, starts the existing PostgreSQL Compose service only because API and E2E verification require the real health dependency, then runs root lint, typecheck, test, E2E and build commands. The workflow contains no deployment or publication steps and uses no secret values.
+Add one versioned CI workflow fixed to Node `24.11.1` and npm `11.6.2`, the approved and locally verified toolchain. It prints `node --version` and `npm --version` before installing strictly with `npm ci`, starts the existing PostgreSQL Compose service only because API and E2E verification require the real health dependency, then runs root lint, typecheck, test, E2E and build commands. The workflow contains no deployment or publication steps and uses no secret values.
 
 The workflow definition alone is not CI evidence. A real result requires a repository and runner authorized by the user; creating a remote, pushing, publishing or configuring external access is outside this change and OpenCode does none of those actions. If no authorized runner exists at closure, documentation records the blocker and CU-0 remains open.
+
+The observed CI failure is toolchain drift: the range `node-version: 24` resolved Node `24.21.0` and npm `11.19.0`, while the current root lockfile successfully executed `npm ci` in isolated Linux with Node `24.11.1` and npm `11.6.2`. The optional chain `jest-resolve` -> `unrs-resolver` -> WASI binding -> `@napi-rs/wasm-runtime` exposes the `@emnapi/*` peers, but does not make them direct project dependencies. The lockfile therefore remains unchanged; adding those packages directly, regenerating a lockfile without need, running `npm audit fix`, or changing functional dependencies would mask rather than fix the cause.
 
 Alternatives discarded: a separate CI-only database configuration would duplicate the local contract; a mock PostgreSQL health check would not prove the current readiness behavior; a deployment workflow exceeds CU-0.3.
 
@@ -56,6 +58,7 @@ Alternatives discarded: closing from planned commands or mocked tests would cont
 - [Stopping PostgreSQL leaves the E2E environment unavailable] → Capture the initial Compose-service state, restore it in `finally`, verify readiness only when it was initially started, and never remove containers, volumes or external instances.
 - [Playwright browser download is unavailable] → CI and local setup report the failed browser prerequisite; no fallback browser or silent skip is accepted as E2E evidence.
 - [CI environment differs from local Windows] → CI proves an isolated supported runner while the documented Windows clean procedure remains separately executed and recorded.
+- [A Node major alias resolves a newer npm] → Pin Node `24.11.1`, verify npm `11.6.2` before `npm ci` and keep the lockfile unchanged when the approved Linux toolchain accepts it.
 - [No authorized CI runner exists] → Keep the workflow versioned, record the missing evidence as a closure blocker and do not mark CU-0 terminated.
 - [A quality check is mistaken for CU-0.3 completion] → Keep check evidence, manual evidence, scope review and documentation closure as distinct tasks.
 
