@@ -5,7 +5,7 @@
 - **Estado del CU: En implementación.**
 - CU-0.1 — Repositorio, configuración y documentación inicial: terminado y verificado el 2026-09-10.
 - CU-0.2 — Aplicaciones y servicios conectados: terminado y validado el 2026-09-12.
-- CU-0.3 — Calidad, reproducibilidad y cierre: no iniciado.
+- CU-0.3 — Calidad, reproducibilidad y cierre: en implementación; Bloques 1 y 2 terminados, E2E, revisión manual, CI real y cierre pendientes.
 - Rama de trabajo: `feature/cu-0-inicializar-base`.
 - Trazabilidad: CU anterior 0 → CU nuevo 0, ciclo 1. Consultar [plan maestro](README.md), [estado](../../STATUS.md) y [ADR-0001](../../decisions/ADR-0001-initial-technical-boundaries.md).
 
@@ -35,7 +35,7 @@ Las fronteras aprobadas en ADR-0001 se preservan: esta base no implementa autent
 |---|---|---|
 | CU-0.1 | Plan 12/3, ADR, contexto, configuración raíz, Compose y verificación estática | Terminado |
 | CU-0.2 | Workspaces, lockfile, PostgreSQL, API, health/OpenAPI/CORS y comunicación real web→API | Terminado |
-| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | Pendiente |
+| CU-0.3 | CI, reproducción limpia, E2E/manuales, build y cierre de CU | En implementación: Bloques 1 y 2 terminados; Bloques 3 y 4 pendientes |
 
 ## Flujos y errores
 
@@ -85,6 +85,52 @@ La evidencia completa de configuración histórica se conserva en el historial G
 
 `astro check` informó 0 errores, 0 warnings y 0 hints. Vitest muestra una advertencia no bloqueante de Vite por `astro:dev-toolbar` y `optimizeDeps.esbuildOptions` deprecado. El verificador histórico `node docs/development/validate-cu-0.1.mjs` falla ahora con `Prematuro: apps`, porque valida exclusivamente que CU-0.1 no haya creado aplicaciones y no es aplicable después de CU-0.2. La evidencia manual de `npm run build` completó el incremento, sin cerrar CU-0.3 ni CU-0.
 
+### CU-0.3 — Bloque 2, reproducción limpia bloqueada — 2026-09-12
+
+| Comprobación | Resultado real |
+|---|---|
+| Snapshot elegido | `50cd2e10bdf958160d04cff344c8e8a902af77ec` (`chore(cu-0.3): add CI and Playwright tooling`) |
+| Origen del snapshot | `git archive` desde `D:\project-planning`; no se copiaron cambios no versionados del checkout |
+| Temporal creado | `C:\Users\brand\AppData\Local\Temp\primer-parcial-clean-3bec42cfbc144e0ab695e7b05943d2e3`, fuera del checkout; la receta lo eliminó al abortar y su ausencia fue comprobada |
+| Snapshot validado | Contenía el único `package-lock.json` raíz, `.env.example`, Compose, Playwright y CI; no presentó directorios excluidos ni archivos `.env` distintos del ejemplo |
+| Runtime | Node 24 y npm 11 fueron aceptados por el preflight de la receta |
+| Resultado | Bloqueado antes de `npm ci`, lint, typecheck, test, build, Compose temporal, `pg_isready` y health: `127.0.0.1:5432` estaba ocupado |
+| Aislamiento PostgreSQL | El servicio original `primer-parcial-postgres-1` permaneció healthy y publicado en `127.0.0.1:5432`; la receta no inició, detuvo ni modificó ningún servicio Compose |
+| Entorno sensible | La ejecución usó el snapshot archivado y no leyó ni copió archivos `.env` reales |
+
+La receta `scripts/reproduce-clean.ps1` preserva el puerto `5432` establecido por el diseño y aborta si está ocupado, sin usar un puerto alternativo no aprobado. La tarea 2.2 sigue pendiente: hace falta repetir la ejecución cuando ese puerto esté libre, para observar PostgreSQL, `pg_isready` y el health disponible desde la copia aislada.
+
+### CU-0.3 — Bloque 2, segundo intento fallido — 2026-09-12
+
+| Comprobación | Resultado real |
+|---|---|
+| Snapshot elegido | `0932c6b79ab2d7d05a0523b8df886a50f32da74d` (`test(cu-0.3): add clean reproduction workflow`), que contiene `scripts/reproduce-clean.ps1` |
+| Puertos y Compose original | `127.0.0.1:5432` y `3100` estaban libres; `docker compose -p primer-parcial ps` no informó servicios activos |
+| Temporal y origen | `C:\Users\brand\AppData\Local\Temp\primer-parcial-clean-e11af103152c4aa7ae9e7691c94d1dc1`, creado desde `git archive` y eliminado tras el fallo; no quedaron contenedores `primer-parcial-clean*` |
+| `npm ci` | Correcto: instaló 1214 paquetes desde el lockfile raíz. Informó 8 vulnerabilidades conocidas; no se ejecutó `npm audit fix` |
+| Lint y tipos | Correctos; `astro check` informó 0 errores, 0 warnings y 0 hints |
+| Tests | Falló `apps/api/test/health.e2e.spec.ts`: esperaba `200 OK` y recibió `503 Service Unavailable` en `returns available after a real PostgreSQL check` |
+| Checks posteriores | No se ejecutaron build, Compose temporal, `pg_isready` ni health porque la receta abortó al fallar `npm run test` |
+| Causa observable | El snapshot ejecuta `npm run test` antes de `docker compose ... up -d --wait postgres`; el test real de health depende de PostgreSQL |
+
+No se corrigió ni reordenó la receta durante esta ejecución: cualquier corrección debe formar parte de un snapshot Git nuevo antes de poder demostrar otra reproducción basada exclusivamente en archivos versionados. La tarea 2.2 permanece pendiente y no existe evidencia de reproducción limpia satisfactoria.
+
+### CU-0.3 — Bloque 2, reproducción limpia correcta — 2026-09-12
+
+| Comprobación | Resultado real |
+|---|---|
+| Snapshot elegido | `6bfe68f8c81cf5af5402771875c07a26d1b87312` (`fix(cu-0.3): start clean postgres before verification`) |
+| Origen y aislamiento | `git archive` creó la copia desde solo el commit versionado; no leyó cambios del checkout, archivos `.env` reales ni artefactos excluidos |
+| Temporal | `C:\Users\brand\AppData\Local\Temp\primer-parcial-clean-4f42e36358884f66b68225053f3497fc`, fuera del checkout y eliminado al finalizar |
+| `npm ci` | Correcto: instaló 1214 paquetes desde el único lockfile raíz. Informó 8 vulnerabilidades conocidas; no se ejecutó `npm audit fix` |
+| PostgreSQL temporal | Compose aislado `primer-parcial-clean-e09b9d7eca37`; `postgres` healthy y `pg_isready` devolvió `accepting connections` |
+| Calidad | Lint, typecheck y tests raíz correctos: API 5, web 6 con 1 integración omitida y contracts 1; `astro check` no informó errores, warnings ni hints |
+| Build | Correcto: Nest, Astro estático y contracts TypeScript finalizaron sin errores dentro de la copia temporal |
+| Health | La API temporal en `127.0.0.1:3100` devolvió el contrato disponible; la receta solo alcanza su objeto final con `Health = available` |
+| Limpieza | La receta detuvo únicamente `primer-parcial-clean-e09b9d7eca37-postgres-1`, eliminó su directorio temporal y liberó el puerto API; no actuó sobre el Compose original ni borró volúmenes |
+
+La reproducción completa satisface la tarea 2.2. El contenedor Compose aislado queda detenido para conservar el volumen temporal sin ejecutar operaciones de borrado; no pertenece al checkout original y no está publicado en ningún puerto.
+
 ## Pruebas manuales y recuperación
 
 La prueba runtime inició API con `WEB_ORIGIN=http://localhost:4321` y web con `PUBLIC_API_ORIGIN=http://localhost:3000`. Se observó que la página web contenía la isla `ApiStatus`; las pruebas condicionales confirmaron las dos salidas contra la API real.
@@ -102,7 +148,7 @@ La caída controlada usó exclusivamente `docker compose stop postgres`; no se e
 
 ## Riesgos, deuda y fuera de alcance
 
-- CU-0.3 debe añadir CI, E2E, reproducción limpia, revisión manual de navegador y cierre documental del CU.
+- CU-0.3 debe añadir E2E, revisión manual de navegador, evidencia CI real y cierre documental del CU.
 - No hay autenticación, UML, persistencia de proyectos, colaboración, XMI, generación, voz, visión ni IA.
 - La prueba de integración web se activa solo con sus variables de entorno; el test raíz la omite deliberadamente para no depender de servicios locales.
 - Los valores de ejemplos no son aptos para despliegue ni sustituyen secretos reales.
@@ -117,6 +163,9 @@ Seguir [la guía de desarrollo](../../development/README.md) desde `D:\project-p
 |---|---|---|
 | 2026-09-10 | CU-0.1 | Configuración/documentación, 12 grupos estáticos correctos y Compose validado sin motor. |
 | 2026-09-12 | CU-0.2 | Base NestJS/Astro/TypeORM/PostgreSQL, health/OpenAPI/CORS y web→API. Checks raíz, integración disponible/no disponible y build manual correctos. |
+| 2026-09-12 | CU-0.3 Bloques 1 y 2 parcial | Tooling CI/Playwright versionado. Receta limpia creada y snapshot `50cd2e1` validado; ejecución bloqueada de forma segura porque el PostgreSQL original ocupaba `127.0.0.1:5432`. |
+| 2026-09-12 | CU-0.3 Bloque 2, segundo intento | Snapshot `0932c6b` instaló, pasó lint/tipos y falló los tests porque la receta inicia PostgreSQL después de la suite; temporal y recursos aislados fueron limpiados. |
+| 2026-09-12 | CU-0.3 Bloque 2, tercer intento | Snapshot `6bfe68f` inició el PostgreSQL aislado antes de los checks y completó instalación, calidad, build, `pg_isready` y health disponible; temporal eliminado y servicio aislado detenido. |
 
 ## Comandos finales de commit y push
 

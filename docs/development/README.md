@@ -53,6 +53,19 @@ docker compose ps
 
 El health devuelve `200` y `{ "status": "available" }` cuando puede ejecutar `SELECT 1` en PostgreSQL. Si la base no está disponible, devuelve `503` y `{ "status": "unavailable" }`, sin detalles de conexión. La isla web realiza una única consulta, tiene timeout y muestra `API no disponible` ante fallo, respuesta inválida o estado no 200.
 
+## Reproducción limpia
+
+La receta de CU-0.3 crea una copia temporal desde un commit Git, fuera de `D:\project-planning`; usa `git archive`, por lo que no copia cambios sin versionar, `node_modules`, builds ni archivos `.env` reales. Desde la raíz, elegí el commit a verificar y ejecutá:
+
+```powershell
+$snapshot = git rev-parse HEAD
+pwsh -NoProfile -File .\scripts\reproduce-clean.ps1 -Snapshot $snapshot
+```
+
+La receta verifica Node, npm, Docker y el único `package-lock.json` raíz; ejecuta `npm ci`, lint, typecheck, tests y build dentro de la copia. Después inicia solamente un proyecto Compose temporal, comprueba `pg_isready`, arranca la API en el puerto sintético `3100` y exige `GET /api/health` disponible. No ejecuta E2E ni abre el navegador.
+
+PostgreSQL conserva el puerto contractual `127.0.0.1:5432`. Si ese puerto, el `3100`, Docker o el snapshot no están disponibles, la receta aborta y no toca los servicios ni archivos del checkout. Al finalizar detiene únicamente su servicio Compose aislado y elimina únicamente su propio directorio temporal, salvo que se agregue `-KeepTemporaryDirectory` para inspección.
+
 Para detener solo el contenedor local sin borrar datos:
 
 ```powershell
