@@ -6,9 +6,9 @@
 - Bloque 1 — Persistencia y API: terminado.
 - Bloque 2 — Landing, sesión y rutas privadas: terminado.
 - Bloque 3.1 — E2E real: terminado y verificado el 2026-09-13.
-- Bloque 3.2 — Evidencia y documentación: parcial; checks locales y documentación actualizados. Reproducción limpia, build, CI remoto y revisión manual pendientes.
-- Bloque 3.3 — Revisión de alcance: pendiente de completar tras la evidencia restante de 3.2.
-- Cambio OpenSpec: `cu-1-gestionar-cuenta-sesion`; progreso actual 7/9 tareas.
+- Bloque 3.2 — Evidencia y documentación: terminado localmente; reproducción limpia, build y revisión manual con resultado correcto. CI remoto pendiente.
+- Bloque 3.3 — Revisión de alcance: terminado localmente.
+- Cambio OpenSpec: `cu-1-gestionar-cuenta-sesion`; progreso actual 9/9 tareas.
 
 ## Objetivo y alcance real
 
@@ -55,20 +55,19 @@ Las variables `JWT_SECRET`, `JWT_EXPIRES_IN_SECONDS` y `BCRYPT_COST` son obligat
 | E2E auth | Migración explícita, nombres/apellidos recortados, email normalizado, duplicado, nombres vacíos, límites de password, login de dos credenciales, Bearer, sesión privada con nombre, `sessionStorage`, logout local, credenciales uniformes, token ausente/inválido/vencido y Swagger sin logout. |
 | E2E health | Disponible, no disponible y recuperación correctos; PostgreSQL terminó healthy. |
 | Aislamiento E2E | Chromium usa API `127.0.0.1:3101` y web `localhost:4322`, sin reutilizar procesos externos para conservar el vencimiento JWT de prueba. |
-| Build | Pendiente: no hay evidencia de una ejecución de build para esta evolución. |
+| Reproducción limpia | Correcta desde un snapshot Git versionado, en un temporal aislado sin `.env` reales ni archivos no versionados: `npm ci`, PostgreSQL, migraciones CU-1, lint, typecheck, tests, E2E Chromium, build, health y recuperación finalizaron correctamente. La limpieza/restauración final fue correcta. |
+| Build | Correcto dentro de la reproducción limpia. |
 
 Las cuentas E2E usan el prefijo `e2e-cu1-` y se limpian selectivamente. No se borran volúmenes ni datos generales.
 
-## Pruebas manuales pendientes
+## Pruebas manuales
 
-La revisión humana de teclado, labels, mensajes, registro, login, área privada, logout y responsive escritorio/tablet/móvil sigue pendiente. Seguir la lista de `docs/development/README.md` y registrar fecha, URL, navegador, observaciones y resultado antes de cerrar este CU.
+Una persona confirmó el registro con nombres, apellidos, email y password; labels y mensajes visibles; navegación por teclado; login limitado a email/password; sesión confirmada con nombre/apellido; logout local hacia el área pública; y diseño responsive en escritorio y viewport móvil sin overflow horizontal ni controles inaccesibles. La evidencia recibida no incluye fecha, URL ni navegador.
 
 ## Riesgos y pendientes
 
-- Falta ejecutar la reproducción limpia desde un snapshot Git que incluya los cambios de aislamiento E2E y registrar su resultado real.
-- Falta ejecutar build y registrar su resultado real.
 - Falta una ejecución real del workflow CI después de sus cambios; no se declara CI correcta sin ella.
-- Falta la revisión humana accesible/responsive y la revisión final de alcance de la tarea 3.3.
+- CU-1 no se cierra hasta registrar ese resultado remoto, aunque las tareas locales estén completas.
 
 ## Archivos relevantes
 

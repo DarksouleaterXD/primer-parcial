@@ -1,6 +1,6 @@
 # Desarrollo local en Windows / PowerShell
 
-**Estado:** CU-0 está terminado. CU-1 está en validación: cuenta/sesión, checks locales y E2E Chromium están verificados; la revisión manual, la reproducción limpia, el build y CI remoto siguen pendientes. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
+**Estado:** CU-0 está terminado. CU-1 está en validación: cuenta/sesión, checks locales, E2E Chromium, reproducción limpia, build y revisión manual están verificados; solo CI remoto sigue pendiente. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
 
 ## Requisitos
 
