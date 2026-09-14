@@ -4,22 +4,14 @@ import { DataSource } from "typeorm";
 
 import { createApiApplication } from "../src/app.js";
 import { readApiConfiguration } from "../src/config/api-configuration.js";
-
-const environment = {
-  API_PORT: "3000",
-  WEB_ORIGIN: "http://localhost:4321",
-  POSTGRES_HOST: "127.0.0.1",
-  POSTGRES_PORT: "5432",
-  POSTGRES_DB: "primer_parcial",
-  POSTGRES_USER: "primer_parcial_local",
-  POSTGRES_PASSWORD: "local-example-only",
-};
+import { prepareTestDatabase, testEnvironment } from "./test-database.js";
 
 describe("API health", () => {
   let app: NestExpressApplication;
 
   beforeAll(async () => {
-    app = await createApiApplication(readApiConfiguration(environment));
+    await prepareTestDatabase();
+    app = await createApiApplication(readApiConfiguration(testEnvironment));
   });
 
   afterAll(async () => {
@@ -44,8 +36,8 @@ describe("API health", () => {
   it("allows only the configured CORS origin", async () => {
     await request(app.getHttpServer())
       .get("/api/docs-json")
-      .set("Origin", environment.WEB_ORIGIN)
-      .expect("access-control-allow-origin", environment.WEB_ORIGIN)
+      .set("Origin", testEnvironment.WEB_ORIGIN)
+      .expect("access-control-allow-origin", testEnvironment.WEB_ORIGIN)
       .expect(200);
 
     const deniedOriginResponse = await request(app.getHttpServer())
@@ -71,7 +63,7 @@ describe("API health", () => {
 
   it("starts and reports unavailable when PostgreSQL is unreachable", async () => {
     const unavailableApp = await createApiApplication(
-      readApiConfiguration({ ...environment, POSTGRES_PORT: "65432" }),
+      readApiConfiguration({ ...testEnvironment, POSTGRES_PORT: "65432" }),
     );
 
     try {
@@ -80,7 +72,7 @@ describe("API health", () => {
         .expect(503);
 
       expect(response.body).toEqual({ status: "unavailable" });
-      expect(JSON.stringify(response.body)).not.toContain(environment.POSTGRES_PASSWORD);
+      expect(JSON.stringify(response.body)).not.toContain(testEnvironment.POSTGRES_PASSWORD);
     } finally {
       await unavailableApp.close();
     }
@@ -88,10 +80,22 @@ describe("API health", () => {
 
   it("rejects an empty or wildcard CORS origin before bootstrap", () => {
     expect(() =>
-      readApiConfiguration({ ...environment, WEB_ORIGIN: "" }),
+      readApiConfiguration({ ...testEnvironment, WEB_ORIGIN: "" }),
     ).toThrow("WEB_ORIGIN");
     expect(() =>
-      readApiConfiguration({ ...environment, WEB_ORIGIN: "*" }),
+      readApiConfiguration({ ...testEnvironment, WEB_ORIGIN: "*" }),
     ).toThrow("WEB_ORIGIN");
+  });
+
+  it("requires valid authentication configuration before bootstrap", () => {
+    expect(() =>
+      readApiConfiguration({ ...testEnvironment, JWT_SECRET: "" }),
+    ).toThrow("JWT_SECRET");
+    expect(() =>
+      readApiConfiguration({ ...testEnvironment, JWT_EXPIRES_IN_SECONDS: "0" }),
+    ).toThrow("JWT_EXPIRES_IN_SECONDS");
+    expect(() =>
+      readApiConfiguration({ ...testEnvironment, BCRYPT_COST: "3" }),
+    ).toThrow("BCRYPT_COST");
   });
 });

@@ -4,6 +4,13 @@ export interface ApiConfiguration {
   readonly port: number;
   readonly webOrigin: string;
   readonly database: DataSourceOptions;
+  readonly authentication: AuthenticationConfiguration;
+}
+
+export interface AuthenticationConfiguration {
+  readonly jwtSecret: string;
+  readonly jwtExpiresInSeconds: number;
+  readonly bcryptCost: number;
 }
 
 export const API_CONFIGURATION = Symbol("API_CONFIGURATION");
@@ -36,11 +43,34 @@ export function readApiConfiguration(
       entities: [],
       synchronize: false,
     },
+    authentication: {
+      jwtSecret: readRequired(environment.JWT_SECRET, "JWT_SECRET"),
+      jwtExpiresInSeconds: readPort(
+        environment.JWT_EXPIRES_IN_SECONDS,
+        undefined,
+        "JWT_EXPIRES_IN_SECONDS",
+      ),
+      bcryptCost: readBcryptCost(environment.BCRYPT_COST),
+    },
   };
 }
 
-function readPort(value: string | undefined, fallback: number, name: string): number {
+function readRequired(value: string | undefined, name: string): string {
+  const trimmed = value?.trim();
+
+  if (!trimmed) {
+    throw new Error(`${name} must be set`);
+  }
+
+  return trimmed;
+}
+
+function readPort(value: string | undefined, fallback: number | undefined, name: string): number {
   if (!value) {
+    if (fallback === undefined) {
+      throw new Error(`${name} must be set`);
+    }
+
     return fallback;
   }
 
@@ -51,4 +81,14 @@ function readPort(value: string | undefined, fallback: number, name: string): nu
   }
 
   return port;
+}
+
+function readBcryptCost(value: string | undefined): number {
+  const cost = readPort(value, undefined, "BCRYPT_COST");
+
+  if (cost < 4 || cost > 31) {
+    throw new Error("BCRYPT_COST must be between 4 and 31");
+  }
+
+  return cost;
 }

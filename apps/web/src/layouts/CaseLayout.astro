@@ -1,0 +1,28 @@
+---
+import "../styles/site.css";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} | Primer Parcial</title>
+  </head>
+  <body>
+    <header class="case-header">
+      <a class="wordmark" href="/">Primer Parcial <span>CASE</span></a>
+      <nav aria-label="Navegación principal">
+        <a href="/register">Registro</a>
+        <a href="/login">Iniciar sesión</a>
+      </nav>
+    </header>
+    <main><slot /></main>
+  </body>
+</html>

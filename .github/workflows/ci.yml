@@ -7,6 +7,11 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      WEB_ORIGIN: http://localhost:4321
+      JWT_SECRET: ci-jwt-secret-only
+      JWT_EXPIRES_IN_SECONDS: 900
+      BCRYPT_COST: 12
 
     steps:
       - uses: actions/checkout@v4
@@ -26,6 +31,8 @@ jobs:
       - run: npm ci
 
       - run: docker compose up -d --wait
+
+      - run: npm run migration:run --workspace @primer-parcial/api
 
       - run: npm run lint
 

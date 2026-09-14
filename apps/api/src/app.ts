@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { cleanupOpenApiDoc, ZodValidationPipe } from "nestjs-zod";
 
 import { AppModule } from "./app.module.js";
 import {
@@ -23,16 +24,18 @@ export async function createApiApplication(
       callback(null, !origin || origin === configuration.webOrigin);
     },
   });
+  app.useGlobalPipes(new ZodValidationPipe());
 
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
       .setTitle("Primer Parcial API")
       .setVersion("0.0.0")
+      .addBearerAuth()
       .build(),
   );
 
-  SwaggerModule.setup("api/docs", app, document, {
+  SwaggerModule.setup("api/docs", app, cleanupOpenApiDoc(document), {
     jsonDocumentUrl: "api/docs-json",
   });
 

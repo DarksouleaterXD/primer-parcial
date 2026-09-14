@@ -1,21 +1,45 @@
 ---
 import { ApiStatus } from "../components/ApiStatus";
+import CaseLayout from "../layouts/CaseLayout.astro";
 
-const title = "Primer Parcial";
 const apiOrigin = import.meta.env.PUBLIC_API_ORIGIN;
 ---
 
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-  </head>
-  <body>
-    <main>
-      <h1>{title}</h1>
-      <ApiStatus client:load apiOrigin={apiOrigin} />
-    </main>
-  </body>
-</html>
+<CaseLayout title="Herramienta de modelado">
+  <section class="landing">
+    <div class="hero">
+      <div>
+        <p class="eyebrow">Taller de modelado 01</p>
+        <h1>Diseñá con estructura.</h1>
+        <p>
+          Primer Parcial es un espacio técnico para preparar modelos antes de convertirlos en
+          aplicaciones. Empezá con una cuenta privada y una sesión local de trabajo.
+        </p>
+        <div class="actions">
+          <a class="button" href="/register">Crear una cuenta</a>
+          <a class="button button-secondary" href="/login">Iniciar sesión</a>
+        </div>
+      </div>
+      <aside class="system-card" aria-label="Estado del sistema">
+        <h2>Estado del sistema</h2>
+        <p>API principal</p>
+        <ApiStatus client:load apiOrigin={apiOrigin} />
+        <p>Las cuentas se validan contra la API local.</p>
+      </aside>
+    </div>
+    <div class="principles">
+      <article>
+        <h2>Modelo primero</h2>
+        <p>La estructura guía cada decisión posterior.</p>
+      </article>
+      <article>
+        <h2>Sesión acotada</h2>
+        <p>Tu token vive solo durante esta sesión del navegador.</p>
+      </article>
+      <article>
+        <h2>Sin atajos</h2>
+        <p>Sin proyectos simulados ni datos inventados.</p>
+      </article>
+    </div>
+  </section>
+</CaseLayout>

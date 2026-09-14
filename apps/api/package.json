@@ -7,17 +7,30 @@
     "test": "jest --runInBand",
     "lint": "eslint src test",
     "typecheck": "tsc --noEmit",
-    "build": "nest build"
+    "build": "nest build",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/migration-data-source.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
+    "@nestjs/jwt": "11.0.2",
+    "@nestjs/passport": "11.0.5",
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/swagger": "^11.2.3",
     "@primer-parcial/contracts": "0.0.0",
+    "bcrypt": "6.0.0",
+    "nestjs-zod": "5.5.0",
+    "passport": "0.7.0",
+    "passport-jwt": "4.0.1",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.28",
+    "zod": "4.1.13"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "6.0.0",
+    "@types/passport": "1.0.17",
+    "@types/passport-jwt": "4.0.1"
   }
 }

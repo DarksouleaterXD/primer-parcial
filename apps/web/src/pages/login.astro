@@ -1,0 +1,12 @@
+---
+import { AuthForm } from "../components/AuthForm";
+import CaseLayout from "../layouts/CaseLayout.astro";
+
+const apiOrigin = import.meta.env.PUBLIC_API_ORIGIN;
+---
+
+<CaseLayout title="Iniciar sesión">
+  <section class="auth-page">
+    <AuthForm client:load apiOrigin={apiOrigin} mode="login" />
+  </section>
+</CaseLayout>

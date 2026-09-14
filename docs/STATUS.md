@@ -10,7 +10,8 @@
 - CU-0.2 está terminado y validado: workspaces, PostgreSQL, API NestJS, web Astro/Preact, contrato health, CORS, OpenAPI y build raíz.
 - CU-0.3 está terminado: reproducción limpia, checks locales finales, E2E Chromium, revisión manual y CI real correctos.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
-- Próximo caso de uso: **CU-1 — Cuenta y sesión**, no iniciado. La evidencia CI se obtuvo en `feature/cu-0-inicializar-base` del repositorio `DarksouleaterXD/primer-parcial`.
+- CU-1 — Cuenta y sesión: **en validación**. Bloques 1 y 2 completos; E2E Chromium real de Bloque 3.1 correcto. Revisión manual, reproducción limpia, build, CI real y cierre de alcance pendientes.
+- Próximo caso de uso: **CU-2 — Modelar diagramas UML manualmente**, no iniciado. La evidencia CI de CU-0 se obtuvo en `feature/cu-0-inicializar-base` del repositorio `DarksouleaterXD/primer-parcial`.
 
 ## Evidencia CU-0.2
 
@@ -55,14 +56,14 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 
 ## Pendientes y riesgos
 
-- No se implementaron autenticación, UML, entidades de dominio, persistencia de proyectos, colaboración, XMI, generación ni IA.
+- CU-1 implementa autenticación y sesión; UML, proyectos, colaboración, XMI, generación e IA siguen sin implementar.
 - `.env` y variantes reales siguen ignorados. Los valores de `.env.example` son sintéticos y no deben usarse fuera de desarrollo local.
 
 ## Estado por ciclo
 
 | Ciclo | Estado | Entrega usable esperada |
 |---|---|---|
-| 1. Editor UML con proyectos privados | CU-0 terminado; CU-1 a CU-3 no iniciados | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
+| 1. Editor UML con proyectos privados | CU-0 terminado; CU-1 en validación; CU-2 y CU-3 no iniciados | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
 | 2. Colaboración, interoperabilidad y generación | Pendiente: CU-4 a CU-7 | LAN/presencia, XMI y aplicación Spring/web/PWA/Android generada |
 | 3. Inteligencia, visión y cierre offline | Pendiente: CU-8 a CU-11 | Texto, voz, imágenes y demostración integral offline |
 
@@ -80,3 +81,4 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 | 2026-09-12 | Se completó la revisión manual de navegador. | Disponible, no disponible y recuperación fueron observados en la URL local; PostgreSQL quedó healthy y no se modificó código. |
 | 2026-09-12 | Se repitieron los checks locales y se revisó el alcance final. | Lint, tipos, tests, E2E, build, OpenSpec y whitespace correctos; se alineó el origen E2E con `localhost` para evitar el rechazo CORS de servidores locales reutilizados. Sin remoto ni runner CI autorizado, CU-0 sigue abierto. |
 | 2026-09-13 | Se validó CI real y se cerró CU-0.3/CU-0. | `Verify base executable` #3 pasó por `push` en `DarksouleaterXD/primer-parcial`, rama `feature/cu-0-inicializar-base`, commit `0a0337b2a283098f53e3392ec062d0644c1ac386`; Node `v24.11.1`, npm `11.6.2`, 2m 1s. |
+| 2026-09-13 | Se implementaron CU-1 Bloques 1 y 2, y E2E real de Bloque 3.1. | API/auth, landing, registro/login, JWT en `sessionStorage`, logout local y `npm run test:e2e`: 5 escenarios Chromium correctos en 1.0 minuto. Cierre de CU-1 pendiente de manual, reproducción, build, CI y revisión final. |

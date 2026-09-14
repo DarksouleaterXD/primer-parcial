@@ -1,6 +1,6 @@
 # Desarrollo local en Windows / PowerShell
 
-**Estado:** CU-0 está terminado. CU-0.3 verificó reproducción limpia, checks locales, E2E Chromium, revisión manual y CI real con Node `24.11.1` y npm `11.6.2`. El documento [CU-0](../puds/use-cases/CU-0-inicializar-base.md) conserva la evidencia y límites de cada incremento.
+**Estado:** CU-0 está terminado. CU-1 está en validación: cuenta/sesión y E2E Chromium están implementados, mientras la revisión manual, la reproducción limpia, el build y CI real de CU-1 siguen pendientes. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
 
 ## Requisitos
 
@@ -35,10 +35,14 @@ La API lee variables del entorno del proceso, no carga automáticamente archivos
 ```powershell
 $env:WEB_ORIGIN = "http://localhost:4321"
 $env:PUBLIC_API_ORIGIN = "http://localhost:3000"
+$env:JWT_SECRET = "local-example-jwt-secret-only"
+$env:JWT_EXPIRES_IN_SECONDS = "900"
+$env:BCRYPT_COST = "12"
+npm run migration:run --workspace @primer-parcial/api
 npm run dev
 ```
 
-La API queda en `http://localhost:3000` y la web en `http://localhost:4321`. Abrí la web y verificá el texto `API disponible`. La API expone `GET /api/health`, Swagger en `http://localhost:3000/api/docs` y el documento OpenAPI en `http://localhost:3000/api/docs-json`.
+La API queda en `http://localhost:3000` y la web en `http://localhost:4321`. La migración crea `users` y nunca se ejecuta durante el bootstrap. Abrí la web y verificá el texto `API disponible`. La API expone `GET /api/health`, Swagger en `http://localhost:3000/api/docs` y el documento OpenAPI en `http://localhost:3000/api/docs-json`.
 
 Los ejemplos `.env.example` solo contienen valores sintéticos. Compose puede leer el `.env` raíz para PostgreSQL, pero los procesos Node requieren variables exportadas como en el ejemplo anterior. No guardes ni imprimas credenciales reales.
 
@@ -55,6 +59,8 @@ docker compose ps
 
 El health devuelve `200` y `{ "status": "available" }` cuando puede ejecutar `SELECT 1` en PostgreSQL. Si la base no está disponible, devuelve `503` y `{ "status": "unavailable" }`, sin detalles de conexión. La isla web realiza una única consulta, tiene timeout y muestra `API no disponible` ante fallo, respuesta inválida o estado no 200.
 
+CU-1 agrega `/register`, `/login` y `/workspace`. Registro e inicio de sesión usan únicamente `email + password`; el JWT se conserva solo en `sessionStorage` y el cierre de sesión lo elimina en el cliente, sin endpoint de logout. Las variables de autenticación son obligatorias: `JWT_SECRET`, `JWT_EXPIRES_IN_SECONDS` y `BCRYPT_COST`. Los valores de ejemplo son sintéticos y no son aptos para despliegue.
+
 ## Reproducción limpia
 
 La receta de CU-0.3 crea una copia temporal desde un commit Git, fuera de `D:\project-planning`; usa `git archive`, por lo que no copia cambios sin versionar, `node_modules`, builds ni archivos `.env` reales. Desde la raíz, elegí el commit a verificar y ejecutá:
@@ -64,7 +70,7 @@ $snapshot = git rev-parse HEAD
 pwsh -NoProfile -File .\scripts\reproduce-clean.ps1 -Snapshot $snapshot
 ```
 
-La receta verifica Node, npm, Docker y el único `package-lock.json` raíz; ejecuta `npm ci`, lint, typecheck, tests y build dentro de la copia. Después inicia solamente un proyecto Compose temporal, comprueba `pg_isready`, arranca la API en el puerto sintético `3100` y exige `GET /api/health` disponible. No ejecuta E2E ni abre el navegador.
+La receta verifica Node, npm, Docker y el único `package-lock.json` raíz; ejecuta `npm ci`, inicia PostgreSQL, aplica la migración de usuarios, corre lint, typecheck, tests, E2E Chromium y build dentro de la copia. Después inicia solamente un proyecto Compose temporal, comprueba `pg_isready`, arranca la API en el puerto sintético `3100` y exige `GET /api/health` disponible.
 
 PostgreSQL conserva el puerto contractual `127.0.0.1:5432`. Si ese puerto, el `3100`, Docker o el snapshot no están disponibles, la receta aborta y no toca los servicios ni archivos del checkout. Al finalizar detiene únicamente su servicio Compose aislado y elimina únicamente su propio directorio temporal, salvo que se agregue `-KeepTemporaryDirectory` para inspección.
 
@@ -83,6 +89,16 @@ docker compose stop postgres
 ```
 
 Restauralo con `docker compose up -d --wait`. No uses comandos de borrado de volúmenes para una prueba rutinaria.
+
+### Cuenta y sesión
+
+Con la API, web y PostgreSQL iniciados según el arranque local, una persona debe comprobar en `http://localhost:4321`:
+
+1. Abrir `Registro`, recorrer email, contraseña y botón con `Tab`, e intentar email inválido y contraseña corta; comprobar labels, foco y mensaje público.
+2. Registrar una cuenta sintética nueva y confirmar que se muestra el resultado sin password ni detalles internos.
+3. Abrir `Iniciar sesión`, probar una contraseña incorrecta y comprobar que el mensaje es genérico; después iniciar sesión correctamente y comprobar el área privada.
+4. Activar `Cerrar sesión`; confirmar retorno a la landing y que una navegación posterior a `/workspace` vuelve a login.
+5. Repetir la inspección en escritorio, tablet y móvil. Anotar fecha, URL, navegador, resultado y cualquier incidencia en el documento CU-1. No declarar esta revisión realizada hasta aportar esas observaciones humanas.
 
 ## Configuración y seguridad
 

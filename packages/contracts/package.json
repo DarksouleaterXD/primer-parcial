@@ -6,7 +6,8 @@
   "types": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts"
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
     }
   },
   "scripts": {
@@ -14,5 +15,8 @@
     "lint": "eslint src test",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "zod": "4.1.13"
   }
 }

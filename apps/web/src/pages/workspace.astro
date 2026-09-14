@@ -1,0 +1,12 @@
+---
+import { PrivateArea } from "../components/PrivateArea";
+import CaseLayout from "../layouts/CaseLayout.astro";
+
+const apiOrigin = import.meta.env.PUBLIC_API_ORIGIN;
+---
+
+<CaseLayout title="Área privada">
+  <section class="private-page">
+    <PrivateArea client:load apiOrigin={apiOrigin} />
+  </section>
+</CaseLayout>

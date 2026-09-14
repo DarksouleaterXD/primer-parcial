@@ -65,7 +65,10 @@ function Get-SyntheticEnvironment {
     "POSTGRES_PASSWORD",
     "POSTGRES_HOST",
     "POSTGRES_PORT",
-    "WEB_ORIGIN"
+    "WEB_ORIGIN",
+    "JWT_SECRET",
+    "JWT_EXPIRES_IN_SECONDS",
+    "BCRYPT_COST"
   )) {
     if (-not $values.ContainsKey($requiredKey)) {
       throw "Blocked: .env.example from the selected snapshot lacks $requiredKey."
@@ -115,7 +118,10 @@ $environmentNames = @(
   "POSTGRES_HOST",
   "POSTGRES_PORT",
   "API_PORT",
-  "WEB_ORIGIN"
+  "WEB_ORIGIN",
+  "JWT_SECRET",
+  "JWT_EXPIRES_IN_SECONDS",
+  "BCRYPT_COST"
 )
 $previousEnvironment = @{}
 
@@ -214,7 +220,10 @@ try {
     "POSTGRES_PASSWORD",
     "POSTGRES_HOST",
     "POSTGRES_PORT",
-    "WEB_ORIGIN"
+    "WEB_ORIGIN",
+    "JWT_SECRET",
+    "JWT_EXPIRES_IN_SECONDS",
+    "BCRYPT_COST"
   )) {
     [Environment]::SetEnvironmentVariable($name, $syntheticEnvironment[$name], "Process")
   }
@@ -236,7 +245,9 @@ try {
   try {
     Invoke-Native -Command npm -Arguments @("run", "lint")
     Invoke-Native -Command npm -Arguments @("run", "typecheck")
+    Invoke-Native -Command npm -Arguments @("run", "migration:run", "--workspace", "@primer-parcial/api")
     Invoke-Native -Command npm -Arguments @("run", "test")
+    Invoke-Native -Command npm -Arguments @("run", "test:e2e")
     Invoke-Native -Command npm -Arguments @("run", "build")
   } finally {
     Pop-Location

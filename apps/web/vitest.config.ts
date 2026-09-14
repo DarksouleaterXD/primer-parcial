@@ -4,6 +4,6 @@ import { getViteConfig } from "astro/config";
 export default getViteConfig({
   test: {
     environment: "jsdom",
-    include: ["test/**/*.test.tsx"],
+    include: ["test/**/*.test.{ts,tsx}"],
   },
 });
