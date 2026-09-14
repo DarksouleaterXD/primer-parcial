@@ -2,7 +2,7 @@
 
 ## Alcance
 
-CU-1 cubre registro, login, JWT Bearer, consulta de sesión y logout local. No cubre proyectos, roles, OAuth, MFA, recuperación de contraseña, refresh tokens ni revocación persistida.
+CU-1 cubre registro con nombres/apellidos/email/password, login, JWT Bearer, consulta de sesión y logout local. No cubre proyectos, roles, OAuth, MFA, recuperación de contraseña, refresh tokens ni revocación persistida.
 
 ## Activos y límites
 
@@ -11,7 +11,7 @@ CU-1 cubre registro, login, JWT Bearer, consulta de sesión y logout local. No c
 | Password | Solo llega por HTTPS en un despliegue real, se hashea con bcrypt antes de persistir y nunca se devuelve. |
 | JWT | Solo vive en `sessionStorage`; el cliente lo envía mediante `Authorization: Bearer`. |
 | Secreto JWT y costo bcrypt | Requeridos por entorno; los ejemplos contienen valores sintéticos. |
-| Cuenta y sesión | La API NestJS es la autoridad; la guardia de navegador no otorga permisos. |
+| Cuenta y sesión | La API NestJS es la autoridad; devuelve solo id, nombres, apellidos y email. La guardia de navegador no otorga permisos. |
 
 ## Riesgos y controles
 
@@ -23,7 +23,7 @@ CU-1 cubre registro, login, JWT Bearer, consulta de sesión y logout local. No c
 | Token vencido o inválido | Passport rechaza el Bearer; el cliente elimina el token y vuelve a login. | No hay refresh token. |
 | Logout de una copia robada | Logout borra solo el token de este navegador. | No existe revocación, blacklist ni invalidación server-side antes del vencimiento. |
 | PostgreSQL ausente | DataSource lazy; health conserva `503` y auth devuelve indisponibilidad pública. | La cuenta no opera hasta restaurar la dependencia. |
-| Migración destructiva | Migración TypeORM explícita y `synchronize: false`. | Ejecutar solo el comando documentado; no borrar volúmenes como recuperación rutinaria. |
+| Migración destructiva | Migraciones TypeORM explícitas y `synchronize: false`; `first_name`/`last_name` nullable preservan cuentas legacy sin backfill inventado. | Ejecutar solo el comando documentado; no borrar volúmenes como recuperación rutinaria. |
 
 ## Datos de prueba
 

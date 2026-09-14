@@ -10,7 +10,7 @@
 - CU-0.2 está terminado y validado: workspaces, PostgreSQL, API NestJS, web Astro/Preact, contrato health, CORS, OpenAPI y build raíz.
 - CU-0.3 está terminado: reproducción limpia, checks locales finales, E2E Chromium, revisión manual y CI real correctos.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
-- CU-1 — Cuenta y sesión: **en validación**. Bloques 1 y 2 completos; E2E Chromium real de Bloque 3.1 correcto. Revisión manual, reproducción limpia, build, CI real y cierre de alcance pendientes.
+- CU-1 — Cuenta y sesión: **en validación**. Bloques 1, 2 y 3.1 correctos con nombres/apellidos; checks locales correctos. Revisión manual, reproducción limpia, build, CI remoto y cierre de alcance pendientes.
 - Próximo caso de uso: **CU-2 — Modelar diagramas UML manualmente**, no iniciado. La evidencia CI de CU-0 se obtuvo en `feature/cu-0-inicializar-base` del repositorio `DarksouleaterXD/primer-parcial`.
 
 ## Evidencia CU-0.2
@@ -82,3 +82,4 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 | 2026-09-12 | Se repitieron los checks locales y se revisó el alcance final. | Lint, tipos, tests, E2E, build, OpenSpec y whitespace correctos; se alineó el origen E2E con `localhost` para evitar el rechazo CORS de servidores locales reutilizados. Sin remoto ni runner CI autorizado, CU-0 sigue abierto. |
 | 2026-09-13 | Se validó CI real y se cerró CU-0.3/CU-0. | `Verify base executable` #3 pasó por `push` en `DarksouleaterXD/primer-parcial`, rama `feature/cu-0-inicializar-base`, commit `0a0337b2a283098f53e3392ec062d0644c1ac386`; Node `v24.11.1`, npm `11.6.2`, 2m 1s. |
 | 2026-09-13 | Se implementaron CU-1 Bloques 1 y 2, y E2E real de Bloque 3.1. | API/auth, landing, registro/login, JWT en `sessionStorage`, logout local y `npm run test:e2e`: 5 escenarios Chromium correctos en 1.0 minuto. Cierre de CU-1 pendiente de manual, reproducción, build, CI y revisión final. |
+| 2026-09-13 | Se adaptó CU-1 a nombres/apellidos y se verificó nuevamente Bloque 3.1. | Registro con nombres/apellidos/email/password, migración aditiva nullable para legacy, sesión segura con nombres, E2E Chromium 5/5 en 1.2 minutos y checks raíz correctos. Build, reproducción limpia, revisión manual, CI remoto y cierre siguen pendientes. |

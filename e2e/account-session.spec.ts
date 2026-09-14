@@ -2,7 +2,7 @@ import { execFileSync, execSync } from "node:child_process";
 
 import { expect, test, type Page } from "@playwright/test";
 
-const apiOrigin = "http://127.0.0.1:3000";
+const apiOrigin = "http://127.0.0.1:3101";
 const primaryEmail = "e2e-cu1-primary@example.test";
 const password = "e2e-password";
 const firstName = "Persona";

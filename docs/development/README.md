@@ -1,6 +1,6 @@
 # Desarrollo local en Windows / PowerShell
 
-**Estado:** CU-0 está terminado. CU-1 está en validación: cuenta/sesión y E2E Chromium están implementados, mientras la revisión manual, la reproducción limpia, el build y CI real de CU-1 siguen pendientes. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
+**Estado:** CU-0 está terminado. CU-1 está en validación: cuenta/sesión, checks locales y E2E Chromium están verificados; la revisión manual, la reproducción limpia, el build y CI remoto siguen pendientes. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
 
 ## Requisitos
 
@@ -59,7 +59,7 @@ docker compose ps
 
 El health devuelve `200` y `{ "status": "available" }` cuando puede ejecutar `SELECT 1` en PostgreSQL. Si la base no está disponible, devuelve `503` y `{ "status": "unavailable" }`, sin detalles de conexión. La isla web realiza una única consulta, tiene timeout y muestra `API no disponible` ante fallo, respuesta inválida o estado no 200.
 
-CU-1 agrega `/register`, `/login` y `/workspace`. Registro e inicio de sesión usan únicamente `email + password`; el JWT se conserva solo en `sessionStorage` y el cierre de sesión lo elimina en el cliente, sin endpoint de logout. Las variables de autenticación son obligatorias: `JWT_SECRET`, `JWT_EXPIRES_IN_SECONDS` y `BCRYPT_COST`. Los valores de ejemplo son sintéticos y no son aptos para despliegue.
+CU-1 agrega `/register`, `/login` y `/workspace`. Registro usa nombres, apellidos, email y password; login usa únicamente `email + password`. El JWT se conserva solo en `sessionStorage` y el cierre de sesión lo elimina en el cliente, sin endpoint de logout. Las variables de autenticación son obligatorias: `JWT_SECRET`, `JWT_EXPIRES_IN_SECONDS` y `BCRYPT_COST`. Los valores de ejemplo son sintéticos y no son aptos para despliegue.
 
 ## Reproducción limpia
 
@@ -70,7 +70,7 @@ $snapshot = git rev-parse HEAD
 pwsh -NoProfile -File .\scripts\reproduce-clean.ps1 -Snapshot $snapshot
 ```
 
-La receta verifica Node, npm, Docker y el único `package-lock.json` raíz; ejecuta `npm ci`, inicia PostgreSQL, aplica la migración de usuarios, corre lint, typecheck, tests, E2E Chromium y build dentro de la copia. Después inicia solamente un proyecto Compose temporal, comprueba `pg_isready`, arranca la API en el puerto sintético `3100` y exige `GET /api/health` disponible.
+La receta verifica Node, npm, Docker y el único `package-lock.json` raíz; ejecuta `npm ci`, inicia PostgreSQL, aplica las migraciones de usuarios, corre lint, typecheck, tests, E2E Chromium y build dentro de la copia. Después inicia solamente un proyecto Compose temporal, comprueba `pg_isready`, arranca la API en el puerto sintético `3100` y exige `GET /api/health` disponible. La suite E2E reserva `3101` y `4322` para no reutilizar procesos externos ni alterar la validez de su JWT de prueba.
 
 PostgreSQL conserva el puerto contractual `127.0.0.1:5432`. Si ese puerto, el `3100`, Docker o el snapshot no están disponibles, la receta aborta y no toca los servicios ni archivos del checkout. Al finalizar detiene únicamente su servicio Compose aislado y elimina únicamente su propio directorio temporal, salvo que se agregue `-KeepTemporaryDirectory` para inspección.
 
@@ -94,11 +94,11 @@ Restauralo con `docker compose up -d --wait`. No uses comandos de borrado de vol
 
 Con la API, web y PostgreSQL iniciados según el arranque local, una persona debe comprobar en `http://localhost:4321`:
 
-1. Abrir `Registro`, recorrer email, contraseña y botón con `Tab`, e intentar email inválido y contraseña corta; comprobar labels, foco y mensaje público.
+1. Abrir `Registro`, recorrer nombres, apellidos, email, contraseña y botón con `Tab`. Intentar nombres/apellidos vacíos o solo espacios, email inválido y contraseña corta; comprobar labels, foco y mensaje público.
 2. Registrar una cuenta sintética nueva y confirmar que se muestra el resultado sin password ni detalles internos.
-3. Abrir `Iniciar sesión`, probar una contraseña incorrecta y comprobar que el mensaje es genérico; después iniciar sesión correctamente y comprobar el área privada.
+3. Abrir `Iniciar sesión`, confirmar que solo muestra email y contraseña; probar una contraseña incorrecta y comprobar que el mensaje es genérico. Luego iniciar sesión correctamente y comprobar que el área privada muestra nombre y apellido.
 4. Activar `Cerrar sesión`; confirmar retorno a la landing y que una navegación posterior a `/workspace` vuelve a login.
-5. Repetir la inspección en escritorio, tablet y móvil. Anotar fecha, URL, navegador, resultado y cualquier incidencia en el documento CU-1. No declarar esta revisión realizada hasta aportar esas observaciones humanas.
+5. Repetir la inspección en escritorio, tablet y móvil, confirmando que no hay overflow horizontal ni controles inaccesibles. Anotar fecha, URL, navegador, resultado y cualquier incidencia en el documento CU-1. No declarar esta revisión realizada hasta aportar esas observaciones humanas.
 
 ## Configuración y seguridad
 
@@ -111,4 +111,4 @@ Con la API, web y PostgreSQL iniciados según el arranque local, una persona deb
 ## Estado del CU-0
 
 - El workflow `Verify base executable` pasó en GitHub Actions #3 para `0a0337b2a283098f53e3392ec062d0644c1ac386`, con Node `v24.11.1` y npm `11.6.2`.
-- CU-1 todavía no fue iniciado. No hagas commit ni push sin autorización explícita.
+- CU-1 está en validación. No hagas commit ni push sin autorización explícita.

@@ -15,6 +15,8 @@ $apiProcess = $null
 $postgresStarted = $false
 $environmentCaptured = $false
 $apiPort = 3100
+$e2eApiPort = 3101
+$e2eWebPort = 4322
 
 function Invoke-Native {
   param(
@@ -208,6 +210,8 @@ try {
 
   Assert-LoopbackPortAvailable -Port 5432
   Assert-LoopbackPortAvailable -Port $apiPort
+  Assert-LoopbackPortAvailable -Port $e2eApiPort
+  Assert-LoopbackPortAvailable -Port $e2eWebPort
 
   $syntheticEnvironment = Get-SyntheticEnvironment (Join-Path $temporaryDirectory ".env.example")
   foreach ($name in $environmentNames) {

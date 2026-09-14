@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const webOrigin = "http://localhost:4321";
+const apiOrigin = "http://127.0.0.1:3101";
+const webOrigin = "http://localhost:4322";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -18,10 +19,10 @@ export default defineConfig({
   webServer: [
     {
       command: "npm run dev --workspace @primer-parcial/api",
-      url: "http://127.0.0.1:3000/api/docs-json",
-      reuseExistingServer: !process.env.CI,
+      url: `${apiOrigin}/api/docs-json`,
+      reuseExistingServer: false,
       env: {
-        API_PORT: "3000",
+        API_PORT: "3101",
         WEB_ORIGIN: webOrigin,
         JWT_SECRET: "e2e-jwt-secret-only",
         JWT_EXPIRES_IN_SECONDS: "3",
@@ -29,11 +30,11 @@ export default defineConfig({
       },
     },
     {
-      command: "npm run dev --workspace @primer-parcial/web -- --host 127.0.0.1",
+      command: "npm run dev --workspace @primer-parcial/web -- --host 127.0.0.1 --port 4322",
       url: webOrigin,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       env: {
-        PUBLIC_API_ORIGIN: "http://127.0.0.1:3000",
+        PUBLIC_API_ORIGIN: apiOrigin,
       },
     },
   ],
