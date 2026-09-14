@@ -15,8 +15,12 @@ describe("AuthForm", () => {
   it("labels registration fields and focuses a shared-contract validation error", async () => {
     render(<AuthForm apiOrigin={apiOrigin} mode="register" />);
 
+    expect(screen.getByLabelText("Nombres")).toBeTruthy();
+    expect(screen.getByLabelText("Apellidos")).toBeTruthy();
     expect(screen.getByLabelText("Email")).toBeTruthy();
     expect(screen.getByLabelText("Contraseña")).toBeTruthy();
+    fireEvent.input(screen.getByLabelText("Nombres"), { target: { value: " " } });
+    fireEvent.input(screen.getByLabelText("Apellidos"), { target: { value: "Ejemplo" } });
     fireEvent.input(screen.getByLabelText("Email"), { target: { value: "invalid" } });
     fireEvent.input(screen.getByLabelText("Contraseña"), { target: { value: "short" } });
     fireEvent.submit(screen.getByRole("form", { name: "Crear cuenta" }));
@@ -35,6 +39,8 @@ describe("AuthForm", () => {
     );
     render(<AuthForm apiOrigin={apiOrigin} mode="register" />);
 
+    fireEvent.input(screen.getByLabelText("Nombres"), { target: { value: "Persona" } });
+    fireEvent.input(screen.getByLabelText("Apellidos"), { target: { value: "Ejemplo" } });
     fireEvent.input(screen.getByLabelText("Email"), { target: { value: "persona@example.test" } });
     fireEvent.input(screen.getByLabelText("Contraseña"), { target: { value: "password" } });
     fireEvent.submit(screen.getByRole("form", { name: "Crear cuenta" }));
@@ -52,6 +58,8 @@ describe("AuthForm", () => {
     );
     render(<AuthForm apiOrigin={apiOrigin} mode="login" onNavigate={navigate} />);
 
+    expect(screen.queryByLabelText("Nombres")).toBeNull();
+    expect(screen.queryByLabelText("Apellidos")).toBeNull();
     fireEvent.input(screen.getByLabelText("Email"), { target: { value: "persona@example.test" } });
     fireEvent.input(screen.getByLabelText("Contraseña"), { target: { value: "password" } });
     fireEvent.submit(screen.getByRole("form", { name: "Iniciar sesión" }));

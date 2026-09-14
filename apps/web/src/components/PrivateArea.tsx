@@ -1,6 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 
 import { createAuthClient } from "../auth/auth-client";
+import type { Account } from "@primer-parcial/contracts";
 
 interface PrivateAreaProps {
   readonly apiOrigin: string;
@@ -11,7 +12,7 @@ type PrivateState =
   | { readonly status: "checking" }
   | { readonly status: "unauthenticated" }
   | { readonly status: "unavailable"; readonly message: string }
-  | { readonly status: "authorized"; readonly email: string };
+  | { readonly status: "authorized"; readonly account: Account };
 
 export function PrivateArea({ apiOrigin, onNavigate = navigate }: PrivateAreaProps) {
   const [state, setState] = useState<PrivateState>({ status: "checking" });
@@ -36,7 +37,7 @@ export function PrivateArea({ apiOrigin, onNavigate = navigate }: PrivateAreaPro
         return;
       }
 
-      setState({ status: "authorized", email: result.data.email });
+      setState({ status: "authorized", account: result.data });
     }
 
     void restoreSession();
@@ -71,11 +72,16 @@ export function PrivateArea({ apiOrigin, onNavigate = navigate }: PrivateAreaPro
     <section class="private-panel">
       <p class="eyebrow">Sesión confirmada</p>
       <h1>Área privada</h1>
-      <p>Conectado como <strong>{state.email}</strong>.</p>
+      <p>Conectado como <strong>{accountLabel(state.account)}</strong>.</p>
       <p class="form-intro">Todavía no hay proyectos ni herramientas de modelado en esta etapa.</p>
       <button type="button" onClick={logout}>Cerrar sesión</button>
     </section>
   );
+}
+
+function accountLabel(account: Account): string {
+  const name = [account.firstName, account.lastName].filter(Boolean).join(" ");
+  return name || account.email;
 }
 
 function navigate(path: string): void {

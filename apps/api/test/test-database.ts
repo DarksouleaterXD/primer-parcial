@@ -1,5 +1,6 @@
 import { DataSource, type DataSourceOptions } from "typeorm";
 
+import { AddUserNames1736900000000 } from "../src/migrations/1736900000000-add-user-names.js";
 import { CreateUsers1736800000000 } from "../src/migrations/1736800000000-create-users.js";
 import { User } from "../src/users/user.entity.js";
 
@@ -36,7 +37,7 @@ export async function prepareTestDatabase(): Promise<void> {
   const testDatabase = new DataSource({
     ...databaseOptions(testEnvironment.POSTGRES_DB),
     entities: [User],
-    migrations: [CreateUsers1736800000000],
+    migrations: [CreateUsers1736800000000, AddUserNames1736900000000],
     synchronize: false,
   });
 
@@ -59,6 +60,42 @@ export async function getStoredPasswordHash(email: string): Promise<string | und
       [email],
     );
     return rows[0]?.password_hash;
+  } finally {
+    await dataSource.destroy();
+  }
+}
+
+export async function getStoredAccount(email: string): Promise<{
+  readonly first_name: string | null;
+  readonly last_name: string | null;
+} | undefined> {
+  const dataSource = new DataSource(databaseOptions(testEnvironment.POSTGRES_DB));
+
+  await dataSource.initialize();
+  try {
+    const rows = await dataSource.query<{ first_name: string | null; last_name: string | null }[]>(
+      'SELECT "first_name", "last_name" FROM "users" WHERE "email" = $1',
+      [email],
+    );
+    return rows[0];
+  } finally {
+    await dataSource.destroy();
+  }
+}
+
+export async function insertLegacyAccount(
+  id: string,
+  email: string,
+  passwordHash: string,
+): Promise<void> {
+  const dataSource = new DataSource(databaseOptions(testEnvironment.POSTGRES_DB));
+
+  await dataSource.initialize();
+  try {
+    await dataSource.query(
+      'INSERT INTO "users" ("id", "email", "password_hash") VALUES ($1, $2, $3)',
+      [id, email, passwordHash],
+    );
   } finally {
     await dataSource.destroy();
   }

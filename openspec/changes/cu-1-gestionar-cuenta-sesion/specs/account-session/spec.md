@@ -4,16 +4,16 @@ Permite que visitantes creen y usen una cuenta privada de forma segura antes de 
 
 ## ADDED Requirements
 
-### Requirement: Un visitante puede registrar una cuenta con email y password válidos
-El sistema SHALL aceptar para registro únicamente `email` y `password`. SHALL normalizar el email mediante recorte de espacios y conversión consistente a minúsculas antes de persistirlo, SHALL validarlo como email, y SHALL exigir una contraseña de al menos 8 caracteres y como máximo 72 bytes UTF-8 sin reglas adicionales de composición. PostgreSQL SHALL imponer unicidad sobre el email normalizado. La contraseña nunca SHALL persistirse, devolverse ni registrarse en texto plano.
+### Requirement: Un visitante puede registrar una cuenta con datos básicos válidos
+El sistema SHALL aceptar para registro únicamente `firstName`, `lastName`, `email` y `password`. SHALL recortar `firstName` y `lastName`, exigir que cada uno no quede vacío y persistirlos como datos básicos de la cuenta. SHALL normalizar el email mediante recorte de espacios y conversión consistente a minúsculas antes de persistirlo, SHALL validarlo como email, y SHALL exigir una contraseña de al menos 8 caracteres y como máximo 72 bytes UTF-8 sin reglas adicionales de composición. PostgreSQL SHALL imponer unicidad sobre el email normalizado. La contraseña nunca SHALL persistirse, devolverse ni registrarse en texto plano. Las columnas de nombre y apellido podrán ser nullable únicamente para preservar cuentas existentes previas a esta evolución; el registro nuevo nunca podrá crearlas sin esos valores.
 
 #### Scenario: Registro correcto
-- **GIVEN** un visitante sin sesión envía `email + password` válidos cuyo email normalizado no pertenece a una cuenta existente
+- **GIVEN** un visitante sin sesión envía `firstName + lastName + email + password` válidos cuyo email normalizado no pertenece a una cuenta existente
 - **WHEN** solicita el registro
-- **THEN** el sistema crea la cuenta con el email normalizado, responde sin la contraseña y permite continuar al inicio de sesión
+- **THEN** el sistema crea la cuenta con nombres y apellidos recortados, el email normalizado, responde sin la contraseña y permite continuar al inicio de sesión
 
 #### Scenario: Registro no aceptado
-- **GIVEN** un visitante sin sesión envía un email inválido, una contraseña fuera de los límites declarados o un email normalizado ya registrado
+- **GIVEN** un visitante sin sesión envía nombres o apellidos vacíos tras recortar, un email inválido, una contraseña fuera de los límites declarados o un email normalizado ya registrado
 - **WHEN** solicita el registro
 - **THEN** el sistema rechaza la solicitud con un error público genérico que no expone contraseñas, hashes, detalles PostgreSQL ni información interna
 
@@ -29,6 +29,14 @@ El sistema SHALL autenticar `email + password` válidos tras aplicar al email la
 - **GIVEN** un visitante sin sesión envía un email inexistente o una contraseña incorrecta
 - **WHEN** solicita el inicio de sesión
 - **THEN** el sistema responde con la misma respuesta pública de autenticación fallida sin indicar cuál de los dos datos fue incorrecto
+
+### Requirement: La sesión actual expone datos básicos seguros de la cuenta
+El sistema SHALL responder una sesión autenticada únicamente con `id`, `firstName`, `lastName` y `email`. SHALL NOT devolver password, `passwordHash` ni información interna. El área privada SHALL poder mostrar al menos el nombre de la cuenta sin convertirse en una vista de perfil.
+
+#### Scenario: Consulta segura de sesión actual
+- **GIVEN** una persona presenta un JWT válido y vigente
+- **WHEN** consulta la sesión actual o entra al área privada
+- **THEN** recibe y visualiza los datos básicos seguros de su cuenta, sin contraseña, hash ni información interna
 
 ### Requirement: Las rutas privadas requieren una sesión JWT vigente
 El sistema SHALL permitir el acceso a rutas privadas y a la consulta de sesión actual solo cuando la solicitud presenta una sesión JWT válida y vigente. Una solicitud anónima, con token inválido o vencido SHALL recibir el mismo resultado de no autenticación sin información sensible.

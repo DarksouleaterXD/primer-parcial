@@ -4,7 +4,7 @@ La base ejecutable ya está cerrada, pero una persona visitante todavía no pued
 
 ## What Changes
 
-- Incorporar la persistencia versionada de usuarios con `email` único normalizado, auditoría TypeORM y manejo seguro de `email + password` mediante bcrypt.
+- Incorporar la persistencia versionada de usuarios con `firstName`, `lastName`, `email` único normalizado, auditoría TypeORM y manejo seguro de password mediante bcrypt. El registro usa nombres, apellidos, email y password; el login conserva exclusivamente email y password.
 - Exponer registro, login y consulta protegida de sesión actual con validación Zod, Passport/JWT, respuestas de error uniformes y documentación OpenAPI de la API principal.
 - Aplicar autenticación JWT a las rutas privadas y tratar tokens vencidos o inválidos sin revelar información sensible.
 - Implementar logout exclusivamente como acción cliente: eliminar el JWT de `sessionStorage` y volver a una ruta pública, sin endpoint ni revocación server-side.
@@ -16,7 +16,7 @@ La base ejecutable ya está cerrada, pero una persona visitante todavía no pued
 ## Capabilities
 
 ### New Capabilities
-- `account-session`: Permite a visitantes registrarse e iniciar sesión con `email + password`, consultar una sesión JWT protegida y cerrarla localmente en el cliente.
+- `account-session`: Permite a visitantes registrarse con nombres, apellidos, email y password; iniciar sesión exclusivamente con email y password; consultar una sesión JWT protegida y cerrarla localmente en el cliente.
 
 ### Modified Capabilities
 
@@ -25,6 +25,6 @@ La base ejecutable ya está cerrada, pero una persona visitante todavía no pued
 ## Impact
 
 - API NestJS: entidad y migración de usuario, inicialización TypeORM lazy, servicios y controladores de autenticación, guardias Passport/JWT, validación y documentación Swagger/OpenAPI.
-- PostgreSQL/TypeORM: tabla de usuarios con `email` normalizado único y auditoría; no se crean entidades ni datos de perfil o proyectos.
-- Web Astro/Preact: landing, vistas de autenticación y navegación/rutas protegidas; la isla `ApiStatus` conserva su responsabilidad actual.
+- PostgreSQL/TypeORM: tabla de usuarios con `firstName` y `lastName` nullable para preservar cuentas previas, `email` normalizado único y auditoría. La migración evoluciona la tabla sin recrearla ni borrar cuentas.
+- Web Astro/Preact: landing, registro con nombres/apellidos/email/password, login de email/password y navegación/rutas protegidas; la isla `ApiStatus` conserva su responsabilidad actual.
 - Contratos, pruebas Jest/Supertest, Vitest y Playwright, junto con el documento de CU-1, guía de variables y modelo de amenazas mínimo.

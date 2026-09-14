@@ -1,6 +1,11 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import type { Account, Credentials, Session } from "@primer-parcial/contracts";
+import type {
+  Account,
+  LoginCredentials,
+  RegisterCredentials,
+  Session,
+} from "@primer-parcial/contracts";
 import bcrypt from "bcrypt";
 import { randomUUID } from "node:crypto";
 import { QueryFailedError, type Repository } from "typeorm";
@@ -28,16 +33,18 @@ export class AuthService {
     @Inject(API_CONFIGURATION) private readonly configuration: ApiConfiguration,
   ) {}
 
-  async register(credentials: Credentials): Promise<Account> {
+  async register(registration: RegisterCredentials): Promise<Account> {
     try {
       const repository = await this.repository();
       const passwordHash = await bcrypt.hash(
-        credentials.password,
+        registration.password,
         this.configuration.authentication.bcryptCost,
       );
       const user = repository.create({
         id: randomUUID(),
-        email: credentials.email,
+        firstName: registration.firstName,
+        lastName: registration.lastName,
+        email: registration.email,
         passwordHash,
       });
 
@@ -55,7 +62,7 @@ export class AuthService {
     }
   }
 
-  async login(credentials: Credentials): Promise<Session> {
+  async login(credentials: LoginCredentials): Promise<Session> {
     try {
       const repository = await this.repository();
       const user = await repository
@@ -104,7 +111,12 @@ export class AuthService {
 }
 
 function toAccount(user: User): Account {
-  return { id: user.id, email: user.email };
+  return {
+    id: user.id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+  };
 }
 
 function isUniqueViolation(error: unknown): boolean {

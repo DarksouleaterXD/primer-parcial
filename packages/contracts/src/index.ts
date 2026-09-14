@@ -15,7 +15,18 @@ export const passwordSchema = z
     `Password must not exceed ${MAX_PASSWORD_BYTES} UTF-8 bytes`,
   );
 
-export const credentialsSchema = z
+export const accountNameSchema = z.string().trim().min(1);
+
+export const registerSchema = z
+  .object({
+    firstName: accountNameSchema,
+    lastName: accountNameSchema,
+    email: emailSchema,
+    password: passwordSchema,
+  })
+  .strict();
+
+export const loginSchema = z
   .object({
     email: emailSchema,
     password: passwordSchema,
@@ -24,6 +35,8 @@ export const credentialsSchema = z
 
 export const accountSchema = z.object({
   id: z.uuid(),
+  firstName: z.string().nullable(),
+  lastName: z.string().nullable(),
   email: z.email(),
 });
 
@@ -31,7 +44,8 @@ export const sessionSchema = z.object({
   accessToken: z.string().min(1),
 });
 
-export type Credentials = z.infer<typeof credentialsSchema>;
+export type RegisterCredentials = z.infer<typeof registerSchema>;
+export type LoginCredentials = z.infer<typeof loginSchema>;
 export type Account = z.infer<typeof accountSchema>;
 export type Session = z.infer<typeof sessionSchema>;
 

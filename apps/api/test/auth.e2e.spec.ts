@@ -1,11 +1,15 @@
 import type { NestExpressApplication } from "@nestjs/platform-express";
 import { JwtService } from "@nestjs/jwt";
+import bcrypt from "bcrypt";
+import { randomUUID } from "node:crypto";
 import request from "supertest";
 
 import { createApiApplication } from "../src/app.js";
 import { readApiConfiguration } from "../src/config/api-configuration.js";
 import {
   getStoredPasswordHash,
+  getStoredAccount,
+  insertLegacyAccount,
   prepareTestDatabase,
   testEnvironment,
 } from "./test-database.js";
@@ -26,15 +30,22 @@ describe("account session API", () => {
     await app.close();
   });
 
-  it("registers a normalized email without storing the password in plaintext", async () => {
+  it("registers trimmed names and a normalized email without storing the password in plaintext", async () => {
     const password = "password";
     const response = await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send({ email: "  PERSONA@EXAMPLE.TEST ", password })
+      .send({
+        firstName: "  Persona ",
+        lastName: " Ejemplo  ",
+        email: "  PERSONA@EXAMPLE.TEST ",
+        password,
+      })
       .expect(201);
 
     expect(response.body).toEqual({
       id: expect.any(String),
+      firstName: "Persona",
+      lastName: "Ejemplo",
       email: "persona@example.test",
     });
     expect(JSON.stringify(response.body)).not.toContain(password);
@@ -42,15 +53,24 @@ describe("account session API", () => {
     const passwordHash = await getStoredPasswordHash("persona@example.test");
     expect(passwordHash).toMatch(/^\$2[aby]\$/);
     expect(passwordHash).not.toBe(password);
+    await expect(getStoredAccount("persona@example.test")).resolves.toEqual({
+      first_name: "Persona",
+      last_name: "Ejemplo",
+    });
   });
 
-  it("rejects duplicate emails and invalid password lengths without database details", async () => {
-    const credentials = { email: "persona@example.test", password: "password" };
-    await request(app.getHttpServer()).post("/api/auth/register").send(credentials).expect(201);
+  it("rejects duplicate emails, empty names, and invalid password lengths without database details", async () => {
+    const registration = {
+      firstName: "Persona",
+      lastName: "Ejemplo",
+      email: "persona@example.test",
+      password: "password",
+    };
+    await request(app.getHttpServer()).post("/api/auth/register").send(registration).expect(201);
 
     const duplicate = await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send({ ...credentials, email: "PERSONA@EXAMPLE.TEST" })
+      .send({ ...registration, email: "PERSONA@EXAMPLE.TEST" })
       .expect(400);
     expect(duplicate.body).toEqual({
       statusCode: 400,
@@ -61,15 +81,23 @@ describe("account session API", () => {
 
     await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send({ email: "other@example.test", password: "short" })
+      .send({ ...registration, email: "other@example.test", password: "short" })
       .expect(400);
     await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send({ email: "other@example.test", password: "a".repeat(73) })
+      .send({ ...registration, email: "other@example.test", password: "a".repeat(73) })
       .expect(400);
     await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send({ email: "not-an-email", password: "password" })
+      .send({ ...registration, email: "not-an-email" })
+      .expect(400);
+    await request(app.getHttpServer())
+      .post("/api/auth/register")
+      .send({ ...registration, firstName: "" })
+      .expect(400);
+    await request(app.getHttpServer())
+      .post("/api/auth/register")
+      .send({ ...registration, lastName: "   " })
       .expect(400);
   });
 
@@ -77,7 +105,7 @@ describe("account session API", () => {
     const credentials = { email: "persona@example.test", password: "password" };
     const registered = await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send(credentials)
+      .send({ firstName: "Persona", lastName: "Ejemplo", ...credentials })
       .expect(201);
 
     const login = await request(app.getHttpServer())
@@ -90,13 +118,44 @@ describe("account session API", () => {
       .get("/api/auth/session")
       .set("Authorization", `Bearer ${login.body.accessToken}`)
       .expect(200)
-      .expect({ id: registered.body.id, email: credentials.email });
+      .expect({
+        id: registered.body.id,
+        firstName: "Persona",
+        lastName: "Ejemplo",
+        email: credentials.email,
+      });
+  });
+
+  it("keeps a legacy account with nullable names able to log in and load its session", async () => {
+    const id = randomUUID();
+    await insertLegacyAccount(id, "legacy@example.test", await bcrypt.hash("password", 4));
+
+    const login = await request(app.getHttpServer())
+      .post("/api/auth/login")
+      .send({ email: "legacy@example.test", password: "password" })
+      .expect(200);
+
+    await request(app.getHttpServer())
+      .get("/api/auth/session")
+      .set("Authorization", `Bearer ${login.body.accessToken}`)
+      .expect(200)
+      .expect({
+        id,
+        firstName: null,
+        lastName: null,
+        email: "legacy@example.test",
+      });
   });
 
   it("returns the same public response for an unknown email and an incorrect password", async () => {
     await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send({ email: "persona@example.test", password: "password" })
+      .send({
+        firstName: "Persona",
+        lastName: "Ejemplo",
+        email: "persona@example.test",
+        password: "password",
+      })
       .expect(201);
 
     const unknownEmail = await request(app.getHttpServer())
@@ -115,7 +174,7 @@ describe("account session API", () => {
     const credentials = { email: "persona@example.test", password: "password" };
     const registered = await request(app.getHttpServer())
       .post("/api/auth/register")
-      .send(credentials)
+      .send({ firstName: "Persona", lastName: "Ejemplo", ...credentials })
       .expect(201);
     const expiredToken = new JwtService({
       secret: testEnvironment.JWT_SECRET,

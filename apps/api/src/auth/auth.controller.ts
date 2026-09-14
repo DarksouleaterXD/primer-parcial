@@ -12,7 +12,7 @@ import { ZodResponse } from "nestjs-zod";
 import type { Request } from "express";
 
 import { AuthService } from "./auth.service.js";
-import { AccountDto, CredentialsDto, SessionDto } from "./auth.dto.js";
+import { AccountDto, LoginDto, RegisterDto, SessionDto } from "./auth.dto.js";
 import { JwtAuthGuard } from "./jwt-auth.guard.js";
 import type { AuthenticatedPrincipal } from "./jwt.strategy.js";
 
@@ -31,8 +31,8 @@ export class AuthController {
     description: "Account created.",
     type: AccountDto,
   })
-  register(@Body() credentials: CredentialsDto): Promise<AccountDto> {
-    return this.authService.register(credentials);
+  register(@Body() registration: RegisterDto): Promise<AccountDto> {
+    return this.authService.register(registration);
   }
 
   @Post("login")
@@ -42,7 +42,7 @@ export class AuthController {
     description: "JWT session created.",
     type: SessionDto,
   })
-  login(@Body() credentials: CredentialsDto): Promise<SessionDto> {
+  login(@Body() credentials: LoginDto): Promise<SessionDto> {
     return this.authService.login(credentials);
   }
 

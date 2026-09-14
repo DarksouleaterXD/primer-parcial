@@ -1,9 +1,11 @@
 import {
   accountSchema,
-  credentialsSchema,
+  loginSchema,
+  registerSchema,
   sessionSchema,
   type Account,
-  type Credentials,
+  type LoginCredentials,
+  type RegisterCredentials,
 } from "@primer-parcial/contracts";
 
 const SESSION_TOKEN_KEY = "primer-parcial.session-token";
@@ -13,8 +15,8 @@ export type AuthResult<T> =
   | { readonly data?: never; readonly error: string };
 
 export interface AuthClient {
-  register(credentials: Credentials): Promise<AuthResult<Account>>;
-  login(credentials: Credentials): Promise<AuthResult<void>>;
+  register(registration: RegisterCredentials): Promise<AuthResult<Account>>;
+  login(credentials: LoginCredentials): Promise<AuthResult<void>>;
   currentAccount(): Promise<AuthResult<Account | null>>;
   logout(): void;
   hasSession(): boolean;
@@ -32,11 +34,11 @@ export function createAuthClient(
   const origin = apiOrigin.replace(/\/$/, "");
 
   return {
-    async register(credentials) {
+    async register(registration) {
       const response = await request(fetchImplementation, `${origin}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
+        body: JSON.stringify(registration),
       });
 
       if (!response.ok) {
@@ -97,8 +99,17 @@ export function createAuthClient(
   };
 }
 
-export function validateCredentials(input: Credentials): AuthResult<Credentials> {
-  const result = credentialsSchema.safeParse(input);
+export function validateRegistration(
+  input: RegisterCredentials,
+): AuthResult<RegisterCredentials> {
+  const result = registerSchema.safeParse(input);
+  return result.success
+    ? { data: result.data }
+    : { error: "Ingresá nombres y apellidos, un email válido y una contraseña de 8 a 72 bytes" };
+}
+
+export function validateLogin(input: LoginCredentials): AuthResult<LoginCredentials> {
+  const result = loginSchema.safeParse(input);
   return result.success
     ? { data: result.data }
     : { error: "Ingresá un email válido y una contraseña de 8 a 72 bytes" };

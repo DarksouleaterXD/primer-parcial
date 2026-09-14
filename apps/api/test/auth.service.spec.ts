@@ -30,13 +30,19 @@ describe("AuthService", () => {
     );
 
     const account = await service.register({
+      firstName: "Persona",
+      lastName: "Ejemplo",
       email: "persona@example.test",
       password: "password",
     });
 
+    expect(account.firstName).toBe("Persona");
+    expect(account.lastName).toBe("Ejemplo");
     expect(account.email).toBe("persona@example.test");
     expect(repository.save).toHaveBeenCalledWith(
       expect.objectContaining({
+        firstName: "Persona",
+        lastName: "Ejemplo",
         email: "persona@example.test",
         id: expect.any(String),
         passwordHash: expect.not.stringContaining("password"),
@@ -100,5 +106,31 @@ describe("AuthService", () => {
     await expect(
       service.login({ email: "persona@example.test", password: "password" }),
     ).rejects.toMatchObject({ response: { message: "Authentication service unavailable" } });
+  });
+
+  it("returns nullable names from a legacy account without exposing its hash", async () => {
+    const repository = {
+      findOneBy: jest.fn().mockResolvedValue({
+        id: "32874025-f1b8-4650-8b9f-e59ff4b72175",
+        firstName: null,
+        lastName: null,
+        email: "legacy@example.test",
+        passwordHash: "not-exposed",
+      }),
+    };
+    const service = new AuthService(
+      {
+        get: jest.fn(async () => ({ getRepository: () => repository })),
+      } as never,
+      { signAsync: jest.fn() } as never,
+      configuration as never,
+    );
+
+    await expect(service.currentAccount("32874025-f1b8-4650-8b9f-e59ff4b72175")).resolves.toEqual({
+      id: "32874025-f1b8-4650-8b9f-e59ff4b72175",
+      firstName: null,
+      lastName: null,
+      email: "legacy@example.test",
+    });
   });
 });

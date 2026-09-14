@@ -1,6 +1,10 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useLayoutEffect, useRef, useState } from "preact/hooks";
 
-import { createAuthClient, validateCredentials } from "../auth/auth-client";
+import {
+  createAuthClient,
+  validateLogin,
+  validateRegistration,
+} from "../auth/auth-client";
 
 type FormMode = "register" | "login";
 
@@ -28,6 +32,8 @@ const copy = {
 } as const;
 
 export function AuthForm({ apiOrigin, mode, onNavigate = navigate }: AuthFormProps) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string>();
@@ -37,7 +43,7 @@ export function AuthForm({ apiOrigin, mode, onNavigate = navigate }: AuthFormPro
   const errorReference = useRef<HTMLParagraphElement>(null);
   const content = copy[mode];
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (error) {
       errorReference.current?.focus();
     }
@@ -52,31 +58,41 @@ export function AuthForm({ apiOrigin, mode, onNavigate = navigate }: AuthFormPro
     setError(undefined);
     setMessage(undefined);
 
-    const credentials = validateCredentials({ email, password });
+    if (mode === "register") {
+      const registration = validateRegistration({ firstName, lastName, email, password });
+      if ("error" in registration) {
+        setError(registration.error);
+        return;
+      }
+
+      setIsSubmitting(true);
+      const result = await createAuthClient(apiOrigin).register(registration.data);
+      setIsSubmitting(false);
+      if ("error" in result) {
+        setError(result.error);
+        return;
+      }
+
+      setPassword("");
+      setMessage("Cuenta creada. Ahora podés iniciar sesión.");
+      return;
+    }
+
+    const credentials = validateLogin({ email, password });
     if ("error" in credentials) {
       setError(credentials.error);
       return;
     }
 
     setIsSubmitting(true);
-    const client = createAuthClient(apiOrigin);
-    const result =
-      mode === "register"
-        ? await client.register(credentials.data)
-        : await client.login(credentials.data);
+    const result = await createAuthClient(apiOrigin).login(credentials.data);
     setIsSubmitting(false);
-
     if ("error" in result) {
       setError(result.error);
       return;
     }
 
     setPassword("");
-    if (mode === "register") {
-      setMessage("Cuenta creada. Ahora podés iniciar sesión.");
-      return;
-    }
-
     onNavigate("/workspace");
   }
 
@@ -84,6 +100,34 @@ export function AuthForm({ apiOrigin, mode, onNavigate = navigate }: AuthFormPro
     <form class="auth-form" aria-label={content.title} onSubmit={handleSubmit} noValidate>
       <h1>{content.title}</h1>
       <p class="form-intro">Usá tu email y una contraseña de al menos 8 caracteres.</p>
+
+      {mode === "register" ? (
+        <>
+          <label for="register-first-name">Nombres</label>
+          <input
+            id="register-first-name"
+            name="firstName"
+            type="text"
+            autocomplete="given-name"
+            value={firstName}
+            onInput={(event) => setFirstName(event.currentTarget.value)}
+            aria-describedby={error ? "register-feedback" : undefined}
+            required
+          />
+
+          <label for="register-last-name">Apellidos</label>
+          <input
+            id="register-last-name"
+            name="lastName"
+            type="text"
+            autocomplete="family-name"
+            value={lastName}
+            onInput={(event) => setLastName(event.currentTarget.value)}
+            aria-describedby={error ? "register-feedback" : undefined}
+            required
+          />
+        </>
+      ) : null}
 
       <label for={`${mode}-email`}>Email</label>
       <input

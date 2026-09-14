@@ -15,7 +15,12 @@ describe("PrivateArea", () => {
   it("renders no private content until a stored JWT confirms the session", async () => {
     window.sessionStorage.setItem("primer-parcial.session-token", "jwt-token");
     const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ id: "32874025-f1b8-4650-8b9f-e59ff4b72175", email: "persona@example.test" }), {
+      new Response(JSON.stringify({
+        id: "32874025-f1b8-4650-8b9f-e59ff4b72175",
+        firstName: "Persona",
+        lastName: "Ejemplo",
+        email: "persona@example.test",
+      }), {
         status: 200,
       }),
     );
@@ -25,7 +30,7 @@ describe("PrivateArea", () => {
 
     expect(screen.getByText("Comprobando sesión…")).toBeTruthy();
     expect(await screen.findByText("Área privada")).toBeTruthy();
-    expect(screen.getByText("persona@example.test")).toBeTruthy();
+    expect(screen.getByText("Persona Ejemplo")).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledWith(`${apiOrigin}/api/auth/session`, {
       headers: { Authorization: "Bearer jwt-token" },
     });
@@ -68,7 +73,12 @@ describe("PrivateArea", () => {
     window.sessionStorage.setItem("primer-parcial.session-token", "jwt-token");
     const navigate = vi.fn();
     const fetchMock = vi.fn().mockResolvedValue(
-      new Response(JSON.stringify({ id: "32874025-f1b8-4650-8b9f-e59ff4b72175", email: "persona@example.test" }), {
+      new Response(JSON.stringify({
+        id: "32874025-f1b8-4650-8b9f-e59ff4b72175",
+        firstName: null,
+        lastName: null,
+        email: "legacy@example.test",
+      }), {
         status: 200,
       }),
     );
@@ -76,6 +86,7 @@ describe("PrivateArea", () => {
 
     render(<PrivateArea apiOrigin={apiOrigin} onNavigate={navigate} />);
 
+    expect(await screen.findByText("legacy@example.test")).toBeTruthy();
     fireEvent.click(await screen.findByRole("button", { name: "Cerrar sesión" }));
 
     expect(window.sessionStorage.getItem("primer-parcial.session-token")).toBeNull();
