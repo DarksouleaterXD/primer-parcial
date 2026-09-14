@@ -120,6 +120,7 @@ $environmentNames = @(
   "POSTGRES_HOST",
   "POSTGRES_PORT",
   "API_PORT",
+  "COMPOSE_PROJECT_NAME",
   "WEB_ORIGIN",
   "JWT_SECRET",
   "JWT_EXPIRES_IN_SECONDS",
@@ -232,6 +233,7 @@ try {
     [Environment]::SetEnvironmentVariable($name, $syntheticEnvironment[$name], "Process")
   }
   [Environment]::SetEnvironmentVariable("API_PORT", $apiPort, "Process")
+  [Environment]::SetEnvironmentVariable("COMPOSE_PROJECT_NAME", $composeProject, "Process")
 
   Push-Location $temporaryDirectory
   try {
