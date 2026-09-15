@@ -103,3 +103,15 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 - La evidencia `reproduce-clean` del snapshot anterior queda como historial porque el codigo cambio despues.
 - OpenSpec vuelve temporalmente a 8/9: 3.2 permanece pendiente hasta un nuevo snapshot versionado y nueva reproduccion limpia.
 - CU-2.1 no esta listo para archive hasta renovar esa evidencia y repetir verify.
+
+## Cierre local CU-2.1 - 2026-09-15
+
+CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
+
+- Snapshot reproducido: `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
+- `uml-domain`: 23/23 tests.
+- E2E Chromium: 5/5.
+- Build raiz: correcto.
+- PostgreSQL aislado: `55432`.
+- Health final: `available`.
+- Estado: listo para verify/sync/archive.

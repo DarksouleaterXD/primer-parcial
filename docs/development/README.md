@@ -130,3 +130,7 @@ El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctam
 ### Remediacion runtime CU-2.1
 
 El verify posterior a la primera reproduccion limpia encontro que el parser aceptaba formas JSON que violaban contratos cerrados. Tras corregir parser/validador, la evidencia del snapshot anterior es historica. Debe ejecutarse `reproduce-clean` otra vez sobre un commit que incluya la remediacion antes de archivar CU-2.1.
+
+### Evidencia reproduce-clean CU-2.1 - 2026-09-15
+
+El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctamente. Como `5432` estaba ocupado, la receta portable uso el puerto aislado `55432` sin modificar el `compose.yaml` versionado ni detener servicios existentes. El resultado final fue 5/5 E2E Chromium, build raiz correcto y health `available`.

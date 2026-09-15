@@ -202,3 +202,24 @@ El verify final detecto un bloqueo critico: `parseProjectDocument` no validaba r
 La reproduccion limpia registrada antes de esta remediacion se conserva como historial, pero ya no certifica el codigo actual. La tarea 3.2 queda reabierta hasta versionar esta correccion y ejecutar nuevamente `reproduce-clean`.
 
 Estado vigente: no archivar CU-2.1 todavia.
+
+## Cierre local CU-2.1 - 2026-09-15
+
+CU-2.1 - Modelo y validacion queda implementado y verificado localmente con 9/9 tareas OpenSpec completas.
+
+La reproduccion limpia final paso correctamente sobre el snapshot Git `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
+
+Evidencia real:
+- `uml-domain`: 23/23 tests;
+- E2E Chromium: 5/5;
+- build raiz completo: API, web, contracts y `uml-domain`;
+- PostgreSQL aislado: host port `55432`;
+- proyecto Compose aislado: `primer-parcial-clean-4bf13daade14`;
+- health final: `available`;
+- PostgreSQL temporal detenido correctamente al finalizar;
+- `git diff --check`: correcto;
+- OpenSpec strict: correcto.
+
+No se implementaron Command Bus, Undo/Redo, canvas, persistencia de proyectos, XMI, generacion ni IA en CU-2.1.
+
+Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.

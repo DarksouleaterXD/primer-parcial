@@ -163,3 +163,7 @@ CU-2.1 (`cu-2-1-modelo-validacion`) esta 9/9 y no requiere mas implementacion fu
 ## Gate vigente CU-2.1 tras remediacion
 
 El bloqueo critico de validacion runtime fue corregido. No iniciar CU-2.2. Primero versionar la remediacion, ejecutar una nueva reproduccion limpia, registrar la evidencia, volver a 9/9 y repetir verify -> sync -> archive.
+
+## Gate actual CU-2.1
+
+CU-2.1 (`cu-2-1-modelo-validacion`) esta 9/9 y no requiere mas implementacion funcional. El siguiente paso permitido es verify -> sync -> archive. No iniciar CU-2.2 antes de cerrar formalmente CU-2.1.
