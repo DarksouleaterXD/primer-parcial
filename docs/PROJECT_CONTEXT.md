@@ -155,3 +155,7 @@ Las comprobaciones iniciales están en [desarrollo](development/README.md); resu
 ## Estado de continuidad CU-2.1
 
 CU-2.1 fue aprobado explícitamente el 2026-09-14. La implementación activa crea `packages/uml-domain` con documento/modelo canónico, layout separado, perfil de generación, serialización y validación. CU-2.2, CU-2.3, persistencia, realtime, XMI, generación e IA siguen fuera de alcance.
+
+## Gate actual CU-2.1
+
+CU-2.1 (`cu-2-1-modelo-validacion`) esta 9/9 y no requiere mas implementacion funcional. El siguiente paso permitido es verify -> sync -> archive. No iniciar CU-2.2 antes de cerrar formalmente CU-2.1.

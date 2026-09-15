@@ -173,3 +173,24 @@ No se requiere E2E de navegador en CU-2.1 porque todavía no existe UI UML; el E
 ## Comandos finales de commit y push
 
 Pendientes hasta implementar, verificar y cerrar CU-2.1. El parche de planificación no ejecuta `git add`, `git commit` ni `git push`.
+
+## Cierre local CU-2.1 - 2026-09-15
+
+CU-2.1 - Modelo y validacion queda implementado y verificado localmente con 9/9 tareas OpenSpec completas.
+
+La reproduccion limpia final paso correctamente sobre el snapshot Git `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
+
+Evidencia real:
+- `uml-domain`: 23/23 tests;
+- E2E Chromium: 5/5;
+- build raiz completo: API, web, contracts y `uml-domain`;
+- PostgreSQL aislado: host port `55432`;
+- proyecto Compose aislado: `primer-parcial-clean-4bf13daade14`;
+- health final: `available`;
+- PostgreSQL temporal detenido correctamente al finalizar;
+- `git diff --check`: correcto;
+- OpenSpec strict: correcto.
+
+No se implementaron Command Bus, Undo/Redo, canvas, persistencia de proyectos, XMI, generacion ni IA en CU-2.1.
+
+Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.

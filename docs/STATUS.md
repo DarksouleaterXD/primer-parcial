@@ -82,3 +82,15 @@ La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/`
 | 2026-09-14 | Se completó y archivó CU-1. | 9/9 tareas; reproducción limpia, revisión manual y `Verify base executable` #6 correctos. |
 | 2026-09-14 | Se preparó y aprobó la planificación de CU-2.1. | Proposal, spec, design y tasks de `cu-2-1-modelo-validacion`. |
 | 2026-09-14 | Se implementaron los bloques de dominio y validación de CU-2.1. | `packages/uml-domain` con modelo canónico, perfil, serialización, validador y pruebas; integración/cierre pendientes. |
+
+## Cierre local CU-2.1 - 2026-09-15
+
+CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
+
+- Snapshot reproducido: `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
+- `uml-domain`: 23/23 tests.
+- E2E Chromium: 5/5.
+- Build raiz: correcto.
+- PostgreSQL aislado: `55432`.
+- Health final: `available`.
+- Estado: listo para verify/sync/archive.
