@@ -1,4 +1,4 @@
-# Desarrollo local en Windows / PowerShell
+﻿# Desarrollo local en Windows / PowerShell
 
 **Estado:** CU-0 está terminado. CU-1 tiene cuenta/sesión, checks locales, E2E Chromium, reproducción limpia, build, revisión manual y CI remoto verificados; está formalmente listo para `/opsx-sync` y `/opsx-archive`. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
 
@@ -60,6 +60,12 @@ docker compose ps
 El health devuelve `200` y `{ "status": "available" }` cuando puede ejecutar `SELECT 1` en PostgreSQL. Si la base no está disponible, devuelve `503` y `{ "status": "unavailable" }`, sin detalles de conexión. La isla web realiza una única consulta, tiene timeout y muestra `API no disponible` ante fallo, respuesta inválida o estado no 200.
 
 CU-1 agrega `/register`, `/login` y `/workspace`. Registro usa nombres, apellidos, email y password; login usa únicamente `email + password`. El JWT se conserva solo en `sessionStorage` y el cierre de sesión lo elimina en el cliente, sin endpoint de logout. Las variables de autenticación son obligatorias: `JWT_SECRET`, `JWT_EXPIRES_IN_SECONDS` y `BCRYPT_COST`. Los valores de ejemplo son sintéticos y no son aptos para despliegue.
+
+### Variables PostgreSQL para tests locales
+
+Los helpers de tests API respetan `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_TEST_DB`. Si no se definen, conservan los valores locales historicos y puerto `5432`, que siguen siendo los usados por CI y `reproduce-clean`.
+
+Si una estacion de trabajo publica PostgreSQL en otro puerto de host, por ejemplo `5433`, exporta ese puerto en la misma terminal antes de `npm run test`; no es necesario cambiar ni commitear `compose.yaml` para adaptar los tests.
 
 ## Reproducción limpia
 

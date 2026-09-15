@@ -1,70 +1,70 @@
-# CU-2 â€” Modelar diagramas UML manualmente
+﻿# CU-2 — Modelar diagramas UML manualmente
 
 ## Estado y trazabilidad
 
-- **Estado del CU: Planificado; implementaciÃ³n no iniciada.**
+- **Estado del CU: En implementación.**
 - Dependencias: CU-0 terminado y CU-1 terminado/archivado.
 - Actor principal: modelador autenticado.
-- Origen histÃ³rico: CUs anteriores 1â€“5, reagrupados en el plan 12/3.
-- Incremento activo: **CU-2.1 â€” Modelo y validaciÃ³n**.
+- Origen histórico: CUs anteriores 1–5, reagrupados en el plan 12/3.
+- Incremento activo: **CU-2.1 - Modelo y validacion**, dominio/validacion e integracion raiz verificados; reproduccion limpia y cierre documental pendientes.
 - Cambio OpenSpec activo: `cu-2-1-modelo-validacion`.
-- CU-2.2 â€” Comandos e historial: pendiente.
-- CU-2.3 â€” Workspace visual: pendiente.
+- CU-2.2 — Comandos e historial: pendiente.
+- CU-2.3 — Workspace visual: pendiente.
 
-La existencia de proposal/spec/design/tasks para CU-2.1 constituye planificaciÃ³n y no autorizaciÃ³n de implementaciÃ³n. El cÃ³digo comienza solo despuÃ©s de aprobaciÃ³n explÃ­cita.
+CU-2.1 fue aprobado explícitamente antes de implementar. El código aplicado se limita al dominio UML, serialización, perfil y validación definidos por OpenSpec; la integración y el cierre siguen pendientes de evidencia real.
 
 ## Objetivo y resultado usable
 
-CU-2 debe convertir la sesiÃ³n autenticada de CU-1 en un editor manual de diagramas de clases basado en una Ãºnica fuente de verdad. Al cerrar el CU completo existirÃ¡n modelo canÃ³nico, validaciÃ³n, Command Bus, historial Undo/Redo y workspace D3/SVG en memoria. La persistencia y reapertura real de proyectos pertenece a CU-3.
+CU-2 debe convertir la sesión autenticada de CU-1 en un editor manual de diagramas de clases basado en una única fuente de verdad. Al cerrar el CU completo existirán modelo canónico, validación, Command Bus, historial Undo/Redo y workspace D3/SVG en memoria. La persistencia y reapertura real de proyectos pertenece a CU-3.
 
-CU-2.1 entrega Ãºnicamente el fundamento de dominio: documento canÃ³nico versionado, serializaciÃ³n, separaciÃ³n semÃ¡ntica/layout, perfil de generaciÃ³n y validaciÃ³n determinista.
+CU-2.1 entrega únicamente el fundamento de dominio: documento canónico versionado, serialización, separación semántica/layout, perfil de generación y validación determinista.
 
 ## Decisiones obligatorias heredadas
 
-- `CanonicalUmlModel` es la Ãºnica fuente de verdad semÃ¡ntica.
+- `CanonicalUmlModel` es la única fuente de verdad semántica.
 - `DiagramLayout` almacena solo datos visuales referenciados por ID.
 - Canvas, SVG, D3 y ELK no se persisten como dominio.
-- Toda mutaciÃ³n del UML pasarÃ¡ por `UmlCommandBus` desde CU-2.2.
+- Toda mutación del UML pasará por `UmlCommandBus` desde CU-2.2.
 - UML se basa en el subconjunto UML 2.5.1 aprobado.
-- Metadatos de generaciÃ³n permanecen separados del UML puro.
-- NingÃºn incremento de CU-2 introduce persistencia TypeORM de proyectos, realtime, XMI, generaciÃ³n o IA.
-- Acciones destructivas del editor deberÃ¡n requerir confirmaciÃ³n cuando se implementen en el workspace.
+- Metadatos de generación permanecen separados del UML puro.
+- Ningún incremento de CU-2 introduce persistencia TypeORM de proyectos, realtime, XMI, generación o IA.
+- Acciones destructivas del editor deberán requerir confirmación cuando se implementen en el workspace.
 
 ## Incrementos
 
 | Incremento | Alcance | Estado |
 |---|---|---|
-| CU-2.1 | `ProjectDocument`, `CanonicalUmlModel`, `DiagramLayout`, perfil, serializaciÃ³n, IDs, fixtures y validador | Planificado |
-| CU-2.2 | `UmlCommandBus`, executor, comandos manuales, revisiÃ³n local, historial mÃ¡ximo 100, Undo/Redo | Pendiente |
-| CU-2.3 | Shell CASE, toolbox/inspector, D3+SVG, ELK, zoom/pan/selecciÃ³n/movimiento/relaciones, diagnÃ³sticos navegables | Pendiente |
+| CU-2.1 | `ProjectDocument`, `CanonicalUmlModel`, `DiagramLayout`, perfil, serializacion, IDs, fixtures y validador | En implementacion: integracion raiz verificada; reproduccion limpia/cierre pendiente |
+| CU-2.2 | `UmlCommandBus`, executor, comandos manuales, revisión local, historial máximo 100, Undo/Redo | Pendiente |
+| CU-2.3 | Shell CASE, toolbox/inspector, D3+SVG, ELK, zoom/pan/selección/movimiento/relaciones, diagnósticos navegables | Pendiente |
 
-## CU-2.1 â€” Modelo y validaciÃ³n
+## CU-2.1 — Modelo y validación
 
 ### Alcance funcional
 
 El documento en memoria contiene:
-- UUID y versiÃ³n de esquema;
-- nombre y propietario de sesiÃ³n;
-- revisiÃ³n local;
+- UUID y versión de esquema;
+- nombre y propietario de sesión;
+- revisión local;
 - timestamps;
 - modelo UML;
 - layout;
-- perfil de generaciÃ³n.
+- perfil de generación.
 
 El modelo UML soporta:
 - paquetes;
 - clases;
 - atributos/propiedades;
-- operaciones y parÃ¡metros;
+- operaciones y parámetros;
 - visibilidad;
 - tipos primitivos y referencias a clasificadores;
 - enumeraciones;
 - asociaciones con dos extremos;
-- agregaciÃ³n y composiciÃ³n mediante semÃ¡ntica del extremo;
+- agregación y composición mediante semántica del extremo;
 - multiplicidades;
-- generalizaciÃ³n.
+- generalización.
 
-El perfil de generaciÃ³n soporta, separado del UML:
+El perfil de generación soporta, separado del UML:
 - `entity`;
 - `auditable`;
 - `readOnly`;
@@ -75,79 +75,101 @@ El perfil de generaciÃ³n soporta, separado del UML:
 - `sortable`;
 - `defaultSort`.
 
-### ValidaciÃ³n
+### Validación
 
-El motor Ãºnico produce diagnÃ³sticos con:
+El motor único produce diagnósticos con:
 - `severity`;
 - `code`;
 - mensaje;
-- `path` lÃ³gico;
+- `path` lógico;
 - `elementId` opcional.
 
-Reglas mÃ­nimas de CU-2.1:
-- IDs Ãºnicos;
-- nombres requeridos no vacÃ­os;
+Reglas mínimas de CU-2.1:
+- IDs únicos;
+- nombres requeridos no vacíos;
 - referencias existentes y compatibles;
-- multiplicidad vÃ¡lida;
-- ausencia de ciclos de paquete y generalizaciÃ³n;
+- multiplicidad válida;
+- ausencia de ciclos de paquete y generalización;
 - referencias de layout existentes;
 - referencias del perfil existentes y compatibles;
-- versiÃ³n de documento soportada.
+- versión de documento soportada.
 
-Las polÃ­ticas `edit`, `save`, `import` y `generate` comparten reglas y cÃ³digos. CU-2.1 solo define/valida esas polÃ­ticas; no implementa guardado, XMI ni generaciÃ³n.
+Las políticas `edit`, `save`, `import` y `generate` comparten reglas y códigos. CU-2.1 solo define/valida esas políticas; no implementa guardado, XMI ni generación.
 
 ## Flujos esperados de CU-2.1
 
-1. La sesiÃ³n autenticada suministra `ownerId` al crear un documento nuevo.
-2. La fÃ¡brica crea documento versiÃ³n 1, revisiÃ³n 0, timestamps y colecciones vacÃ­as.
-3. Fixtures o consumidores de dominio agregan estructuras UML vÃ¡lidas en pruebas.
-4. El validador recorre documento, layout y perfil y devuelve diagnÃ³sticos deterministas.
-5. La serializaciÃ³n y deserializaciÃ³n preservan el documento vÃ¡lido.
-6. Una versiÃ³n no soportada, ID duplicado, referencia rota, ciclo o multiplicidad invÃ¡lida produce error tipado y nunca un falso vÃ¡lido.
+1. La sesión autenticada suministra `ownerId` al crear un documento nuevo.
+2. La fábrica crea documento versión 1, revisión 0, timestamps y colecciones vacías.
+3. Fixtures o consumidores de dominio agregan estructuras UML válidas en pruebas.
+4. El validador recorre documento, layout y perfil y devuelve diagnósticos deterministas.
+5. La serialización y deserialización preservan el documento válido.
+6. Una versión no soportada, ID duplicado, referencia rota, ciclo o multiplicidad inválida produce error tipado y nunca un falso válido.
 
-CU-2.1 no expone todavÃ­a estas acciones como editor visual; las mutaciones pÃºblicas se diseÃ±an en CU-2.2.
+CU-2.1 no expone estas acciones como editor visual; las mutaciones públicas se diseñan en CU-2.2. La implementación actual vive en `packages/uml-domain` y no importa UI, backend, ORM ni librerías de canvas.
 
 ## Fuera de alcance de CU-2.1
 
-- Command Bus y comandos de ediciÃ³n.
+- Command Bus y comandos de edición.
 - Undo/Redo e historial.
 - Canvas, D3, SVG, ELK, Shoelace y Nanostores.
-- Toolbox, inspector, menÃºs contextuales y rutas del editor.
+- Toolbox, inspector, menús contextuales y rutas del editor.
 - Guardado o reapertura en PostgreSQL.
 - CRUD/ownership persistente de proyectos.
-- WebSocket, colaboraciÃ³n y presencia.
+- WebSocket, colaboración y presencia.
 - XMI.
-- UML â†’ relacional y generaciÃ³n de cÃ³digo.
+- UML → relacional y generación de código.
 - IA, lenguaje natural, voz e imagen.
 - Offline integral.
 
+## Implementación actual
+
+- Nuevo workspace `@primer-parcial/uml-domain` sin dependencias de runtime.
+- `ProjectDocument` versión 1 con fábrica inyectable de ID/reloj.
+- Modelo canónico con paquetes, clases, atributos, operaciones, parámetros, enumeraciones, asociaciones y generalizaciones.
+- `DiagramLayout` separado y perfil de generación referenciado por IDs.
+- Serializador estable y parser versionado sin documentos parciales ante errores estructurales.
+- Validador único con diagnósticos ordenados y políticas `edit`, `save`, `import` y `generate`.
+- Fixtures y pruebas unitarias del dominio.
+
+Aún no se registra como cerrado ningún check raíz, reproducción limpia ni evidencia CI; esas verificaciones corresponden al bloque de integración.
+
+## Evidencia de integracion CU-2.1 - 2026-09-15
+
+La regresion raiz fue ejecutada correctamente con el nuevo workspace incluido: `npm run lint`, `npm run typecheck`, `npm run test` y `npm run build`. La API cerro 18/18 tests, web 19 correctos con 1 integracion condicional omitida, contracts 4/4 y `uml-domain` 23/23. `astro check` informo 0 errores, 0 warnings y 0 hints.
+
+El control de alcance confirmo que `packages/uml-domain` no introdujo Command Bus, Undo/Redo, canvas, persistencia, XMI, generacion ni IA. `openspec validate cu-2-1-modelo-validacion --strict` y `git diff --check` fueron correctos.
+
+Durante la regresion en esta PC se detecto una limitacion heredada de infraestructura de tests de CU-1: `apps/api/test/test-database.ts` fijaba `POSTGRES_PORT=5432`. Se corrigio para respetar `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_TEST_DB` del entorno, conservando los valores historicos como fallback. Esto no cambia el comportamiento productivo ni el contrato de CI/reproduccion limpia.
+
+La reproduccion limpia permanece pendiente porque debe ejecutarse sobre un snapshot Git versionado que incluya CU-2.1.
+
 ## Pruebas requeridas para cerrar CU-2.1
 
-- Unitarias del documento, modelo, perfil, serializaciÃ³n y validador.
+- Unitarias del documento, modelo, perfil, serialización y validador.
 - Fixtures positivos y negativos de todo el subconjunto incorporado.
-- Round-trip completo de semÃ¡ntica/layout/perfil.
+- Round-trip completo de semántica/layout/perfil.
 - IDs duplicados, nombres, referencias, multiplicidad y ciclos.
-- PolÃ­ticas de validaciÃ³n y orden estable de diagnÃ³sticos.
+- Políticas de validación y orden estable de diagnósticos.
 - `npm run lint`.
 - `npm run typecheck`.
 - `npm run test`.
 - `npm run build`.
-- ReproducciÃ³n limpia si cambia el workspace/lockfile o la receta reproducible.
+- Reproducción limpia si cambia el workspace/lockfile o la receta reproducible.
 - `openspec validate cu-2-1-modelo-validacion --strict`.
 - `git diff --check`.
-- RegresiÃ³n de CU-0/CU-1 sin cambiar sus contratos.
+- Regresión de CU-0/CU-1 sin cambiar sus contratos.
 
-No se requiere E2E de navegador en CU-2.1 porque todavÃ­a no existe UI UML; el E2E manual de diagramaciÃ³n corresponde al cierre de CU-2.3.
+No se requiere E2E de navegador en CU-2.1 porque todavía no existe UI UML; el E2E manual de diagramación corresponde al cierre de CU-2.3.
 
-## DocumentaciÃ³n a mantener
+## Documentación a mantener
 
 - este documento;
 - `docs/STATUS.md`;
 - `docs/PROJECT_CONTEXT.md`;
-- arquitectura/desarrollo si cambia un contrato o comando pÃºblico;
+- arquitectura/desarrollo si cambia un contrato o comando público;
 - OpenSpec del incremento;
-- plan maestro si cambia alcance aprobado, nunca para ocultar una desviaciÃ³n.
+- plan maestro si cambia alcance aprobado, nunca para ocultar una desviación.
 
 ## Comandos finales de commit y push
 
-Pendientes hasta implementar, verificar y cerrar CU-2.1. El parche de planificaciÃ³n no ejecuta `git add`, `git commit` ni `git push`.
+Pendientes hasta implementar, verificar y cerrar CU-2.1. El parche de planificación no ejecuta `git add`, `git commit` ni `git push`.

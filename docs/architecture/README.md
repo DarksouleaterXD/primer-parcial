@@ -1,13 +1,13 @@
 # Arquitectura aprobada — Primer Parcial
 
-**Estado:** CU-0.2 implementa y valida la base web/API/PostgreSQL. Consultá [STATUS](../STATUS.md), [producto](../product/product-05-astro-nestjs.md) y [ADR-0001](../decisions/ADR-0001-initial-technical-boundaries.md).
+**Estado:** CU-0 y CU-1 cerrados; CU-2.1 implementa el dominio UML portable y su validación, con cierre de integración pendiente. Consultá [STATUS](../STATUS.md), [producto](../product/product-05-astro-nestjs.md) y [ADR-0001](../decisions/ADR-0001-initial-technical-boundaries.md).
 
 ## Dos aplicaciones distintas
 
 | Contexto | Stack aprobado | Estado |
 |---|---|---|
-| Herramienta CASE: web principal | Astro, TypeScript, islas Preact, Shoelace, D3/SVG, ELK.js, Nanostores, WebSocket nativo | Base CU-0.2: página Astro e isla `ApiStatus`; resto pendiente |
-| Herramienta CASE: API | Node 24, NestJS 11/Express, TypeORM/PostgreSQL, Passport/JWT/bcrypt, Zod/`nestjs-zod`, `@nestjs/swagger` | Base CU-0.2: health, CORS y OpenAPI; resto pendiente |
+| Herramienta CASE: web principal | Astro, TypeScript, islas Preact, Shoelace, D3/SVG, ELK.js, Nanostores, WebSocket nativo | CU-1: landing/registro/login/workspace; canvas UML sigue pendiente para CU-2.3 |
+| Herramienta CASE: API | Node 24, NestJS 11/Express, TypeORM/PostgreSQL, Passport/JWT/bcrypt, Zod/`nestjs-zod`, `@nestjs/swagger` | CU-1: health + cuenta/sesión JWT; proyectos UML persistentes siguen pendientes para CU-3 |
 | Realtime principal | NestJS Gateway con adaptador `ws`, servidor autoritativo | No implementado |
 | Interoperabilidad | UML 2.5.1, XMI 2.1, `saxes`/`xmlbuilder2`, Enterprise Architect | No implementado |
 | Generadores | Mapper determinista y plantillas Eta | No implementado |
@@ -46,7 +46,8 @@ primer-parcial/
 │   ├── web/                [CU-0.2: Astro/Preact + ApiStatus]
 │   └── api/                [CU-0.2: NestJS health]
 ├── packages/
-│   └── contracts/          [CU-0.2: contrato de health]
+│   ├── contracts/          [CU-1: health + cuenta/sesión]
+│   └── uml-domain/         [CU-2.1: canónico/layout/perfil/serialización/validación]
 ├── docs/                   [documentación existente y de CU-0.1]
 │   ├── architecture/
 │   ├── benchmarks/
@@ -59,7 +60,7 @@ primer-parcial/
 └── compose.yaml            [configurado: solo PostgreSQL local]
 ```
 
-No se crean paquetes vacíos por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Los workspaces contienen solo la base ejecutable de CU-0.2.
+`packages/uml-domain` es un paquete real de CU-2.1 y no contiene dependencias de UI/backend. No se crean paquetes vacíos por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Los workspaces contienen solo la base ejecutable de CU-0.2.
 
 ## Infraestructura local objetivo y orden
 
