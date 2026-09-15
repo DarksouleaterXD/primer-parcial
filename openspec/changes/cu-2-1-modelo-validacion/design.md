@@ -1,4 +1,4 @@
-## Context
+﻿## Context
 
 CU-0 y CU-1 ya estÃ¡n cerrados: existe un monorepo npm reproducible con Astro/Preact, NestJS/PostgreSQL, contratos compartidos y autenticaciÃ³n JWT. El producto y `AGENTS.md` fijan una frontera arquitectÃ³nica mÃ¡s importante para CU-2: el canvas nunca puede ser fuente de verdad, toda entrada futura debe converger en `CanonicalUmlModel`, el layout visual debe permanecer separado y todas las mutaciones posteriores pasarÃ¡n por `UmlCommandBus`.
 
@@ -149,3 +149,10 @@ Las pruebas verifican round-trip, referencias, duplicados, nombres, multiplicida
 6. Actualizar documentaciÃ³n con evidencia real y solo entonces cerrar CU-2.1.
 
 No existe migraciÃ³n de datos ni rollback de base de datos en este incremento. El rollback consiste en revertir el paquete y la documentaciÃ³n en un cambio posterior; no se tocan usuarios, tablas ni volÃºmenes.
+### El parser valida recursivamente el contrato cerrado en runtime
+
+La verificacion final de CU-2.1 detecto que el chequeo minimo del parser no garantizaba el contrato cerrado definido por el spec. La remediacion incorpora una inspeccion runtime recursiva antes de devolver un `ProjectDocument`: discriminantes, enums, UUID, timestamps ISO, primitivas, multiplicidades estructurales, asociaciones de dos extremos, coordenadas finitas, flags booleanos, direccion de sort y propiedades permitidas.
+
+El mismo chequeo se ejecuta al inicio del validador. Una forma runtime invalida produce `DOCUMENT_STRUCTURE_INVALID` con `severity`, `path` y `elementId` cuando aplica, y bloquea incluso la politica `edit`. Tras superar la forma cerrada, el parser ejecuta la validacion semantica y no devuelve documentos con errores bloqueantes.
+
+Esta correccion no cambia el subconjunto UML ni introduce dependencias nuevas; implementa de forma completa los requisitos ya aprobados de contratos cerrados y parsing sin documentos parciales.

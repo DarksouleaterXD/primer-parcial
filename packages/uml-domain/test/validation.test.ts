@@ -27,7 +27,7 @@ describe("UML domain validation", () => {
     });
   });
 
-  it("detects duplicate IDs with a deterministic path", () => {
+  it("detects duplicate IDs with stable severity, path and elementId", () => {
     const document = createValidProjectDocumentFixture();
     document.uml.classes[1]!.id = ids.userClass;
 
@@ -35,7 +35,14 @@ describe("UML domain validation", () => {
       (item) => item.code === "UML_ID_DUPLICATE",
     );
 
-    expect(duplicate?.path).toBe("uml.classes[1].id");
+    expect(duplicate).toEqual(
+      expect.objectContaining({
+        severity: "error",
+        code: "UML_ID_DUPLICATE",
+        path: "uml.classes[1].id",
+        elementId: ids.userClass,
+      }),
+    );
   });
 
   it("requires trimmed names for packages, classifiers and members", () => {
@@ -50,22 +57,38 @@ describe("UML domain validation", () => {
     ).toHaveLength(4);
   });
 
-  it("validates classifier references and multiplicities", () => {
+  it("validates classifier references and multiplicities with stable diagnostics", () => {
     const document = createValidProjectDocumentFixture();
     document.uml.classes[0]!.attributes[1]!.type = {
       kind: "classifier",
-      classifierId: "missing-classifier",
+      classifierId: "00000000-0000-4000-8000-000000000099",
     };
     document.uml.classes[0]!.attributes[0]!.multiplicity = {
       lower: 5,
       upper: 2,
     };
 
-    expect(codes(document)).toEqual(
-      expect.arrayContaining([
-        "UML_REFERENCE_MISSING",
-        "UML_MULTIPLICITY_INVALID",
-      ]),
+    const diagnostics = validateProjectDocument(document, "save").diagnostics;
+    const missingReference = diagnostics.find(
+      (item) => item.code === "UML_REFERENCE_MISSING",
+    );
+    const invalidMultiplicity = diagnostics.find(
+      (item) => item.code === "UML_MULTIPLICITY_INVALID",
+    );
+
+    expect(missingReference).toEqual(
+      expect.objectContaining({
+        severity: "error",
+        path: "uml.classes[0].attributes[1].type",
+        elementId: ids.roleAttribute,
+      }),
+    );
+    expect(invalidMultiplicity).toEqual(
+      expect.objectContaining({
+        severity: "error",
+        path: "uml.classes[0].attributes[0].multiplicity",
+        elementId: ids.emailAttribute,
+      }),
     );
   });
 
@@ -111,7 +134,8 @@ describe("UML domain validation", () => {
     const document = createValidProjectDocumentFixture();
     document.uml.associations[0]!.ends[0].aggregation = "composite";
     document.uml.associations[0]!.ends[1].aggregation = "composite";
-    document.uml.associations[0]!.ends[1].classifierId = "missing-classifier";
+    document.uml.associations[0]!.ends[1].classifierId =
+      "00000000-0000-4000-8000-000000000099";
 
     expect(codes(document)).toEqual(
       expect.arrayContaining(["UML_ASSOCIATION_INVALID", "UML_REFERENCE_MISSING"]),
@@ -120,10 +144,16 @@ describe("UML domain validation", () => {
 
   it("detects orphan layout and profile references", () => {
     const document = createValidProjectDocumentFixture();
-    document.layout.nodes.push({ elementId: "missing-layout", x: 0, y: 0 });
-    document.generationProfile.classes.push({ classId: "missing-class" });
+    document.layout.nodes.push({
+      elementId: "00000000-0000-4000-8000-000000000097",
+      x: 0,
+      y: 0,
+    });
+    document.generationProfile.classes.push({
+      classId: "00000000-0000-4000-8000-000000000098",
+    });
     document.generationProfile.attributes.push({
-      attributeId: "missing-attribute",
+      attributeId: "00000000-0000-4000-8000-000000000099",
     });
 
     expect(codes(document)).toEqual(
@@ -144,11 +174,17 @@ describe("UML domain validation", () => {
   it("returns diagnostics in stable path/code order", () => {
     const document = createValidProjectDocumentFixture();
     document.uml.classes[0]!.attributes[0]!.name = "";
-    document.layout.nodes.push({ elementId: "missing-layout", x: 0, y: 0 });
+    document.layout.nodes.push({
+      elementId: "00000000-0000-4000-8000-000000000099",
+      x: 0,
+      y: 0,
+    });
 
     const diagnostics = validateProjectDocument(document, "save").diagnostics;
     const sorted = [...diagnostics].sort((left, right) =>
-      left.path.localeCompare(right.path) || left.code.localeCompare(right.code),
+      left.path.localeCompare(right.path) ||
+      left.code.localeCompare(right.code) ||
+      (left.elementId ?? "").localeCompare(right.elementId ?? ""),
     );
 
     expect(diagnostics).toEqual(sorted);
@@ -172,7 +208,29 @@ describe("UML domain validation", () => {
     expect(result.blocked).toBe(false);
   });
 
-  it("uses the same diagnostics across policies while edit tolerates intermediate errors", () => {
+  it("rejects malformed runtime structures before semantic validation", () => {
+    const document = createValidProjectDocumentFixture();
+    (
+      document.uml.classes[0]!.attributes[0] as unknown as Record<string, unknown>
+    ).visibility = "internal";
+
+    const result = validateProjectDocument(document, "save");
+    const edit = validateProjectDocument(document, "edit");
+
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({
+        severity: "error",
+        code: "DOCUMENT_STRUCTURE_INVALID",
+        path: "uml.classes[0].attributes[0].visibility",
+        elementId: ids.emailAttribute,
+      }),
+    ]);
+    expect(result.hasErrors).toBe(true);
+    expect(result.blocked).toBe(true);
+    expect(edit.blocked).toBe(true);
+  });
+
+  it("uses the same diagnostics across policies while edit tolerates semantic errors", () => {
     const document = createValidProjectDocumentFixture();
     document.uml.classes[0]!.attributes[0]!.multiplicity = {
       lower: 5,

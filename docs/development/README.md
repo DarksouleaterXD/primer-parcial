@@ -123,6 +123,10 @@ Con la API, web y PostgreSQL iniciados según el arranque local, una persona deb
 - El workflow `Verify base executable` pasó en GitHub Actions #3 para `0a0337b2a283098f53e3392ec062d0644c1ac386`, con Node `v24.11.1` y npm `11.6.2`.
 - CU-1 está formalmente listo para `/opsx-sync` y `/opsx-archive`. No hagas commit ni push sin autorización explícita.
 
-### Evidencia reproduce-clean CU-2.1 - 2026-09-15
+### Historial - evidencia reproduce-clean previa a remediacion CU-2.1 - 2026-09-15
 
 El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctamente. Como `5432` estaba ocupado, la receta portable uso el puerto aislado `55432` sin modificar el `compose.yaml` versionado ni detener servicios existentes. El resultado final fue 5/5 E2E Chromium, build raiz correcto y health `available`.
+
+### Remediacion runtime CU-2.1
+
+El verify posterior a la primera reproduccion limpia encontro que el parser aceptaba formas JSON que violaban contratos cerrados. Tras corregir parser/validador, la evidencia del snapshot anterior es historica. Debe ejecutarse `reproduce-clean` otra vez sobre un commit que incluya la remediacion antes de archivar CU-2.1.

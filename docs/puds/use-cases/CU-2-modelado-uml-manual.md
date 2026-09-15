@@ -6,7 +6,7 @@
 - Dependencias: CU-0 terminado y CU-1 terminado/archivado.
 - Actor principal: modelador autenticado.
 - Origen histórico: CUs anteriores 1–5, reagrupados en el plan 12/3.
-- Incremento activo: **CU-2.1 - Modelo y validacion**, dominio/validacion e integracion raiz verificados; reproduccion limpia y cierre documental pendientes.
+- Incremento activo: **CU-2.1 - Modelo y validacion**, bloqueo critico de parser remediado localmente; nueva reproduccion limpia pendiente antes de verify/sync/archive.
 - Cambio OpenSpec activo: `cu-2-1-modelo-validacion`.
 - CU-2.2 — Comandos e historial: pendiente.
 - CU-2.3 — Workspace visual: pendiente.
@@ -34,7 +34,7 @@ CU-2.1 entrega únicamente el fundamento de dominio: documento canónico version
 
 | Incremento | Alcance | Estado |
 |---|---|---|
-| CU-2.1 | `ProjectDocument`, `CanonicalUmlModel`, `DiagramLayout`, perfil, serializacion, IDs, fixtures y validador | En implementacion: integracion raiz verificada; reproduccion limpia/cierre pendiente |
+| CU-2.1 | `ProjectDocument`, `CanonicalUmlModel`, `DiagramLayout`, perfil, serializacion, IDs, fixtures y validador | Remediacion runtime aplicada; nueva reproduccion limpia pendiente |
 | CU-2.2 | `UmlCommandBus`, executor, comandos manuales, revisión local, historial máximo 100, Undo/Redo | Pendiente |
 | CU-2.3 | Shell CASE, toolbox/inspector, D3+SVG, ELK, zoom/pan/selección/movimiento/relaciones, diagnósticos navegables | Pendiente |
 
@@ -174,7 +174,7 @@ No se requiere E2E de navegador en CU-2.1 porque todavía no existe UI UML; el E
 
 Pendientes hasta implementar, verificar y cerrar CU-2.1. El parche de planificación no ejecuta `git add`, `git commit` ni `git push`.
 
-## Cierre local CU-2.1 - 2026-09-15
+## Historial - cierre local previo al verify critico - 2026-09-15
 
 CU-2.1 - Modelo y validacion queda implementado y verificado localmente con 9/9 tareas OpenSpec completas.
 
@@ -194,3 +194,11 @@ Evidencia real:
 No se implementaron Command Bus, Undo/Redo, canvas, persistencia de proyectos, XMI, generacion ni IA en CU-2.1.
 
 Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
+
+## Estado vigente tras remediacion del verify - 2026-09-15
+
+El verify final detecto un bloqueo critico: `parseProjectDocument` no validaba recursivamente el contrato cerrado. La remediacion agrega validacion runtime exhaustiva y regresiones negativas para discriminantes, enums, UUID, timestamps, primitivas, asociaciones, layout, perfil y propiedades no permitidas.
+
+La reproduccion limpia registrada antes de esta remediacion se conserva como historial, pero ya no certifica el codigo actual. La tarea 3.2 queda reabierta hasta versionar esta correccion y ejecutar nuevamente `reproduce-clean`.
+
+Estado vigente: no archivar CU-2.1 todavia.

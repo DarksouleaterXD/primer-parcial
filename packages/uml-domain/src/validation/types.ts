@@ -2,6 +2,7 @@ export type ValidationSeverity = "error" | "warning";
 
 export type ValidationDiagnosticCode =
   | "DOCUMENT_VERSION_UNSUPPORTED"
+  | "DOCUMENT_STRUCTURE_INVALID"
   | "UML_ID_DUPLICATE"
   | "UML_NAME_REQUIRED"
   | "UML_NAME_DUPLICATE"

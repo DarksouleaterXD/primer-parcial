@@ -8,7 +8,7 @@
 - CU-0 — Inicializar la base ejecutable: **terminado y archivado**.
 - CU-1 — Gestionar cuenta y sesión: **terminado y archivado** el 2026-09-14; 9/9 tareas, validación local completa y CI remoto `Verify base executable` #6 correcto.
 - CU-2 — Modelar diagramas UML manualmente: **en implementación**.
-- Incremento activo: **CU-2.1 - Modelo y validacion**, cambio OpenSpec `cu-2-1-modelo-validacion`; dominio/validacion e integracion raiz verificados, reproduccion limpia/cierre pendientes.
+- Incremento activo: **CU-2.1 - Modelo y validacion**; bloqueo critico del parser remediado localmente, nueva reproduccion limpia pendiente. No esta listo para archive.
 - CU-2.2 — Comandos e historial y CU-2.3 — Workspace visual permanecen pendientes.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
 
@@ -83,7 +83,7 @@ La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/`
 | 2026-09-14 | Se preparó y aprobó la planificación de CU-2.1. | Proposal, spec, design y tasks de `cu-2-1-modelo-validacion`. |
 | 2026-09-14 | Se implementaron los bloques de dominio y validación de CU-2.1. | `packages/uml-domain` con modelo canónico, perfil, serialización, validador y pruebas; integración/cierre pendientes. |
 
-## Cierre local CU-2.1 - 2026-09-15
+## Historial - cierre local previo al verify critico - 2026-09-15
 
 CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 
@@ -94,3 +94,12 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 - PostgreSQL aislado: `55432`.
 - Health final: `available`.
 - Estado: listo para verify/sync/archive.
+
+## Estado vigente CU-2.1 tras remediacion del verify
+
+- El verify detecto validacion runtime incompleta del contrato cerrado del `ProjectDocument`.
+- Parser y validador fueron remediados para validar forma recursiva antes de aceptar el documento.
+- Se agregaron regresiones negativas y assertions de `severity`, `path` y `elementId`.
+- La evidencia `reproduce-clean` del snapshot anterior queda como historial porque el codigo cambio despues.
+- OpenSpec vuelve temporalmente a 8/9: 3.2 permanece pendiente hasta un nuevo snapshot versionado y nueva reproduccion limpia.
+- CU-2.1 no esta listo para archive hasta renovar esa evidencia y repetir verify.

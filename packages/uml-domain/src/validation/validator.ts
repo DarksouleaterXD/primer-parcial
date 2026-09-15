@@ -1,3 +1,4 @@
+import { collectProjectDocumentStructureIssues } from "../document/runtime-schema.js";
 import { CURRENT_PROJECT_DOCUMENT_SCHEMA_VERSION } from "../document/types.js";
 import type { ProjectDocument } from "../document/types.js";
 import type {
@@ -382,6 +383,20 @@ export const collectValidationDiagnostics = (
   document: ProjectDocument,
 ): ValidationDiagnostic[] => {
   try {
+    const structuralDiagnostics = collectProjectDocumentStructureIssues(document).map(
+      (issue): ValidationDiagnostic =>
+        error(
+          "DOCUMENT_STRUCTURE_INVALID",
+          issue.message,
+          issue.path,
+          issue.elementId,
+        ),
+    );
+
+    if (structuralDiagnostics.length > 0) {
+      return sortedDiagnostics(structuralDiagnostics);
+    }
+
     const diagnostics: ValidationDiagnostic[] = [];
     const model = document.uml;
 
@@ -674,11 +689,17 @@ export const validateProjectDocument = (
   const hasInternalError = diagnostics.some(
     (item) => item.code === "VALIDATION_INTERNAL_ERROR",
   );
+  const hasStructuralError = diagnostics.some(
+    (item) => item.code === "DOCUMENT_STRUCTURE_INVALID",
+  );
 
   return {
     policy,
     diagnostics,
     hasErrors,
-    blocked: hasInternalError || (hasErrors && policyBlocksErrors(policy)),
+    blocked:
+      hasInternalError ||
+      hasStructuralError ||
+      (hasErrors && policyBlocksErrors(policy)),
   };
 };
