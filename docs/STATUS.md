@@ -1,6 +1,6 @@
 # Estado real del proyecto
 
-Última actualización: 2026-09-13
+Última actualización: 2026-09-14
 
 ## Resumen
 
@@ -10,7 +10,7 @@
 - CU-0.2 está terminado y validado: workspaces, PostgreSQL, API NestJS, web Astro/Preact, contrato health, CORS, OpenAPI y build raíz.
 - CU-0.3 está terminado: reproducción limpia, checks locales finales, E2E Chromium, revisión manual y CI real correctos.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
-- CU-1 — Cuenta y sesión: **en validación**. Bloques 1, 2 y validación local del Bloque 3 correctos con nombres/apellidos; reproducción limpia, build y revisión manual correctos. Solo CI remoto permanece pendiente antes del cierre.
+- CU-1 — Cuenta y sesión: **formalmente listo para `/opsx-sync` y `/opsx-archive`**. Bloques 1, 2 y 3 correctos con nombres/apellidos; reproducción limpia, build, revisión manual y CI remoto correctos.
 - Próximo caso de uso: **CU-2 — Modelar diagramas UML manualmente**, no iniciado. La evidencia CI de CU-0 se obtuvo en `feature/cu-0-inicializar-base` del repositorio `DarksouleaterXD/primer-parcial`.
 
 ## Evidencia CU-0.2
@@ -63,7 +63,7 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 
 | Ciclo | Estado | Entrega usable esperada |
 |---|---|---|
-| 1. Editor UML con proyectos privados | CU-0 terminado; CU-1 en validación; CU-2 y CU-3 no iniciados | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
+| 1. Editor UML con proyectos privados | CU-0 terminado; CU-1 listo para `/opsx-sync` y `/opsx-archive`; CU-2 y CU-3 no iniciados | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
 | 2. Colaboración, interoperabilidad y generación | Pendiente: CU-4 a CU-7 | LAN/presencia, XMI y aplicación Spring/web/PWA/Android generada |
 | 3. Inteligencia, visión y cierre offline | Pendiente: CU-8 a CU-11 | Texto, voz, imágenes y demostración integral offline |
 
@@ -84,3 +84,4 @@ La verificación de tipos de Astro no informó errores, warnings ni hints. Vites
 | 2026-09-13 | Se implementaron CU-1 Bloques 1 y 2, y E2E real de Bloque 3.1. | API/auth, landing, registro/login, JWT en `sessionStorage`, logout local y `npm run test:e2e`: 5 escenarios Chromium correctos en 1.0 minuto. Cierre de CU-1 pendiente de manual, reproducción, build, CI y revisión final. |
 | 2026-09-13 | Se adaptó CU-1 a nombres/apellidos y se verificó nuevamente Bloque 3.1. | Registro con nombres/apellidos/email/password, migración aditiva nullable para legacy, sesión segura con nombres, E2E Chromium 5/5 en 1.2 minutos y checks raíz correctos. Build, reproducción limpia, revisión manual, CI remoto y cierre siguen pendientes. |
 | 2026-09-13 | Se completó la validación local final de CU-1. | Reproducción limpia desde snapshot Git aislado, instalación, PostgreSQL, migraciones, lint, tipos, tests, E2E Chromium, build, health, recuperación y limpieza correctos; revisión humana de registro/login/workspace/logout/accesibilidad/responsive correcta. CI remoto sigue pendiente. |
+| 2026-09-14 | Se registró CI remoto correcto de CU-1. | `Verify base executable` #6 (ID `34803009828`) pasó por `push` en `feature/cu-0-inicializar-base`, commit `0cc67afe5cba99e93169f04a51915705dd4944b0`, resultado `Success` en aproximadamente 2m 35s. La anotación no bloqueante sobre el runtime interno Node de `actions/checkout@v4` y `actions/setup-node@v4` no afectó el workflow ni es un fallo de CU-1. CU-1 queda listo para `/opsx-sync` y `/opsx-archive`. |

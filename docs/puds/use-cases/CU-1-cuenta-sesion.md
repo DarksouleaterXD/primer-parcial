@@ -2,11 +2,11 @@
 
 ## Estado y trazabilidad
 
-- **Estado del CU: En validación.**
+- **Estado del CU: Formalmente listo para `/opsx-sync` y `/opsx-archive`.**
 - Bloque 1 — Persistencia y API: terminado.
 - Bloque 2 — Landing, sesión y rutas privadas: terminado.
 - Bloque 3.1 — E2E real: terminado y verificado el 2026-09-13.
-- Bloque 3.2 — Evidencia y documentación: terminado localmente; reproducción limpia, build y revisión manual con resultado correcto. CI remoto pendiente.
+- Bloque 3.2 — Evidencia y documentación: terminado; reproducción limpia, build, revisión manual y CI remoto con resultado correcto.
 - Bloque 3.3 — Revisión de alcance: terminado localmente.
 - Cambio OpenSpec: `cu-1-gestionar-cuenta-sesion`; progreso actual 9/9 tareas.
 
@@ -57,6 +57,7 @@ Las variables `JWT_SECRET`, `JWT_EXPIRES_IN_SECONDS` y `BCRYPT_COST` son obligat
 | Aislamiento E2E | Chromium usa API `127.0.0.1:3101` y web `localhost:4322`, sin reutilizar procesos externos para conservar el vencimiento JWT de prueba. |
 | Reproducción limpia | Correcta desde un snapshot Git versionado, en un temporal aislado sin `.env` reales ni archivos no versionados: `npm ci`, PostgreSQL, migraciones CU-1, lint, typecheck, tests, E2E Chromium, build, health y recuperación finalizaron correctamente. La limpieza/restauración final fue correcta. |
 | Build | Correcto dentro de la reproducción limpia. |
+| CI remoto | GitHub Actions `Verify base executable`, ejecución `#6` (ID `34803009828`) por `push` en `feature/cu-0-inicializar-base`, commit `0cc67afe5cba99e93169f04a51915705dd4944b0`: `Success` en aproximadamente 2m 35s. La anotación de Actions sobre el runtime interno Node de `actions/checkout@v4` y `actions/setup-node@v4` fue no bloqueante y no afectó el workflow ni constituye un fallo de CU-1. |
 
 Las cuentas E2E usan el prefijo `e2e-cu1-` y se limpian selectivamente. No se borran volúmenes ni datos generales.
 
@@ -64,10 +65,9 @@ Las cuentas E2E usan el prefijo `e2e-cu1-` y se limpian selectivamente. No se bo
 
 Una persona confirmó el registro con nombres, apellidos, email y password; labels y mensajes visibles; navegación por teclado; login limitado a email/password; sesión confirmada con nombre/apellido; logout local hacia el área pública; y diseño responsive en escritorio y viewport móvil sin overflow horizontal ni controles inaccesibles. La evidencia recibida no incluye fecha, URL ni navegador.
 
-## Riesgos y pendientes
+## Cierre operativo
 
-- Falta una ejecución real del workflow CI después de sus cambios; no se declara CI correcta sin ella.
-- CU-1 no se cierra hasta registrar ese resultado remoto, aunque las tareas locales estén completas.
+No quedan bloqueos de evidencia para CU-1. Con las 9/9 tareas completas y la ejecución remota correcta registrada, el cambio está formalmente listo para `/opsx-sync` y `/opsx-archive`; esos flujos no se ejecutaron durante esta actualización documental.
 
 ## Archivos relevantes
 
