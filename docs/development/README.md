@@ -68,6 +68,10 @@ Los helpers de tests API respetan `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_US
 Si una estacion de trabajo publica PostgreSQL en otro puerto de host, por ejemplo `5433`, exporta ese puerto en la misma terminal antes de `npm run test`; no es necesario cambiar ni commitear `compose.yaml` para adaptar los tests.
 
 ## Reproducción limpia
+### Puerto PostgreSQL de la reproduccion limpia
+
+`reproduce-clean.ps1` prefiere `127.0.0.1:5432` para el PostgreSQL aislado. Si ese puerto ya esta ocupado o reservado en la estacion local, la receta selecciona automaticamente el primer puerto libre entre `55432` y `55531`, modifica solo el `compose.yaml` de la copia temporal y propaga ese puerto mediante `POSTGRES_PORT` a API/tests/E2E. El `compose.yaml` versionado no se modifica y ningun servicio existente es detenido.
+
 
 La receta de CU-0.3 crea una copia temporal desde un commit Git, fuera de `D:\project-planning`; usa `git archive`, por lo que no copia cambios sin versionar, `node_modules`, builds ni archivos `.env` reales. Desde la raíz, elegí el commit a verificar y ejecutá:
 

@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
   [string]$Snapshot = "HEAD",
   [switch]$KeepTemporaryDirectory
@@ -209,7 +209,45 @@ try {
     throw "Blocked: snapshot $resolvedSnapshot contains non-example environment files."
   }
 
-  Assert-LoopbackPortAvailable -Port 5432
+  $cleanPostgresPort = $null
+  $candidatePorts = @(5432) + @(55432..55531)
+
+  foreach ($candidatePort in $candidatePorts) {
+    try {
+      Assert-LoopbackPortAvailable -Port $candidatePort
+      $cleanPostgresPort = $candidatePort
+      break
+    } catch {
+      continue
+    }
+  }
+
+  if ($null -eq $cleanPostgresPort) {
+    throw "Blocked: no free loopback port was found for isolated PostgreSQL (tried 5432 and 55432-55531)."
+  }
+
+  $temporaryComposePath = Join-Path $temporaryDirectory "compose.yaml"
+  $temporaryCompose = [System.IO.File]::ReadAllText($temporaryComposePath)
+  $defaultPortBinding = "127.0.0.1:5432:5432"
+
+  if (-not $temporaryCompose.Contains($defaultPortBinding)) {
+    throw "Blocked: snapshot compose.yaml does not contain the expected PostgreSQL loopback binding."
+  }
+
+  if ($cleanPostgresPort -ne 5432) {
+    $temporaryCompose = $temporaryCompose.Replace(
+      $defaultPortBinding,
+      "127.0.0.1:${cleanPostgresPort}:5432"
+    )
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText(
+      $temporaryComposePath,
+      $temporaryCompose,
+      $utf8NoBom
+    )
+  }
+
+  Write-Output "Isolated PostgreSQL host port: $cleanPostgresPort"
   Assert-LoopbackPortAvailable -Port $apiPort
   Assert-LoopbackPortAvailable -Port $e2eApiPort
   Assert-LoopbackPortAvailable -Port $e2eWebPort
@@ -232,6 +270,7 @@ try {
   )) {
     [Environment]::SetEnvironmentVariable($name, $syntheticEnvironment[$name], "Process")
   }
+  [Environment]::SetEnvironmentVariable("POSTGRES_PORT", $cleanPostgresPort.ToString(), "Process")
   [Environment]::SetEnvironmentVariable("API_PORT", $apiPort, "Process")
   [Environment]::SetEnvironmentVariable("COMPOSE_PROJECT_NAME", $composeProject, "Process")
 
@@ -268,6 +307,7 @@ try {
     Snapshot = $resolvedSnapshot
     TemporaryDirectory = $temporaryDirectory
     ComposeProject = $composeProject
+    PostgresHostPort = $cleanPostgresPort
     Health = "available"
   }
 } finally {
