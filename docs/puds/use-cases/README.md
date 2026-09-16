@@ -1,6 +1,6 @@
 # Plan maestro PUDS â€” Primer Parcial
 
-Planificacion definitiva: **12 casos de uso en 3 ciclos**, con uno a tres incrementos por CU. Define cobertura futura; el avance real esta en [STATUS](../../STATUS.md). CU-0 y CU-1 estan terminados y archivados; CU-2.1 esta implementado y verificado, con 9/9 tareas y verify sin CRITICAL. Resta su sync/archive formal antes de iniciar CU-2.2.
+Planificacion definitiva: **12 casos de uso en 3 ciclos**, con uno a tres incrementos por CU. Define cobertura futura; el avance real esta en [STATUS](../../STATUS.md). CU-0 y CU-1 estan terminados y archivados; CU-2.1 esta implementado con 9/9 tareas, verify estatico sin CRITICAL y verificacion de comportamiento completada sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`. Antes de su `sync/archive` resta el verify final; CU-2.2 no inicia hasta el cierre formal.
 
 El proceso es dirigido por casos de uso, centrado en arquitectura, iterativo e incremental. Cada CU se prueba, documenta y cierra antes del siguiente; una excepciÃ³n requiere aprobaciÃ³n trazable. La reagrupaciÃ³n no adelanta canvas, realtime, generaciÃ³n o IA respecto del modelo canÃ³nico, validador y Command Bus.
 

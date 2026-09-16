@@ -133,14 +133,16 @@ CU-1 quedó terminado y archivado el 2026-09-14. CU-2 comienza por CU-2.1 para e
 
 ## Continuar en futuras sesiones
 
-1. Leer completos AGENTS, este contexto, STATUS, producto, plan maestro y benchmarks; después el documento de CU que se active y ADR-0001.
-2. Comprobar `git status --short --branch` y `git branch --show-current`. Confirmar que la rama corresponde al CU o incremento aprobado antes de modificar código e inspeccionar cambios existentes como posible trabajo del usuario.
-3. Consultar evidencia del CU y estado: CU-0 y CU-1 están terminados y archivados. CU-1 dejó registro/login/JWT/logout local con reproducción limpia y CI real correctos.
-4. CU-2 esta activo en implementacion. CU-2.1 - Modelo y validacion (`cu-2-1-modelo-validacion`) tiene 9/9 tareas completas y `reproduce-clean` vigente sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; resta el verify final antes de sync/archive. No iniciar CU-2.2/CU-2.3 ni CU-3 antes del cierre formal de CU-2.1.
-5. CU-2.1 ya fue aprobado explicitamente. Antes de cerrarlo, versionar el incremento, ejecutar reproduccion limpia sobre ese snapshot y registrar solo evidencia real; luego verificar/sincronizar/archivar segun el gate OpenSpec.
-6. `opencode.json` puede contener preferencias locales del usuario y no debe sobrescribirse por automatización de CU-2 salvo solicitud explícita. Commit/push y acciones GitHub siguen siendo acciones del usuario.
+1. Leer completos `AGENTS.md`, este contexto, `STATUS`, producto, plan maestro y benchmarks; después el documento del CU activo y ADR-0001.
+2. Comprobar `git status --short --branch` y `git branch --show-current`. La rama de CU-2.1 es `feature/cu-2-1-modelo-validacion`.
+3. CU-0 y CU-1 están terminados y archivados.
+4. CU-2 está activo porque CU-2.2 y CU-2.3 siguen pendientes. CU-2.1 está implementado con 9/9 tareas OpenSpec y verify estático sin CRITICAL.
+5. La evidencia conductual vigente de CU-2.1 es el snapshot `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`; `ec30194` está en su ancestry y `uml-domain` tiene 37/37 tests post-remediación.
+6. La verificación de comportamiento autorizada ya fue completada correctamente mediante `reproduce-clean`; resta repetir el verify final antes de `sync/archive`.
+7. No iniciar CU-2.2, CU-2.3 ni CU-3 antes del cierre formal de CU-2.1.
+8. `compose.yaml` y `opencode.json` pueden contener preferencias locales del usuario; no deben incorporarse al cierre de CU-2.1.
 
-Las comprobaciones iniciales están en [desarrollo](development/README.md); resultados y pendientes en [STATUS](STATUS.md) y el documento del CU, no en supuestos heredados de otro chat.
+Las comprobaciones operativas están en [desarrollo](development/README.md); el estado vigente está en [STATUS](STATUS.md) y la evidencia específica en el documento de CU-2.
 
 ## Recordatorio para el asistente
 
@@ -152,44 +154,25 @@ Las comprobaciones iniciales están en [desarrollo](development/README.md); resu
 - No implementar el siguiente CU por adelantado.
 - No hacer acciones externas, commits o push sin autorización explícita.
 
-## Estado de continuidad CU-2.1
+## Estado actual CU-2.1
 
-CU-2.1 fue aprobado explícitamente el 2026-09-14. La implementación activa crea `packages/uml-domain` con documento/modelo canónico, layout separado, perfil de generación, serialización y validación. CU-2.2, CU-2.3, persistencia, realtime, XMI, generación e IA siguen fuera de alcance.
+CU-2.1 — Modelo y validación está implementado. Su alcance incluye `ProjectDocument`, `CanonicalUmlModel`, `DiagramLayout`, perfil de generación, serialización y validación. Command Bus, historial, canvas, persistencia, realtime, XMI, generación e IA permanecen fuera de CU-2.1.
 
-## Historial - gate previo al verify critico CU-2.1
-
-CU-2.1 (`cu-2-1-modelo-validacion`) esta 9/9 y no requiere mas implementacion funcional. El siguiente paso permitido es verify -> sync -> archive. No iniciar CU-2.2 antes de cerrar formalmente CU-2.1.
-
-## Gate vigente CU-2.1 tras remediacion
-
-El bloqueo critico de validacion runtime fue corregido. No iniciar CU-2.2. Primero versionar la remediacion, ejecutar una nueva reproduccion limpia, registrar la evidencia, volver a 9/9 y repetir verify -> sync -> archive.
-
-## Gate actual CU-2.1
-
-CU-2.1 (`cu-2-1-modelo-validacion`) esta 9/9 y no requiere mas implementacion funcional. El siguiente paso permitido es verify -> sync -> archive. No iniciar CU-2.2 antes de cerrar formalmente CU-2.1.
-
-## Gate vigente CU-2.1 - verify final
-CU-2.1 tiene 9/9 tareas completas y
-reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f. El unico gate restante es /opsx-verify cu-2-1-modelo-validacion sin CRITICAL.
-La evidencia post-remediacion ya fue actualizada con el snapshot `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; repetir `/opsx-verify cu-2-1-modelo-validacion`. No iniciar CU-2.2 ni archive antes de completar ese gate.
-
-## Gate vigente CU-2.1 - verify final
-
-CU-2.1 esta en la rama `feature/cu-2-1-modelo-validacion`.
-
-La evidencia vigente de OpenSpec 3.2 es:
-
-- snapshot: `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`;
-- reproduccion limpia: finalizada correctamente;
-- Compose: `primer-parcial-clean-50365d5da937`;
+Evidencia vigente:
+- rama: `feature/cu-2-1-modelo-validacion`;
+- OpenSpec: 9/9;
+- snapshot conductualmente verificado: `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`;
+- `reproduce-clean`: finalizado correctamente;
+- Compose: `primer-parcial-clean-fe04b87c22b7`;
 - PostgreSQL host port: `55432`;
-- health final: `available`;
-- `uml-domain`: 37/37 tests post-remediacion;
-- composite valido y round-trip: cubiertos;
-- OpenSpec: 9/9.
+- health: `available`;
+- `uml-domain`: 37/37 tests post-remediación;
+- composite válido y round-trip: cubiertos;
+- remediación runtime: `ec30194`;
+- verify estático más reciente: **CRITICAL: None**.
 
-Siguiente paso: `/opsx-verify cu-2-1-modelo-validacion`. Solo si no hay CRITICAL se permite sync -> archive. CU-2.2 sigue bloqueado hasta el cierre formal.
+El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` es histórico y precede a la remediación runtime.
 
+## Gate vigente CU-2.1
 
-CU-2.1 tiene 9/9 tareas completas y
-`reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: `/opsx-verify cu-2-1-modelo-validacion` sin CRITICAL.
+La verificación de comportamiento autorizada fue completada correctamente sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`. Gate restante antes de `sync/archive`: repetir `/opsx-verify cu-2-1-modelo-validacion` sobre el cierre consolidado. CU-2.2 continúa bloqueado hasta el cierre formal de CU-2.1.

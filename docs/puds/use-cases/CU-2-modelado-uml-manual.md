@@ -2,17 +2,18 @@
 
 ## Estado y trazabilidad
 
-- **Estado del CU: En implementación.**
+- **Estado del CU completo: En implementación.**
 - Dependencias: CU-0 terminado y CU-1 terminado/archivado.
 - Actor principal: modelador autenticado.
 - Origen histórico: CUs anteriores 1–5, reagrupados en el plan 12/3.
-- Estado CU-2.1: implementacion completa, 9/9 tareas y
-reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
+- CU-2.1 — Modelo y validación: implementación completa, 9/9 tareas y verify estático sin CRITICAL.
+- Evidencia `reproduce-clean` vigente y conductualmente verificada: snapshot `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`.
+- Gate de CU-2.1: verify final sobre la documentación consolidada y cierre formal `sync/archive`.
 - Cambio OpenSpec activo: `cu-2-1-modelo-validacion`.
 - CU-2.2 — Comandos e historial: pendiente.
 - CU-2.3 — Workspace visual: pendiente.
 
-CU-2.1 fue aprobado explícitamente antes de implementar. El código aplicado se limita al dominio UML, serialización, perfil y validación definidos por OpenSpec; la implementación, integración y reproducción limpia post-remediación están completas. Resta únicamente el verify final antes de sync/archive.
+CU-2.1 fue aprobado explícitamente antes de implementar. Su alcance se limita al dominio UML, serialización, perfil y validación definidos por OpenSpec. CU-2.2 y CU-2.3 siguen fuera de este incremento.
 
 ## Objetivo y resultado usable
 
@@ -35,8 +36,7 @@ CU-2.1 entrega únicamente el fundamento de dominio: documento canónico version
 
 | Incremento | Alcance | Estado |
 |---|---|---|
-- Estado CU-2.1: implementacion completa, 9/9 tareas y
-reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
+| CU-2.1 | `ProjectDocument`, modelo canónico, layout, perfil, serialización y validación | Implementado; 9/9; verify sin CRITICAL; verificación de comportamiento completada; verify final y `sync/archive` pendientes |
 | CU-2.2 | `UmlCommandBus`, executor, comandos manuales, revisión local, historial máximo 100, Undo/Redo | Pendiente |
 | CU-2.3 | Shell CASE, toolbox/inspector, D3+SVG, ELK, zoom/pan/selección/movimiento/relaciones, diagnósticos navegables | Pendiente |
 
@@ -132,19 +132,28 @@ CU-2.1 no expone estas acciones como editor visual; las mutaciones públicas se 
 - Serializador estable y parser versionado sin documentos parciales ante errores estructurales.
 - Validador único con diagnósticos ordenados y políticas `edit`, `save`, `import` y `generate`.
 - Fixtures y pruebas unitarias del dominio.
+- Runtime-contract remediation `ec30194` incorporada.
+- Composite válido y round-trip cubiertos.
 
-Aún no se registra como cerrado ningún check raíz, reproducción limpia ni evidencia CI; esas verificaciones corresponden al bloque de integración.
+Los checks raíz y la reproducción limpia cuentan con evidencia vigente. La verificación de comportamiento autorizada se completó mediante `reproduce-clean` sobre el snapshot `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`.
 
-## Evidencia de integracion CU-2.1 - 2026-09-15
+## Evidencia de integración CU-2.1
 
-La regresion raiz fue ejecutada correctamente con el nuevo workspace incluido: `npm run lint`, `npm run typecheck`, `npm run test` y `npm run build`. La API cerro 18/18 tests, web 19 correctos con 1 integracion condicional omitida, contracts 4/4 y `uml-domain` conteo historico previo a remediacion (no vigente). `astro check` informo 0 errores, 0 warnings y 0 hints.
+Evidencia vigente:
+- `uml-domain`: 37/37 tests post-remediación;
+- API/web/contracts: regresión raíz previamente ejecutada sin romper contratos de CU-0/CU-1;
+- `npm run lint`, `npm run typecheck`, `npm run test` y `npm run build`: ejecutados correctamente en la reproducción limpia vigente;
+- E2E Chromium: incluido en la reproducción limpia vigente;
+- `openspec validate cu-2-1-modelo-validacion --strict`: correcto;
+- `git diff --check`: correcto;
+- snapshot limpio conductualmente verificado: `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`;
+- PostgreSQL aislado: `55432`;
+- Compose: `primer-parcial-clean-fe04b87c22b7`;
+- health: `available`.
 
-El control de alcance confirmo que `packages/uml-domain` no introdujo Command Bus, Undo/Redo, canvas, persistencia, XMI, generacion ni IA. `openspec validate cu-2-1-modelo-validacion --strict` y `git diff --check` fueron correctos.
+Durante la regresión se corrigió la infraestructura de tests API para respetar `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_TEST_DB`, manteniendo los valores históricos como fallback. Esto no cambia el comportamiento productivo.
 
-Durante la regresion en esta PC se detecto una limitacion heredada de infraestructura de tests de CU-1: `apps/api/test/test-database.ts` fijaba `POSTGRES_PORT=5432`. Se corrigio para respetar `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_TEST_DB` del entorno, conservando los valores historicos como fallback. Esto no cambia el comportamiento productivo ni el contrato de CI/reproduccion limpia.
-
-- Estado CU-2.1: implementacion completa, 9/9 tareas y
-reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
+El verify read-only más reciente confirmó **CRITICAL: None**. Después se ejecutó la verificación de comportamiento autorizada mediante `reproduce-clean` sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b` y finalizó correctamente. Gate restante: repetir el verify final sobre la documentación consolidada antes de `sync/archive`.
 
 ## Pruebas requeridas para cerrar CU-2.1
 
@@ -175,91 +184,35 @@ No se requiere E2E de navegador en CU-2.1 porque todavía no existe UI UML; el E
 
 ## Comandos finales de commit y push
 
-CU-2.1 ya está implementado y verificado técnicamente; resta únicamente el verify final antes de sync/archive. La planificación no ejecutó `git add`, `git commit` ni `git push`.
+CU-2.1 ya está implementado, verificado estáticamente sin CRITICAL y verificado conductualmente mediante `reproduce-clean`. Antes del `sync/archive` resta únicamente el verify final sobre la documentación consolidada. Los cambios locales de `compose.yaml` y `opencode.json` no pertenecen al cierre de CU-2.1.
 
-## Historial - cierre local previo al verify critico - 2026-09-15
+## Historial de verificación y remediación — 2026-09-15
 
-CU-2.1 - Modelo y validacion queda implementado y verificado localmente con 9/9 tareas OpenSpec completas.
+El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` tuvo una reproducción limpia correcta antes de la remediación runtime. El verify posterior detectó que `parseProjectDocument` aceptaba formas JSON que violaban contratos cerrados, por lo que esa evidencia quedó histórica.
 
-La reproduccion limpia final paso correctamente sobre el snapshot Git `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
+La remediación `ec30194` añadió validación runtime exhaustiva y regresiones negativas. También se agregaron fixture, validación y round-trip para un composite válido. Después de esos cambios, `uml-domain` quedó en 37/37 tests.
 
-Evidencia real:
-- `uml-domain`: conteo historico previo a remediacion (no vigente) tests;
-- E2E Chromium: 5/5;
-- build raiz completo: API, web, contracts y `uml-domain`;
-- PostgreSQL aislado: host port `55432`;
-- proyecto Compose aislado: `primer-parcial-clean-4bf13daade14`;
-- health final: `available`;
-- PostgreSQL temporal detenido correctamente al finalizar;
-- `git diff --check`: correcto;
-- OpenSpec strict: correcto.
+## Evidencia vigente final CU-2.1
 
-No se implementaron Command Bus, Undo/Redo, canvas, persistencia de proyectos, XMI, generacion ni IA en CU-2.1.
-
-Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
-
-## Estado vigente tras remediacion del verify - 2026-09-15
-
-El verify final detecto un bloqueo critico: `parseProjectDocument` no validaba recursivamente el contrato cerrado. La remediacion agrega validacion runtime exhaustiva y regresiones negativas para discriminantes, enums, UUID, timestamps, primitivas, asociaciones, layout, perfil y propiedades no permitidas.
-
-La reproduccion limpia registrada antes de esta remediacion se conserva como historial y no certifica el codigo actual. La reapertura historica de la tarea 3.2 fue resuelta con la reproduccion limpia post-remediacion del snapshot `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; 3.2 esta completa.
-
-- Estado CU-2.1: implementacion completa, 9/9 tareas y
-- CU-2.1: `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
-
-## Cierre local CU-2.1 - 2026-09-15
-
-CU-2.1 - Modelo y validacion queda implementado y verificado localmente con 9/9 tareas OpenSpec completas.
-
-La reproduccion limpia final paso correctamente sobre el snapshot Git `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
-
-Evidencia real:
-- `uml-domain`: conteo historico previo a remediacion (no vigente) tests;
-- E2E Chromium: 5/5;
-- build raiz completo: API, web, contracts y `uml-domain`;
-- PostgreSQL aislado: host port `55432`;
-- proyecto Compose aislado: `primer-parcial-clean-4bf13daade14`;
-- health final: `available`;
-- PostgreSQL temporal detenido correctamente al finalizar;
-- `git diff --check`: correcto;
-- OpenSpec strict: correcto.
-
-No se implementaron Command Bus, Undo/Redo, canvas, persistencia de proyectos, XMI, generacion ni IA en CU-2.1.
-
-Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
-
-## Estado vigente post-remediacion verify
-
-- Rama de trazabilidad: feature/cu-2-1-modelo-validacion.
-- Runtime-contract remediation vigente desde ec30194.
-- Fixture composite valido: presente.
-- Validacion de composite valido: cubierta.
-- Round-trip de composite valido: cubierto.
-- Tests uml-domain post-remediacion: 37/37 correctos.
-- La reproduccion limpia del snapshot 3c030ef6674f82b674bd48823a95e2623c22f8d1 es historica y no certifica el codigo actual.
-- Estado CU-2.1: implementacion completa, 9/9 tareas y
-reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
-
-## Evidencia vigente final CU-2.1 - 2026-09-15
-
-La evidencia de cierre vigente corresponde a la reproduccion limpia ejecutada despues de la remediacion runtime y de la cobertura composite.
-
-Trazabilidad concreta:
-
-- Comando ejecutado: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Software-Parcial-1\project-planning\scripts\reproduce-clean.ps1"`
-- Resultado del comando: finalizo correctamente y emitio el resumen final de reproduccion limpia.
-- Snapshot Git reproducido: `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`.
-- Rama del incremento: `feature/cu-2-1-modelo-validacion`.
-- Compose aislado: `primer-parcial-clean-50365d5da937`.
-- PostgreSQL aislado, host port: `55432`.
+- Rama: `feature/cu-2-1-modelo-validacion`.
+- Snapshot Git conductualmente verificado: `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`.
+- Runtime-contract remediation `ec30194`: ancestro del snapshot.
+- Comando: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Software-Parcial-1\project-planning\scripts\reproduce-clean.ps1"`.
+- Resultado: reproducción limpia finalizada correctamente.
+- Compose aislado: `primer-parcial-clean-fe04b87c22b7`.
+- PostgreSQL host port: `55432`.
 - Health final: `available`.
-- Limpieza final: el contenedor `primer-parcial-clean-50365d5da937-postgres-1` termino en estado `Stopped`.
-- Tests `uml-domain` post-remediacion ejecutados antes de versionar el snapshot: 37/37 correctos.
-- Composite valido: cubierto por validacion.
-- Composite valido: cubierto por round-trip de serializacion/parse.
-- Runtime-contract remediation `ec30194`: ancestro del snapshot reproducido.
-- OpenSpec: 9/9 tareas completas.
+- Contenedor temporal: `Stopped`.
+- `uml-domain`: 37/37 tests post-remediación.
+- Composite válido y round-trip: cubiertos.
+- OpenSpec: 9/9 tareas.
+- Verify estático más reciente: **CRITICAL: None**.
 
-El snapshot historico `3c030ef6674f82b674bd48823a95e2623c22f8d1` no se usa como evidencia de cierre porque precede la remediacion runtime.
+- Verificación de comportamiento: `reproduce-clean` completado correctamente sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`.
+- Directorio temporal: `C:\Users\brand\AppData\Local\Temp\primer-parcial-clean-d402d40dfd304b98b354eabef08a57a7`.
+- Compose de la verificación: `primer-parcial-clean-fe04b87c22b7`.
+- PostgreSQL host port: `55432`.
+- Health: `available`.
+- Contenedor `primer-parcial-clean-fe04b87c22b7-postgres-1`: `Stopped` al finalizar.
 
-Estado: evidencia concreta registrada. Repetir `/opsx-verify cu-2-1-modelo-validacion`; solo un verify sin CRITICAL habilita sync y archive.
+La evidencia `3c030ef6674f82b674bd48823a95e2623c22f8d1` permanece únicamente como historial. La verificación de comportamiento autorizada quedó completada sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`. Gate restante antes de `sync/archive`: verify final sobre la documentación consolidada.

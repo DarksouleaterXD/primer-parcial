@@ -1,6 +1,6 @@
 # Desarrollo local en Windows / PowerShell
 
-**Estado:** CU-0 y CU-1 estan terminados y archivados. CU-2.1 tiene implementacion, checks locales, reproduccion limpia post-remediacion y verify sin CRITICAL; resta su sync/archive formal. Consulta [CU-0](../puds/use-cases/CU-0-inicializar-base.md), [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) y [CU-2](../puds/use-cases/CU-2-modelado-uml-manual.md) para la evidencia real.
+**Estado:** CU-0 y CU-1 están terminados y archivados. CU-2.1 está implementado, tiene verify estático sin CRITICAL y verificación de comportamiento `reproduce-clean` completada correctamente. Antes de `sync/archive` resta el verify final sobre la documentación consolidada. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md), [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) y [CU-2](../puds/use-cases/CU-2-modelado-uml-manual.md).
 
 ## Requisitos
 
@@ -123,38 +123,24 @@ Con la API, web y PostgreSQL iniciados según el arranque local, una persona deb
 - El workflow `Verify base executable` pasó en GitHub Actions #3 para `0a0337b2a283098f53e3392ec062d0644c1ac386`, con Node `v24.11.1` y npm `11.6.2`.
 - CU-1 esta terminado y archivado; su evidencia y cambio OpenSpec archivado permanecen como referencia historica. No hagas commit ni push sin autorizacion explicita.
 
-### Historial - evidencia reproduce-clean previa a remediacion CU-2.1 - 2026-09-15
+### Historial de reproducción previa a remediación CU-2.1 — 2026-09-15
 
-El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctamente. Como `5432` estaba ocupado, la receta portable uso el puerto aislado `55432` sin modificar el `compose.yaml` versionado ni detener servicios existentes. El resultado final fue 5/5 E2E Chromium, build raiz correcto y health `available`.
-
-### Remediacion runtime CU-2.1
-
-El verify posterior a la primera reproduccion limpia encontro que el parser aceptaba formas JSON que violaban contratos cerrados. Tras corregir parser/validador, la evidencia del snapshot anterior es historica. La exigencia de repetir `reproduce-clean` fue satisfecha por el snapshot `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; esa es la evidencia vigente antes del verify final.
-
-### Evidencia reproduce-clean CU-2.1 - 2026-09-15
-
-El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctamente. Como `5432` estaba ocupado, la receta portable uso el puerto aislado `55432` sin modificar el `compose.yaml` versionado ni detener servicios existentes. El resultado final fue 5/5 E2E Chromium, build raiz correcto y health `available`.
-
-### Estado de verificacion CU-2.1 post-remediacion
-
-El paquete uml-domain tiene 37/37 tests correctos post-remediacion, incluyendo una composicion valida y su round-trip. La evidencia
-`reproduce-clean` anterior a `ec30194` es evidencia historica. La evidencia vigente post-remediacion es el snapshot `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; OpenSpec 3.2 esta completa y resta el verify final.
+El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctamente antes de la remediación runtime. Como precede a `ec30194`, se conserva únicamente como evidencia histórica.
 
 ### Evidencia limpia vigente CU-2.1
 
-Comando ejecutado:
+La evidencia post-remediación corresponde a:
 
-`powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Software-Parcial-1\project-planning\scripts\reproduce-clean.ps1"`
-
-Resultado observado:
-
-- snapshot: `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`;
+- snapshot conductualmente verificado: `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`;
 - rama: `feature/cu-2-1-modelo-validacion`;
-- Compose project: `primer-parcial-clean-50365d5da937`;
+- comando: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Software-Parcial-1\project-planning\scripts\reproduce-clean.ps1"`;
+- Compose project: `primer-parcial-clean-fe04b87c22b7`;
 - PostgreSQL host port: `55432`;
 - health final: `available`;
 - contenedor PostgreSQL temporal: `Stopped`;
-- tests `uml-domain` post-remediacion previos al snapshot: 37/37 correctos;
-- composite valido y round-trip: cubiertos.
+- tests `uml-domain` post-remediación: 37/37;
+- composite válido y round-trip: cubiertos;
+- OpenSpec: 9/9;
+- verify estático más reciente: **CRITICAL: None**.
 
-Esta es la evidencia vigente para OpenSpec 3.2. La reproduccion de `3c030ef6674f82b674bd48823a95e2623c22f8d1` es solo historica.
+La verificación read-only no reejecutó lint, typecheck, tests, build, E2E, Docker ni `reproduce-clean`. Después de ese reporte se ejecutó `reproduce-clean` sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b` y finalizó correctamente. Gate restante: verify final antes de `sync/archive`.
