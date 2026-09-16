@@ -61,7 +61,7 @@ primer-parcial/
 └── compose.yaml            [configurado: solo PostgreSQL local]
 ```
 
-`packages/uml-domain` es un paquete real de CU-2.1 y no contiene dependencias de UI/backend. No se crean paquetes vacíos por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Los workspaces contienen solo la base ejecutable de CU-0.2.
+`packages/uml-domain` es un paquete real de CU-2.1 y no contiene dependencias de UI/backend. No se crean paquetes vacios por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Los workspaces implementados incluyen la base ejecutable web/API de CU-0.2, los contratos de cuenta/sesion de CU-1 y `packages/uml-domain` de CU-2.1.
 
 ## Infraestructura local objetivo y orden
 

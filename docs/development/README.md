@@ -1,6 +1,6 @@
 # Desarrollo local en Windows / PowerShell
 
-**Estado:** CU-0 está terminado. CU-1 tiene cuenta/sesión, checks locales, E2E Chromium, reproducción limpia, build, revisión manual y CI remoto verificados; está formalmente listo para `/opsx-sync` y `/opsx-archive`. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
+**Estado:** CU-0 y CU-1 estan terminados y archivados. CU-2.1 tiene implementacion, checks locales, reproduccion limpia post-remediacion y verify sin CRITICAL; resta su sync/archive formal. Consulta [CU-0](../puds/use-cases/CU-0-inicializar-base.md), [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) y [CU-2](../puds/use-cases/CU-2-modelado-uml-manual.md) para la evidencia real.
 
 ## Requisitos
 
@@ -121,7 +121,7 @@ Con la API, web y PostgreSQL iniciados según el arranque local, una persona deb
 ## Estado del CU-0
 
 - El workflow `Verify base executable` pasó en GitHub Actions #3 para `0a0337b2a283098f53e3392ec062d0644c1ac386`, con Node `v24.11.1` y npm `11.6.2`.
-- CU-1 está formalmente listo para `/opsx-sync` y `/opsx-archive`. No hagas commit ni push sin autorización explícita.
+- CU-1 esta terminado y archivado; su evidencia y cambio OpenSpec archivado permanecen como referencia historica. No hagas commit ni push sin autorizacion explicita.
 
 ### Historial - evidencia reproduce-clean previa a remediacion CU-2.1 - 2026-09-15
 
