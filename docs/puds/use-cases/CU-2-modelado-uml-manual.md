@@ -1,4 +1,4 @@
-﻿# CU-2 — Modelar diagramas UML manualmente
+# CU-2 — Modelar diagramas UML manualmente
 
 ## Estado y trazabilidad
 
@@ -135,7 +135,7 @@ Aún no se registra como cerrado ningún check raíz, reproducción limpia ni ev
 
 ## Evidencia de integracion CU-2.1 - 2026-09-15
 
-La regresion raiz fue ejecutada correctamente con el nuevo workspace incluido: `npm run lint`, `npm run typecheck`, `npm run test` y `npm run build`. La API cerro 18/18 tests, web 19 correctos con 1 integracion condicional omitida, contracts 4/4 y `uml-domain` 23/23. `astro check` informo 0 errores, 0 warnings y 0 hints.
+La regresion raiz fue ejecutada correctamente con el nuevo workspace incluido: `npm run lint`, `npm run typecheck`, `npm run test` y `npm run build`. La API cerro 18/18 tests, web 19 correctos con 1 integracion condicional omitida, contracts 4/4 y `uml-domain` conteo historico previo a remediacion (no vigente). `astro check` informo 0 errores, 0 warnings y 0 hints.
 
 El control de alcance confirmo que `packages/uml-domain` no introdujo Command Bus, Undo/Redo, canvas, persistencia, XMI, generacion ni IA. `openspec validate cu-2-1-modelo-validacion --strict` y `git diff --check` fueron correctos.
 
@@ -181,7 +181,7 @@ CU-2.1 - Modelo y validacion queda implementado y verificado localmente con 9/9 
 La reproduccion limpia final paso correctamente sobre el snapshot Git `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
 
 Evidencia real:
-- `uml-domain`: 23/23 tests;
+- `uml-domain`: conteo historico previo a remediacion (no vigente) tests;
 - E2E Chromium: 5/5;
 - build raiz completo: API, web, contracts y `uml-domain`;
 - PostgreSQL aislado: host port `55432`;
@@ -210,7 +210,7 @@ CU-2.1 - Modelo y validacion queda implementado y verificado localmente con 9/9 
 La reproduccion limpia final paso correctamente sobre el snapshot Git `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
 
 Evidencia real:
-- `uml-domain`: 23/23 tests;
+- `uml-domain`: conteo historico previo a remediacion (no vigente) tests;
 - E2E Chromium: 5/5;
 - build raiz completo: API, web, contracts y `uml-domain`;
 - PostgreSQL aislado: host port `55432`;
@@ -223,3 +223,16 @@ Evidencia real:
 No se implementaron Command Bus, Undo/Redo, canvas, persistencia de proyectos, XMI, generacion ni IA en CU-2.1.
 
 Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
+
+## Estado vigente post-remediacion verify
+
+- Rama de trazabilidad: $TargetBranch.
+- Runtime-contract remediation vigente desde ec30194.
+- Fixture composite valido: presente.
+- Validacion de composite valido: cubierta.
+- Round-trip de composite valido: cubierto.
+- Tests uml-domain post-remediacion: 37/37 correctos.
+- La reproduccion limpia del snapshot 3c030ef6674f82b674bd48823a95e2623c22f8d1 es historica y no certifica el codigo actual.
+- OpenSpec 3.2 permanece pendiente hasta versionar este estado y ejecutar
+eproduce-clean nuevamente.
+- No archivar CU-2.1 todavia.

@@ -1,4 +1,4 @@
-﻿# Estado real del proyecto
+# Estado real del proyecto
 
 Última actualización: 2026-09-14
 
@@ -52,7 +52,7 @@ La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/`
 ### Evidencia de integracion CU-2.1 - 2026-09-15
 
 - Regresion raiz: `npm run lint`, `npm run typecheck`, `npm run test` y `npm run build` correctos.
-- Tests: API 18/18; web 19 correctos con 1 omitido condicional; contracts 4/4; `uml-domain` 23/23.
+- Tests: API 18/18; web 19 correctos con 1 omitido condicional; contracts 4/4; `uml-domain` conteo historico previo a remediacion (no vigente).
 - Alcance: sin Command Bus, Undo/Redo, canvas, persistencia, XMI, generacion ni IA dentro de CU-2.1.
 - OpenSpec strict y `git diff --check`: correctos.
 - Infraestructura de tests API: ahora respeta variables PostgreSQL del entorno con fallback contractual a 5432; esto permite la misma regresion en una estacion local con publicacion 5433 sin modificar `compose.yaml`.
@@ -88,7 +88,7 @@ La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/`
 CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 
 - Snapshot reproducido: `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
-- `uml-domain`: 23/23 tests.
+- `uml-domain`: conteo historico previo a remediacion (no vigente) tests.
 - E2E Chromium: 5/5.
 - Build raiz: correcto.
 - PostgreSQL aislado: `55432`.
@@ -109,9 +109,20 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 
 - Snapshot reproducido: `3c030ef6674f82b674bd48823a95e2623c22f8d1`.
-- `uml-domain`: 23/23 tests.
+- `uml-domain`: conteo historico previo a remediacion (no vigente) tests.
 - E2E Chromium: 5/5.
 - Build raiz: correcto.
 - PostgreSQL aislado: `55432`.
 - Health final: `available`.
 - Estado: listo para verify/sync/archive.
+
+## Estado vigente post-remediacion verify
+
+- Rama: $TargetBranch.
+- Tests uml-domain: 37/37 correctos.
+- Composite valido y round-trip: cubiertos.
+- Runtime-contract remediation ec30194: incluida.
+- OpenSpec 3.2: pendiente.
+- Siguiente evidencia requerida: nuevo snapshot Git +
+eproduce-clean.
+- No archivar CU-2.1 todavia.

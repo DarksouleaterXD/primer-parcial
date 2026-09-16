@@ -1,4 +1,4 @@
-﻿# Contexto de continuidad para nuevos chats y agentes
+# Contexto de continuidad para nuevos chats y agentes
 
 ## Cómo usar este archivo
 
@@ -167,3 +167,8 @@ El bloqueo critico de validacion runtime fue corregido. No iniciar CU-2.2. Prime
 ## Gate actual CU-2.1
 
 CU-2.1 (`cu-2-1-modelo-validacion`) esta 9/9 y no requiere mas implementacion funcional. El siguiente paso permitido es verify -> sync -> archive. No iniciar CU-2.2 antes de cerrar formalmente CU-2.1.
+
+## Gate vigente CU-2.1 - nueva evidencia requerida
+
+CU-2.1 esta en $TargetBranch, con runtime-contract remediation y cobertura composite valida aplicadas. OpenSpec 3.2 sigue pendiente. El siguiente paso es commit de remediacion -> nuevo
+eproduce-clean -> actualizar evidencia -> repetir /opsx-verify. No iniciar CU-2.2 ni archive antes de completar ese gate.

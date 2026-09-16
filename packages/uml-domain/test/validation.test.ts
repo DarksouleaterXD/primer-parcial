@@ -5,6 +5,7 @@ import {
 import { describe, expect, it } from "vitest";
 
 import {
+  createValidCompositeAssociationProjectDocumentFixture,
   createValidProjectDocumentFixture,
   ids,
 } from "./fixtures/project-document.fixture.js";
@@ -142,6 +143,19 @@ describe("UML domain validation", () => {
     );
   });
 
+  it("accepts one valid composite owner", () => {
+    const document = createValidCompositeAssociationProjectDocumentFixture();
+
+    const result = validateProjectDocument(document, "save");
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.hasErrors).toBe(false);
+    expect(result.blocked).toBe(false);
+    expect(document.uml.associations[0]!.ends.map((end) => end.aggregation)).toEqual([
+      "composite",
+      "none",
+    ]);
+  });
   it("detects orphan layout and profile references", () => {
     const document = createValidProjectDocumentFixture();
     document.layout.nodes.push({

@@ -1,4 +1,4 @@
-﻿# Desarrollo local en Windows / PowerShell
+# Desarrollo local en Windows / PowerShell
 
 **Estado:** CU-0 está terminado. CU-1 tiene cuenta/sesión, checks locales, E2E Chromium, reproducción limpia, build, revisión manual y CI remoto verificados; está formalmente listo para `/opsx-sync` y `/opsx-archive`. Consultá [CU-0](../puds/use-cases/CU-0-inicializar-base.md) y [CU-1](../puds/use-cases/CU-1-cuenta-sesion.md) para la evidencia real.
 
@@ -134,3 +134,8 @@ El verify posterior a la primera reproduccion limpia encontro que el parser acep
 ### Evidencia reproduce-clean CU-2.1 - 2026-09-15
 
 El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctamente. Como `5432` estaba ocupado, la receta portable uso el puerto aislado `55432` sin modificar el `compose.yaml` versionado ni detener servicios existentes. El resultado final fue 5/5 E2E Chromium, build raiz correcto y health `available`.
+
+### Estado de verificacion CU-2.1 post-remediacion
+
+El paquete uml-domain tiene 37/37 tests correctos post-remediacion, incluyendo una composicion valida y su round-trip. La evidencia
+eproduce-clean anterior a ec30194 es historica. Debe versionarse el estado actual y ejecutar una nueva reproduccion limpia antes de cerrar OpenSpec 3.2.

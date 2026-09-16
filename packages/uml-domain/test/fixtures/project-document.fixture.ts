@@ -181,3 +181,18 @@ export const createValidProjectDocumentFixture = (): ProjectDocument => ({
     ],
   },
 });
+export const createValidCompositeAssociationProjectDocumentFixture =
+  (): ProjectDocument => {
+    const document = createValidProjectDocumentFixture();
+    const association = document.uml.associations[0]!;
+
+    association.name = "userAdminComposition";
+    association.ends[0]!.classifierId = ids.userClass;
+    association.ends[0]!.roleName = "whole";
+    association.ends[0]!.aggregation = "composite";
+    association.ends[1]!.classifierId = ids.adminClass;
+    association.ends[1]!.roleName = "part";
+    association.ends[1]!.aggregation = "none";
+
+    return document;
+  };

@@ -8,6 +8,7 @@ import {
 import { describe, expect, it } from "vitest";
 
 import {
+  createValidCompositeAssociationProjectDocumentFixture,
   createValidProjectDocumentFixture,
   ids,
 } from "./fixtures/project-document.fixture.js";
@@ -94,6 +95,19 @@ describe("ProjectDocument", () => {
     expect(validateProjectDocument(parsed, "save").diagnostics).toEqual([]);
   });
 
+  it("round-trips a valid composite association without changing aggregation", () => {
+    const original = createValidCompositeAssociationProjectDocumentFixture();
+
+    expect(validateProjectDocument(original, "save").diagnostics).toEqual([]);
+
+    const parsed = parseProjectDocument(serializeProjectDocument(original));
+
+    expect(parsed).toEqual(original);
+    expect(parsed.uml.associations[0]!.ends.map((end) => end.aggregation)).toEqual([
+      "composite",
+      "none",
+    ]);
+  });
   it("serializes object keys deterministically without mutating array order", () => {
     const document = createValidProjectDocumentFixture();
     const first = serializeProjectDocument(document);
