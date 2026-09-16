@@ -139,3 +139,7 @@ El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctam
 
 El paquete uml-domain tiene 37/37 tests correctos post-remediacion, incluyendo una composicion valida y su round-trip. La evidencia
 eproduce-clean anterior a ec30194 es historica. Debe versionarse el estado actual y ejecutar una nueva reproduccion limpia antes de cerrar OpenSpec 3.2.
+
+### Evidencia limpia vigente CU-2.1
+
+La reproduccion limpia vigente corresponde al snapshot post-remediacion $Snapshot. Se ejecuto con PostgreSQL aislado en $PostgresHostPort, Compose $ComposeProject y health final vailable. El paquete uml-domain tiene 37/37 tests post-remediacion, incluyendo composite valido y round-trip.

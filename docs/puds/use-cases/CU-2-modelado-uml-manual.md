@@ -236,3 +236,24 @@ Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
 - OpenSpec 3.2 permanece pendiente hasta versionar este estado y ejecutar
 eproduce-clean nuevamente.
 - No archivar CU-2.1 todavia.
+
+## Evidencia vigente final CU-2.1 - 2026-09-15
+
+La reproduccion limpia post-remediacion paso correctamente sobre el snapshot Git $Snapshot.
+
+Evidencia vigente:
+- rama: $TargetBranch;
+- runtime-contract remediation: incluida;
+- composite valido: cubierto por validacion y round-trip;
+- tests uml-domain post-remediacion: 37/37;
+- E2E del snapshot limpio: correctos;
+- build raiz del snapshot limpio: correcto;
+- PostgreSQL aislado: host port $PostgresHostPort;
+- Compose aislado: $ComposeProject;
+- health final: vailable;
+- contenedor PostgreSQL temporal detenido correctamente;
+- OpenSpec: 9/9 tareas completas.
+
+La evidencia anterior basada en 3c030ef6674f82b674bd48823a95e2623c22f8d1 permanece solo como historial y no es la evidencia de cierre vigente.
+
+Estado: listo para repetir /opsx-verify. No ejecutar sync/archive hasta que ese verify no tenga CRITICAL.

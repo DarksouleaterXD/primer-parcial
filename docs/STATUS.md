@@ -126,3 +126,15 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 - Siguiente evidencia requerida: nuevo snapshot Git +
 eproduce-clean.
 - No archivar CU-2.1 todavia.
+
+## Evidencia vigente final CU-2.1 - 2026-09-15
+
+- Rama: $TargetBranch.
+- Snapshot limpio post-remediacion: $Snapshot.
+- uml-domain: 37/37.
+- Composite valido + round-trip: cubiertos.
+- PostgreSQL aislado: $PostgresHostPort.
+- Compose aislado: $ComposeProject.
+- Health final: vailable.
+- OpenSpec: 9/9.
+- Estado: listo para repetir /opsx-verify; no sync/archive antes de un verify sin CRITICAL.
