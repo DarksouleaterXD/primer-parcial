@@ -118,7 +118,7 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 
 ## Estado vigente post-remediacion verify
 
-- Rama: $TargetBranch.
+- Rama: feature/cu-2-1-modelo-validacion.
 - Tests uml-domain: 37/37 correctos.
 - Composite valido y round-trip: cubiertos.
 - Runtime-contract remediation ec30194: incluida.
@@ -129,12 +129,15 @@ eproduce-clean.
 
 ## Evidencia vigente final CU-2.1 - 2026-09-15
 
-- Rama: $TargetBranch.
-- Snapshot limpio post-remediacion: $Snapshot.
-- uml-domain: 37/37.
-- Composite valido + round-trip: cubiertos.
-- PostgreSQL aislado: $PostgresHostPort.
-- Compose aislado: $ComposeProject.
-- Health final: vailable.
+- Rama: `feature/cu-2-1-modelo-validacion`.
+- Snapshot limpio post-remediacion: `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`.
+- Comando: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Software-Parcial-1\project-planning\scripts\reproduce-clean.ps1"`.
+- Resultado: reproduccion limpia finalizada correctamente.
+- `uml-domain` post-remediacion: 37/37 tests correctos.
+- Composite valido y round-trip: cubiertos.
+- PostgreSQL aislado: host port `55432`.
+- Compose aislado: `primer-parcial-clean-50365d5da937`.
+- Health final: `available`.
+- Contenedor temporal PostgreSQL: detenido correctamente al finalizar.
 - OpenSpec: 9/9.
-- Estado: listo para repetir /opsx-verify; no sync/archive antes de un verify sin CRITICAL.
+- Estado: repetir `/opsx-verify`; no ejecutar sync/archive antes de un verify sin CRITICAL.

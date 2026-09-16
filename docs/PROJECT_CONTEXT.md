@@ -170,10 +170,22 @@ CU-2.1 (`cu-2-1-modelo-validacion`) esta 9/9 y no requiere mas implementacion fu
 
 ## Gate vigente CU-2.1 - nueva evidencia requerida
 
-CU-2.1 esta en $TargetBranch, con runtime-contract remediation y cobertura composite valida aplicadas. OpenSpec 3.2 sigue pendiente. El siguiente paso es commit de remediacion -> nuevo
+CU-2.1 esta en feature/cu-2-1-modelo-validacion, con runtime-contract remediation y cobertura composite valida aplicadas. OpenSpec 3.2 sigue pendiente. El siguiente paso es commit de remediacion -> nuevo
 eproduce-clean -> actualizar evidencia -> repetir /opsx-verify. No iniciar CU-2.2 ni archive antes de completar ese gate.
 
 ## Gate vigente CU-2.1 - verify final
 
-CU-2.1 esta en $TargetBranch, tiene 9/9 tareas completas y evidencia
-eproduce-clean vigente sobre $Snapshot. El siguiente paso es repetir /opsx-verify cu-2-1-modelo-validacion. Solo si no hay CRITICAL se permite sync -> archive. CU-2.2 sigue bloqueado hasta ese cierre formal.
+CU-2.1 esta en la rama `feature/cu-2-1-modelo-validacion`.
+
+La evidencia vigente de OpenSpec 3.2 es:
+
+- snapshot: `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`;
+- reproduccion limpia: finalizada correctamente;
+- Compose: `primer-parcial-clean-50365d5da937`;
+- PostgreSQL host port: `55432`;
+- health final: `available`;
+- `uml-domain`: 37/37 tests post-remediacion;
+- composite valido y round-trip: cubiertos;
+- OpenSpec: 9/9.
+
+Siguiente paso: `/opsx-verify cu-2-1-modelo-validacion`. Solo si no hay CRITICAL se permite sync -> archive. CU-2.2 sigue bloqueado hasta el cierre formal.

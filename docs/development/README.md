@@ -142,4 +142,19 @@ eproduce-clean anterior a ec30194 es historica. Debe versionarse el estado actua
 
 ### Evidencia limpia vigente CU-2.1
 
-La reproduccion limpia vigente corresponde al snapshot post-remediacion $Snapshot. Se ejecuto con PostgreSQL aislado en $PostgresHostPort, Compose $ComposeProject y health final vailable. El paquete uml-domain tiene 37/37 tests post-remediacion, incluyendo composite valido y round-trip.
+Comando ejecutado:
+
+`powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Software-Parcial-1\project-planning\scripts\reproduce-clean.ps1"`
+
+Resultado observado:
+
+- snapshot: `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`;
+- rama: `feature/cu-2-1-modelo-validacion`;
+- Compose project: `primer-parcial-clean-50365d5da937`;
+- PostgreSQL host port: `55432`;
+- health final: `available`;
+- contenedor PostgreSQL temporal: `Stopped`;
+- tests `uml-domain` post-remediacion previos al snapshot: 37/37 correctos;
+- composite valido y round-trip: cubiertos.
+
+Esta es la evidencia vigente para OpenSpec 3.2. La reproduccion de `3c030ef6674f82b674bd48823a95e2623c22f8d1` es solo historica.

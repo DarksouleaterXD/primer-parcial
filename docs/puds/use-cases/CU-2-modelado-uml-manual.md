@@ -226,7 +226,7 @@ Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
 
 ## Estado vigente post-remediacion verify
 
-- Rama de trazabilidad: $TargetBranch.
+- Rama de trazabilidad: feature/cu-2-1-modelo-validacion.
 - Runtime-contract remediation vigente desde ec30194.
 - Fixture composite valido: presente.
 - Validacion de composite valido: cubierta.
@@ -239,21 +239,24 @@ eproduce-clean nuevamente.
 
 ## Evidencia vigente final CU-2.1 - 2026-09-15
 
-La reproduccion limpia post-remediacion paso correctamente sobre el snapshot Git $Snapshot.
+La evidencia de cierre vigente corresponde a la reproduccion limpia ejecutada despues de la remediacion runtime y de la cobertura composite.
 
-Evidencia vigente:
-- rama: $TargetBranch;
-- runtime-contract remediation: incluida;
-- composite valido: cubierto por validacion y round-trip;
-- tests uml-domain post-remediacion: 37/37;
-- E2E del snapshot limpio: correctos;
-- build raiz del snapshot limpio: correcto;
-- PostgreSQL aislado: host port $PostgresHostPort;
-- Compose aislado: $ComposeProject;
-- health final: vailable;
-- contenedor PostgreSQL temporal detenido correctamente;
+Trazabilidad concreta:
+
+- Comando ejecutado: `powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Software-Parcial-1\project-planning\scripts\reproduce-clean.ps1"`
+- Resultado del comando: finalizo correctamente y emitio el resumen final de reproduccion limpia.
+- Snapshot Git reproducido: `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`.
+- Rama del incremento: `feature/cu-2-1-modelo-validacion`.
+- Compose aislado: `primer-parcial-clean-50365d5da937`.
+- PostgreSQL aislado, host port: `55432`.
+- Health final: `available`.
+- Limpieza final: el contenedor `primer-parcial-clean-50365d5da937-postgres-1` termino en estado `Stopped`.
+- Tests `uml-domain` post-remediacion ejecutados antes de versionar el snapshot: 37/37 correctos.
+- Composite valido: cubierto por validacion.
+- Composite valido: cubierto por round-trip de serializacion/parse.
+- Runtime-contract remediation `ec30194`: ancestro del snapshot reproducido.
 - OpenSpec: 9/9 tareas completas.
 
-La evidencia anterior basada en 3c030ef6674f82b674bd48823a95e2623c22f8d1 permanece solo como historial y no es la evidencia de cierre vigente.
+El snapshot historico `3c030ef6674f82b674bd48823a95e2623c22f8d1` no se usa como evidencia de cierre porque precede la remediacion runtime.
 
-Estado: listo para repetir /opsx-verify. No ejecutar sync/archive hasta que ese verify no tenga CRITICAL.
+Estado: evidencia concreta registrada. Repetir `/opsx-verify cu-2-1-modelo-validacion`; solo un verify sin CRITICAL habilita sync y archive.
