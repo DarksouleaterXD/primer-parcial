@@ -129,7 +129,7 @@ El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctam
 
 ### Remediacion runtime CU-2.1
 
-El verify posterior a la primera reproduccion limpia encontro que el parser aceptaba formas JSON que violaban contratos cerrados. Tras corregir parser/validador, la evidencia del snapshot anterior es historica. Debe ejecutarse `reproduce-clean` otra vez sobre un commit que incluya la remediacion antes de archivar CU-2.1.
+El verify posterior a la primera reproduccion limpia encontro que el parser aceptaba formas JSON que violaban contratos cerrados. Tras corregir parser/validador, la evidencia del snapshot anterior es historica. La exigencia de repetir `reproduce-clean` fue satisfecha por el snapshot `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; esa es la evidencia vigente antes del verify final.
 
 ### Evidencia reproduce-clean CU-2.1 - 2026-09-15
 
@@ -138,7 +138,7 @@ El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` fue reproducido correctam
 ### Estado de verificacion CU-2.1 post-remediacion
 
 El paquete uml-domain tiene 37/37 tests correctos post-remediacion, incluyendo una composicion valida y su round-trip. La evidencia
-eproduce-clean anterior a ec30194 es historica. Debe versionarse el estado actual y ejecutar una nueva reproduccion limpia antes de cerrar OpenSpec 3.2.
+`reproduce-clean` anterior a `ec30194` es evidencia historica. La evidencia vigente post-remediacion es el snapshot `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; OpenSpec 3.2 esta completa y resta el verify final.
 
 ### Evidencia limpia vigente CU-2.1
 

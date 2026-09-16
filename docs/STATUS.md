@@ -1,6 +1,6 @@
 # Estado real del proyecto
 
-Última actualización: 2026-09-14
+Ultima actualizacion: 2026-09-16
 
 ## Resumen
 
@@ -8,7 +8,8 @@
 - CU-0 — Inicializar la base ejecutable: **terminado y archivado**.
 - CU-1 — Gestionar cuenta y sesión: **terminado y archivado** el 2026-09-14; 9/9 tareas, validación local completa y CI remoto `Verify base executable` #6 correcto.
 - CU-2 — Modelar diagramas UML manualmente: **en implementación**.
-- Incremento activo: **CU-2.1 - Modelo y validacion**; bloqueo critico del parser remediado localmente, nueva reproduccion limpia pendiente. No esta listo para archive.
+- CU-2.1 tiene 9/9 tareas completas;
+- CU-2.1: 9/9 tareas completas. `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 - CU-2.2 — Comandos e historial y CU-2.3 — Workspace visual permanecen pendientes.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
 
@@ -33,7 +34,7 @@ CU-0 dejó el monorepo reproducible con Node `v24.11.1`, npm `11.6.2`, Astro/Pre
 
 Los warnings de verificación final de CU-1 sobre respuestas OpenAPI 401 y cobertura explícita de PostgreSQL caído en registro/sesión quedaron como deuda no bloqueante; no se incorporan a CU-2.1 salvo corrección separada aprobada.
 
-## CU-2.1 — Implementación activa
+## CU-2.1 — Implementacion completada; verify final
 
 Objetivo: estabilizar el dominio UML antes de cualquier canvas o ruta alternativa de mutación.
 
@@ -47,7 +48,8 @@ Implementación aprobada y aplicada:
 - validador único con diagnósticos estables y políticas `edit/save/import/generate`;
 - sin Command Bus, canvas, persistencia de proyectos, realtime, XMI, generación ni IA en este incremento.
 
-La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/` y fue aprobada explícitamente antes de implementar. `packages/uml-domain` contiene el código actual; checks raíz, reproducción limpia y cierre permanecen pendientes hasta evidencia real.
+- CU-2.1 tiene 9/9 tareas completas;
+- CU-2.1: 9/9 tareas completas. `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 
 ### Evidencia de integracion CU-2.1 - 2026-09-15
 
@@ -56,13 +58,15 @@ La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/`
 - Alcance: sin Command Bus, Undo/Redo, canvas, persistencia, XMI, generacion ni IA dentro de CU-2.1.
 - OpenSpec strict y `git diff --check`: correctos.
 - Infraestructura de tests API: ahora respeta variables PostgreSQL del entorno con fallback contractual a 5432; esto permite la misma regresion en una estacion local con publicacion 5433 sin modificar `compose.yaml`.
-- Pendiente: snapshot Git versionado + `reproduce-clean` + cierre documental de CU-2.1.
+- CU-2.1 tiene 9/9 tareas completas;
+- CU-2.1: 9/9 tareas completas. `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 
 ## Pendientes y riesgos
 
-- La rama física de Git debe revisarse antes de implementar CU-2.1 según la regla “una rama por CU o incremento” de `AGENTS.md`; este parche no crea ni cambia ramas.
+- Rama de CU-2.1 confirmada: eature/cu-2-1-modelo-validacion.
 - `compose.yaml` y `opencode.json` pueden contener ajustes locales del usuario y este cambio no los modifica.
-- CU-2.1 ya tiene implementación de dominio y pruebas unitarias preparadas. Los checks raíz, build/reproducción limpia y evidencia de cierre permanecen pendientes hasta ejecución real en el entorno del proyecto.
+- CU-2.1 tiene 9/9 tareas completas;
+- CU-2.1: 9/9 tareas completas. `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 - Persistencia/reapertura del documento UML corresponde a CU-3.
 - Colaboración, XMI, generación e IA siguen fuera de alcance.
 
@@ -70,7 +74,8 @@ La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/`
 
 | Ciclo | Estado | Entrega usable esperada |
 |---|---|---|
-| 1. Editor UML con proyectos privados | CU-0 y CU-1 terminados; CU-2.1 en implementación; CU-2.2/CU-2.3 y CU-3 pendientes | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
+- CU-2.1: implementacion completa, 9/9 tareas y
+- CU-2.1: `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 | 2. Colaboración, interoperabilidad y generación | Pendiente: CU-4 a CU-7 | LAN/presencia, XMI y aplicación Spring/web/PWA/Android generada |
 | 3. Inteligencia, visión y cierre offline | Pendiente: CU-8 a CU-11 | Texto, voz, imágenes y demostración integral offline |
 
@@ -81,7 +86,7 @@ La planificación OpenSpec está en `openspec/changes/cu-2-1-modelo-validacion/`
 | 2026-09-13 | Se cerró CU-0. | Reproducción limpia, E2E/manuales y GitHub Actions correctos. |
 | 2026-09-14 | Se completó y archivó CU-1. | 9/9 tareas; reproducción limpia, revisión manual y `Verify base executable` #6 correctos. |
 | 2026-09-14 | Se preparó y aprobó la planificación de CU-2.1. | Proposal, spec, design y tasks de `cu-2-1-modelo-validacion`. |
-| 2026-09-14 | Se implementaron los bloques de dominio y validación de CU-2.1. | `packages/uml-domain` con modelo canónico, perfil, serialización, validador y pruebas; integración/cierre pendientes. |
+| 2026-09-14 | Se implementaron los bloques de dominio y validacion de CU-2.1. | Implementacion inicial completada; el cierre posterior queda documentado en la evidencia vigente de CU-2.1. |
 
 ## Historial - cierre local previo al verify critico - 2026-09-15
 
@@ -93,7 +98,7 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 - Build raiz: correcto.
 - PostgreSQL aislado: `55432`.
 - Health final: `available`.
-- Estado: listo para verify/sync/archive.
+- Estado historico: evidencia supersedida por el snapshot post-remediacion 6f7f4759bd74516ee1bead9645fe2cb975af1b8f.
 
 ## Estado vigente CU-2.1 tras remediacion del verify
 
@@ -101,8 +106,8 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 - Parser y validador fueron remediados para validar forma recursiva antes de aceptar el documento.
 - Se agregaron regresiones negativas y assertions de `severity`, `path` y `elementId`.
 - La evidencia `reproduce-clean` del snapshot anterior queda como historial porque el codigo cambio despues.
-- OpenSpec vuelve temporalmente a 8/9: 3.2 permanece pendiente hasta un nuevo snapshot versionado y nueva reproduccion limpia.
-- CU-2.1 no esta listo para archive hasta renovar esa evidencia y repetir verify.
+- CU-2.1 tiene 9/9 tareas completas;
+- CU-2.1: 9/9 tareas completas. `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 
 ## Cierre local CU-2.1 - 2026-09-15
 
@@ -114,7 +119,7 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 - Build raiz: correcto.
 - PostgreSQL aislado: `55432`.
 - Health final: `available`.
-- Estado: listo para verify/sync/archive.
+- Estado historico: evidencia supersedida por el snapshot post-remediacion 6f7f4759bd74516ee1bead9645fe2cb975af1b8f.
 
 ## Estado vigente post-remediacion verify
 
@@ -122,10 +127,8 @@ CU-2.1 tiene 9/9 tareas completas y verificacion local final correcta.
 - Tests uml-domain: 37/37 correctos.
 - Composite valido y round-trip: cubiertos.
 - Runtime-contract remediation ec30194: incluida.
-- OpenSpec 3.2: pendiente.
-- Siguiente evidencia requerida: nuevo snapshot Git +
-eproduce-clean.
-- No archivar CU-2.1 todavia.
+- CU-2.1 tiene 9/9 tareas completas;
+- CU-2.1: 9/9 tareas completas. `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 
 ## Evidencia vigente final CU-2.1 - 2026-09-15
 

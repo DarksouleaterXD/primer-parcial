@@ -1,6 +1,7 @@
 # Arquitectura aprobada — Primer Parcial
 
-**Estado:** CU-0 y CU-1 cerrados; CU-2.1 implementa el dominio UML portable y su validación, con cierre de integración pendiente. Consultá [STATUS](../STATUS.md), [producto](../product/product-05-astro-nestjs.md) y [ADR-0001](../decisions/ADR-0001-initial-technical-boundaries.md).
+CU-2.1 esta implementado y verificado tecnicamente;
+reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f. Resta solo el verify final antes de sync/archive.
 
 ## Dos aplicaciones distintas
 
@@ -67,3 +68,7 @@ primer-parcial/
 PostgreSQL `18.6-alpine` solo publica `127.0.0.1:5432`, con volumen nombrado montado en `/var/lib/postgresql` y healthcheck `pg_isready`. Variables vienen del entorno con fallback de desarrollo sintético; `.env.example` es versionable y archivos reales son ignorados. CU-0.2 comprobó el motor, el healthcheck, el endpoint disponible y el endpoint no disponible sin borrar el volumen.
 
 CU-0.2 implementa web/API/BD, health y contrato principal; su build fue comprobado manualmente. CU-0.3 verifica CI, E2E, reproducción limpia y el cierre de CU-0. Dentro de CU-2 se estabilizan canónico→validador→bus antes del canvas. CU-3 incorpora proyectos, CU-4 LAN, CU-5 XMI, CU-6/7 generación y CU-8/9/10 asistentes/visión; CU-11 verifica conjunto offline. LAN no requiere exponer PostgreSQL: el anfitrión media acceso por sus servicios autorizados. GitHub no es dependencia de ejecución local.
+
+
+CU-2.1 esta implementado y verificado tecnicamente;
+- CU-2.1: `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.

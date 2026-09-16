@@ -6,12 +6,13 @@
 - Dependencias: CU-0 terminado y CU-1 terminado/archivado.
 - Actor principal: modelador autenticado.
 - Origen histórico: CUs anteriores 1–5, reagrupados en el plan 12/3.
-- Incremento activo: **CU-2.1 - Modelo y validacion**, bloqueo critico de parser remediado localmente; nueva reproduccion limpia pendiente antes de verify/sync/archive.
+- Estado CU-2.1: implementacion completa, 9/9 tareas y
+reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
 - Cambio OpenSpec activo: `cu-2-1-modelo-validacion`.
 - CU-2.2 — Comandos e historial: pendiente.
 - CU-2.3 — Workspace visual: pendiente.
 
-CU-2.1 fue aprobado explícitamente antes de implementar. El código aplicado se limita al dominio UML, serialización, perfil y validación definidos por OpenSpec; la integración y el cierre siguen pendientes de evidencia real.
+CU-2.1 fue aprobado explícitamente antes de implementar. El código aplicado se limita al dominio UML, serialización, perfil y validación definidos por OpenSpec; la implementación, integración y reproducción limpia post-remediación están completas. Resta únicamente el verify final antes de sync/archive.
 
 ## Objetivo y resultado usable
 
@@ -34,7 +35,8 @@ CU-2.1 entrega únicamente el fundamento de dominio: documento canónico version
 
 | Incremento | Alcance | Estado |
 |---|---|---|
-| CU-2.1 | `ProjectDocument`, `CanonicalUmlModel`, `DiagramLayout`, perfil, serializacion, IDs, fixtures y validador | Remediacion runtime aplicada; nueva reproduccion limpia pendiente |
+- Estado CU-2.1: implementacion completa, 9/9 tareas y
+reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
 | CU-2.2 | `UmlCommandBus`, executor, comandos manuales, revisión local, historial máximo 100, Undo/Redo | Pendiente |
 | CU-2.3 | Shell CASE, toolbox/inspector, D3+SVG, ELK, zoom/pan/selección/movimiento/relaciones, diagnósticos navegables | Pendiente |
 
@@ -141,7 +143,8 @@ El control de alcance confirmo que `packages/uml-domain` no introdujo Command Bu
 
 Durante la regresion en esta PC se detecto una limitacion heredada de infraestructura de tests de CU-1: `apps/api/test/test-database.ts` fijaba `POSTGRES_PORT=5432`. Se corrigio para respetar `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD` y `POSTGRES_TEST_DB` del entorno, conservando los valores historicos como fallback. Esto no cambia el comportamiento productivo ni el contrato de CI/reproduccion limpia.
 
-La reproduccion limpia permanece pendiente porque debe ejecutarse sobre un snapshot Git versionado que incluya CU-2.1.
+- Estado CU-2.1: implementacion completa, 9/9 tareas y
+reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
 
 ## Pruebas requeridas para cerrar CU-2.1
 
@@ -172,7 +175,7 @@ No se requiere E2E de navegador en CU-2.1 porque todavía no existe UI UML; el E
 
 ## Comandos finales de commit y push
 
-Pendientes hasta implementar, verificar y cerrar CU-2.1. El parche de planificación no ejecuta `git add`, `git commit` ni `git push`.
+CU-2.1 ya está implementado y verificado técnicamente; resta únicamente el verify final antes de sync/archive. La planificación no ejecutó `git add`, `git commit` ni `git push`.
 
 ## Historial - cierre local previo al verify critico - 2026-09-15
 
@@ -199,9 +202,10 @@ Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
 
 El verify final detecto un bloqueo critico: `parseProjectDocument` no validaba recursivamente el contrato cerrado. La remediacion agrega validacion runtime exhaustiva y regresiones negativas para discriminantes, enums, UUID, timestamps, primitivas, asociaciones, layout, perfil y propiedades no permitidas.
 
-La reproduccion limpia registrada antes de esta remediacion se conserva como historial, pero ya no certifica el codigo actual. La tarea 3.2 queda reabierta hasta versionar esta correccion y ejecutar nuevamente `reproduce-clean`.
+La reproduccion limpia registrada antes de esta remediacion se conserva como historial y no certifica el codigo actual. La reapertura historica de la tarea 3.2 fue resuelta con la reproduccion limpia post-remediacion del snapshot `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`; 3.2 esta completa.
 
-Estado vigente: no archivar CU-2.1 todavia.
+- Estado CU-2.1: implementacion completa, 9/9 tareas y
+- CU-2.1: `reproduce-clean` completado sobre `6f7f4759bd74516ee1bead9645fe2cb975af1b8f`. Gate restante: verify final antes de sync/archive.
 
 ## Cierre local CU-2.1 - 2026-09-15
 
@@ -233,9 +237,8 @@ Estado: listo para `/opsx-verify`, `/opsx-sync` y `/opsx-archive`.
 - Round-trip de composite valido: cubierto.
 - Tests uml-domain post-remediacion: 37/37 correctos.
 - La reproduccion limpia del snapshot 3c030ef6674f82b674bd48823a95e2623c22f8d1 es historica y no certifica el codigo actual.
-- OpenSpec 3.2 permanece pendiente hasta versionar este estado y ejecutar
-eproduce-clean nuevamente.
-- No archivar CU-2.1 todavia.
+- Estado CU-2.1: implementacion completa, 9/9 tareas y
+reproduce-clean vigente sobre 6f7f4759bd74516ee1bead9645fe2cb975af1b8f; falta unicamente el verify final antes de sync/archive.
 
 ## Evidencia vigente final CU-2.1 - 2026-09-15
 
