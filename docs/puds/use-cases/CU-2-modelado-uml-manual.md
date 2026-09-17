@@ -9,8 +9,8 @@
 - CU-2.1 — Modelo y validación: implementación completa, 9/9 tareas y verify estático sin CRITICAL.
 - Evidencia `reproduce-clean` vigente y conductualmente verificada: snapshot `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`.
 - Gate de CU-2.1: verify final sobre la documentación consolidada y cierre formal `sync/archive`.
-- Cambio OpenSpec activo: `cu-2-1-modelo-validacion`.
-- CU-2.2 — Comandos e historial: pendiente.
+- Cambio OpenSpec activo: `cu-2-2-comandos-historial`.
+- CU-2.2 — Comandos e historial: implementación integrada; 19/20 tareas, con verificación final pendiente.
 - CU-2.3 — Workspace visual: pendiente.
 
 CU-2.1 fue aprobado explícitamente antes de implementar. Su alcance se limita al dominio UML, serialización, perfil y validación definidos por OpenSpec. CU-2.2 y CU-2.3 siguen fuera de este incremento.
@@ -37,7 +37,7 @@ CU-2.1 entrega únicamente el fundamento de dominio: documento canónico version
 | Incremento | Alcance | Estado |
 |---|---|---|
 | CU-2.1 | `ProjectDocument`, modelo canónico, layout, perfil, serialización y validación | Implementado; 9/9; verify sin CRITICAL; verificación de comportamiento completada; verify final y `sync/archive` pendientes |
-| CU-2.2 | `UmlCommandBus`, executor, comandos manuales, revisión local, historial máximo 100, Undo/Redo | Pendiente |
+| CU-2.2 | `UmlCommandBus`, executor, comandos manuales, revisión local, historial máximo 100, Undo/Redo | Implementado; 19/20 tareas, pendiente solo la verificación final 5.4 |
 | CU-2.3 | Shell CASE, toolbox/inspector, D3+SVG, ELK, zoom/pan/selección/movimiento/relaciones, diagnósticos navegables | Pendiente |
 
 ## CU-2.1 — Modelo y validación
@@ -216,3 +216,19 @@ La remediación `ec30194` añadió validación runtime exhaustiva y regresiones 
 - Contenedor `primer-parcial-clean-fe04b87c22b7-postgres-1`: `Stopped` al finalizar.
 
 La evidencia `3c030ef6674f82b674bd48823a95e2623c22f8d1` permanece únicamente como historial. La verificación de comportamiento autorizada quedó completada sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`. Gate restante antes de `sync/archive`: verify final sobre la documentación consolidada.
+
+## CU-2.2 — Comandos e historial
+
+La integración final expone en `@primer-parcial/uml-domain` el catálogo cerrado de 27 `UmlCommand`, sus resultados tipados y `UmlCommandBus` como única frontera pública con estado local. El bus acepta solo envelopes cerrados, delega el candidato aislado al executor, aplica una validación `edit`, incrementa la revisión solo al aceptar y conserva snapshots privados completos para Undo/Redo con capacidad exacta de 100.
+
+La superficie pública auditada mantiene `UmlCommandBus`, contratos de comando, `UmlHistoryResult`, `currentDocument`, `canUndo`, `canRedo`, `submit`, `undo` y `redo`. El executor, stacks, tupla y capacidad no se exportan desde el índice del paquete; no hay dependencias de adaptadores.
+
+Pruebas ejecutadas en esta integración:
+- `npm run test --workspace @primer-parcial/uml-domain`: 5 archivos, **69/69** tests correctos.
+- `npm run typecheck --workspace @primer-parcial/uml-domain`: correcto.
+- `npm run typecheck`: correcto en API, web (0 errores, 0 warnings, 0 hints), contracts y `uml-domain`.
+- `npm run lint`: correcto después de eliminar dos imports sin uso en los archivos de CU-2.2.
+- `npm run test`: no cerró en verde porque los 14 tests de API que requieren PostgreSQL fallaron al no existir el rol local `primer_parcial_local`; web terminó 19 correctos y 1 omitido, contracts 4/4 y `uml-domain` 69/69.
+- `openspec validate cu-2-2-comandos-historial --strict` y `git diff --check`: correctos.
+
+No se ejecutaron `npm run build` ni `reproduce-clean` en CU-2.2 por restricción explícita. Tampoco se implementaron UI/canvas, persistencia, red, realtime, XMI, generación, IA, dependencias ni refactorizaciones ajenas. La tarea 5.4 queda pendiente hasta completar los checks autorizados que no se pueden declarar sin build y reproducción limpia; CU-2 completo sigue **en implementación** porque CU-2.3 permanece pendiente.

@@ -134,12 +134,12 @@ CU-1 quedó terminado y archivado el 2026-09-14. CU-2 comienza por CU-2.1 para e
 ## Continuar en futuras sesiones
 
 1. Leer completos `AGENTS.md`, este contexto, `STATUS`, producto, plan maestro y benchmarks; después el documento del CU activo y ADR-0001.
-2. Comprobar `git status --short --branch` y `git branch --show-current`. La rama de CU-2.1 es `feature/cu-2-1-modelo-validacion`.
+2. Comprobar `git status --short --branch` y `git branch --show-current`. La rama de CU-2.2 es `feature/cu-2-2-comandos-historial`.
 3. CU-0 y CU-1 están terminados y archivados.
-4. CU-2 está activo porque CU-2.2 y CU-2.3 siguen pendientes. CU-2.1 está implementado con 9/9 tareas OpenSpec y verify estático sin CRITICAL.
+4. CU-2 está activo porque CU-2.3 sigue pendiente. CU-2.1 conserva su evidencia vigente; CU-2.2 está implementado con 19/20 tareas OpenSpec y requiere verify final.
 5. La evidencia conductual vigente de CU-2.1 es el snapshot `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`; `ec30194` está en su ancestry y `uml-domain` tiene 37/37 tests post-remediación.
 6. La verificación de comportamiento autorizada ya fue completada correctamente mediante `reproduce-clean`; resta repetir el verify final antes de `sync/archive`.
-7. No iniciar CU-2.2, CU-2.3 ni CU-3 antes del cierre formal de CU-2.1.
+7. No iniciar CU-2.3 ni CU-3 antes del cierre formal de CU-2.2.
 8. `compose.yaml` y `opencode.json` pueden contener preferencias locales del usuario; no deben incorporarse al cierre de CU-2.1.
 
 Las comprobaciones operativas están en [desarrollo](development/README.md); el estado vigente está en [STATUS](STATUS.md) y la evidencia específica en el documento de CU-2.
@@ -154,25 +154,21 @@ Las comprobaciones operativas están en [desarrollo](development/README.md); el 
 - No implementar el siguiente CU por adelantado.
 - No hacer acciones externas, commits o push sin autorización explícita.
 
-## Estado actual CU-2.1
+## Estado actual CU-2.2
 
-CU-2.1 — Modelo y validación está implementado. Su alcance incluye `ProjectDocument`, `CanonicalUmlModel`, `DiagramLayout`, perfil de generación, serialización y validación. Command Bus, historial, canvas, persistencia, realtime, XMI, generación e IA permanecen fuera de CU-2.1.
+CU-2.2 — Comandos e historial está implementado con 19/20 tareas. Su alcance añade el catálogo cerrado de 27 `UmlCommand`, executor interno, `UmlCommandBus`, revisión local y snapshots privados de 100 para Undo/Redo. Canvas, persistencia, realtime, XMI, generación e IA permanecen fuera de CU-2.2.
 
 Evidencia vigente:
-- rama: `feature/cu-2-1-modelo-validacion`;
-- OpenSpec: 9/9;
-- snapshot conductualmente verificado: `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`;
-- `reproduce-clean`: finalizado correctamente;
-- Compose: `primer-parcial-clean-fe04b87c22b7`;
-- PostgreSQL host port: `55432`;
-- health: `available`;
-- `uml-domain`: 37/37 tests post-remediación;
-- composite válido y round-trip: cubiertos;
-- remediación runtime: `ec30194`;
-- verify estático más reciente: **CRITICAL: None**.
+- rama: `feature/cu-2-2-comandos-historial`;
+- OpenSpec: 19/20;
+- `uml-domain`: 69/69 tests en la integración final;
+- typecheck raíz correcto; lint raíz correcto;
+- test raíz bloqueado por ausencia del rol PostgreSQL local `primer_parcial_local` (14 tests API fallidos); web 19 correctos/1 omitido y contracts 4/4;
+- `openspec validate cu-2-2-comandos-historial --strict` y `git diff --check` correctos;
+- ni build ni `reproduce-clean` se ejecutaron para CU-2.2 por restricción explícita.
 
 El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` es histórico y precede a la remediación runtime.
 
-## Gate vigente CU-2.1
+## Gate vigente CU-2.2
 
-La verificación de comportamiento autorizada fue completada correctamente sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`. Gate restante antes de `sync/archive`: repetir `/opsx-verify cu-2-1-modelo-validacion` sobre el cierre consolidado. CU-2.2 continúa bloqueado hasta el cierre formal de CU-2.1.
+La tarea 5.4 de CU-2.2 queda pendiente: faltan resolver el entorno PostgreSQL para la regresión raíz y los checks build/reproducción limpia que no se pueden ejecutar bajo la restricción actual. No se declara `sync/archive`; CU-2.3 continúa bloqueado hasta el cierre formal de CU-2.2.

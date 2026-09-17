@@ -1,6 +1,6 @@
 # Arquitectura aprobada — Primer Parcial
 
-CU-2.1 está implementado, verificado estáticamente sin CRITICAL y verificado conductualmente mediante `reproduce-clean` sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`. `packages/uml-domain` forma parte real del monorepositorio y conserva independencia de UI/backend. Antes de `sync/archive` resta el verify final sobre la documentación consolidada.
+CU-2.1 está implementado, verificado estáticamente sin CRITICAL y verificado conductualmente mediante `reproduce-clean` sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`. CU-2.2 integra el Command Bus y el historial local en `packages/uml-domain`, sin dependencias de UI/backend; su verificación final sigue pendiente. CU-2.3 (canvas) no está iniciado.
 
 ## Dos aplicaciones distintas
 
@@ -47,7 +47,7 @@ primer-parcial/
 │   └── api/                [CU-0.2: NestJS health]
 ├── packages/
 │   ├── contracts/          [CU-1: health + cuenta/sesión]
-│   └── uml-domain/         [CU-2.1: canónico/layout/perfil/serialización/validación]
+│   └── uml-domain/         [CU-2.1: dominio/validación; CU-2.2: comandos e historial local]
 ├── docs/                   [documentación existente y de CU-0.1]
 │   ├── architecture/
 │   ├── benchmarks/
@@ -60,7 +60,7 @@ primer-parcial/
 └── compose.yaml            [configurado: solo PostgreSQL local]
 ```
 
-`packages/uml-domain` es un paquete real de CU-2.1 y no contiene dependencias de UI/backend. No se crean paquetes vacios por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Los workspaces implementados incluyen la base ejecutable web/API de CU-0.2, los contratos de cuenta/sesion de CU-1 y `packages/uml-domain` de CU-2.1.
+`packages/uml-domain` es un paquete real de CU-2.1/CU-2.2 y no contiene dependencias de UI/backend. En CU-2.2, el índice expone contratos cerrados y `UmlCommandBus`; executor y snapshots de historial permanecen internos. No se crean paquetes vacios por capacidad futura. El nombre del directorio actual es `D:\project-planning`; no se renombra para adoptar el slug. Los workspaces implementados incluyen la base ejecutable web/API de CU-0.2, los contratos de cuenta/sesion de CU-1 y `packages/uml-domain`.
 
 ## Infraestructura local objetivo y orden
 
