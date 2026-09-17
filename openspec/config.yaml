@@ -3,8 +3,8 @@ schema: spec-driven
 context: |
   Proyecto: Primer Parcial.
   CU activo: CU-2 â€” Modelar diagramas UML manualmente.
-  Incremento activo: CU-2.1 â€” Modelo y validaciÃ³n.
-  Cambio OpenSpec activo: cu-2-1-modelo-validacion.
+  Incremento activo: CU-2.2 - Comandos e historial.
+  Cambio OpenSpec activo: cu-2-2-comandos-historial.
   Arquitectura: monorepositorio con npm workspaces.
   Stack aprobado: Node.js 24, Astro, TypeScript, Preact,
   NestJS 11 sobre Express, TypeORM y PostgreSQL.

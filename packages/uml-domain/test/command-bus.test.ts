@@ -21,7 +21,6 @@ describe("UmlCommandBus", () => {
       kind: "AddAttribute",
       classId: ids.adminClass,
       value: {
-        kind: "attribute",
         id: "00000000-0000-4000-8000-000000000101",
         name: "email",
         visibility: "private",
@@ -173,7 +172,7 @@ describe("UmlCommandBus", () => {
       kind: "AddAttribute",
       classId: ids.adminClass,
       value: {
-        kind: "attribute", id: "00000000-0000-4000-8000-000000000101", name: "email",
+        id: "00000000-0000-4000-8000-000000000101", name: "email",
         visibility: "private", type: { kind: "primitive", name: "string" }, multiplicity: multiplicity(1, 1),
       },
     });
@@ -233,8 +232,14 @@ describe("UmlCommandBus", () => {
     };
 
     for (const command of [
-      { kind: "CreateClass" },
+      { kind: "CreateClass", value: { id: "missing-context", name: "Other" } },
       { kind: "RenameClass", classId: "missing", name: "Other" },
+      null,
+      "CreateClass",
+      1,
+      true,
+      [],
+      new Map([["kind", "CreateClass"]]),
     ]) {
       const { bus, redoDocument } = prepareBranch();
       const before = bus.currentDocument;

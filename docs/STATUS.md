@@ -10,7 +10,7 @@ Ultima actualizacion: 2026-09-16
 - CU-2 — Modelar diagramas UML manualmente: **en implementación** porque CU-2.3 sigue pendiente.
 - CU-2.1 — Modelo y validación: **implementado y verificado**, 9/9 tareas OpenSpec, `uml-domain` 37/37 post-remediación y verificación de comportamiento completada mediante `reproduce-clean` sobre `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`.
 - El `/opsx-verify` más reciente no reportó CRITICAL. La verificación de comportamiento autorizada ya fue completada; resta repetir el verify final sobre la documentación consolidada y, si no aparecen bloqueos, ejecutar `sync/archive`.
-- CU-2.2 — Comandos e historial: **implementado**, 19/20 tareas; pendiente la verificación final 5.4.
+- CU-2.2 — Comandos e historial: **implementado**, 20/20 tareas y evidencia técnica de cierre registrada.
 - CU-2.3 — Workspace visual: pendiente.
 - Benchmarks no ejecutados: B-TXT-UML/B-TXT-APP→CU-8, B-STT→CU-9, B-VLM→CU-10, B-OFFLINE→CU-11.
 
@@ -67,8 +67,9 @@ El verify read-only más reciente confirmó **CRITICAL: None**. Después de ese 
 - Rama de CU-2.2 confirmada: `feature/cu-2-2-comandos-historial`.
 - CU-2.2 expone el catálogo cerrado de 27 comandos y `UmlCommandBus` con snapshots privados de 100, sin UI, persistencia, red, realtime, XMI, generación, IA ni dependencias nuevas.
 - En la integración final, `uml-domain` pasó 69/69; lint y typecheck raíz pasaron. El test raíz no cerró: 14 tests API fallaron porque falta el rol PostgreSQL local `primer_parcial_local`; web terminó 19 correctos y 1 omitido, contracts 4/4 y `uml-domain` 69/69.
-- `openspec validate cu-2-2-comandos-historial --strict` y `git diff --check` finalizaron correctamente.
-- No se ejecutaron build ni reproducción limpia para CU-2.2. Esos checks siguen siendo bloqueadores de la tarea 5.4 por restricción explícita.
+- Reproducción limpia posterior al snapshot `fedb59247aec93936e23c941afdb8c74b9187243`: directorio temporal `C:\Users\brand\AppData\Local\Temp\primer-parcial-clean-f6aa052723c24bf9b7b91fe7fb98a856`; Compose `primer-parcial-clean-5a07494313ca`; PostgreSQL host port `55432`; health `available`; y contenedor `primer-parcial-clean-5a07494313ca-postgres-1` en `Stopped` al limpiar. El aislamiento evita depender del rol PostgreSQL local `primer_parcial_local`.
+- En el cierre de 5.4, `openspec validate cu-2-2-comandos-historial --strict` finalizó correcto y `git diff --check` finalizó correcto sin salida. No se afirman checks individuales adicionales a los ya registrados.
+- La tarea 5.4 está completa; no se ejecutaron build ni tests durante este cierre documental.
 - `compose.yaml` y `opencode.json` contienen ajustes locales del usuario y deben permanecer fuera del cierre de CU-2.1.
 - La verificación de comportamiento autorizada ya fue completada correctamente; resta el verify final antes de `sync/archive`.
 - CU-2.3 no debe iniciarse antes del cierre formal de CU-2.2.
@@ -79,7 +80,7 @@ El verify read-only más reciente confirmó **CRITICAL: None**. Después de ese 
 
 | Ciclo | Estado | Entrega usable esperada |
 |---|---|---|
-| 1. Editor UML con proyectos privados | CU-0 y CU-1 archivados; CU-2.1 con evidencia vigente; CU-2.2 implementado (19/20, verify final pendiente); CU-2.3 y CU-3 pendientes | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
+| 1. Editor UML con proyectos privados | CU-0 y CU-1 archivados; CU-2.1 con evidencia vigente; CU-2.2 implementado (20/20, evidencia técnica registrada); CU-2.3 y CU-3 pendientes | Cuenta, editor validado con Undo/Redo y proyectos privados persistentes |
 | 2. Colaboración, interoperabilidad y generación | Pendiente: CU-4 a CU-7 | LAN/presencia, XMI y aplicación Spring/web/PWA/Android generada |
 | 3. Inteligencia, visión y cierre offline | Pendiente: CU-8 a CU-11 | Texto, voz, imágenes y demostración integral offline |
 

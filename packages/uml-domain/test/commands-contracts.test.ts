@@ -33,7 +33,7 @@ const command: UmlCommand = {
   kind: "AddAttribute",
   classId: id("001"),
   value: {
-    kind: "attribute", id: id("002"), name: "email", visibility: "private",
+    id: id("002"), name: "email", visibility: "private",
     type: primitiveType("string"), multiplicity: multiplicity(1, 1),
   },
 };
@@ -49,6 +49,9 @@ describe("UmlCommand public contracts", () => {
 
   it("accepts only complete nested Create/Add values and closed update shapes", () => {
     expect(isUmlCommand(command)).toBe(true);
+    expect(isUmlCommand({ kind: "CreatePackage", parentPackageId: null, value: { id: id("001"), name: "Domain" } })).toBe(true);
+    expect(isUmlCommand({ kind: "CreateClass", packageId: id("001"), value: { id: id("002"), name: "User" } })).toBe(true);
+    expect(isUmlCommand({ kind: "CreateEnumeration", packageId: id("001"), value: { id: id("003"), name: "Role" } })).toBe(true);
     expect(isUmlCommand({
       kind: "UpdateAssociation", associationId: id("003"), ends: [
         { kind: "association-end", id: id("004"), classifierId: id("005"), multiplicity: multiplicity(0, "*"), aggregation: "none" },
@@ -60,10 +63,19 @@ describe("UmlCommand public contracts", () => {
 
   it.each([
     ["missing nested value", { kind: "AddAttribute", classId: id("001") }],
+    ["missing external package parent", { kind: "CreatePackage", value: { id: id("002"), name: "Domain" } }],
+    ["missing external class package", { kind: "CreateClass", value: { id: id("002"), name: "User" } }],
+    ["missing external enumeration package", { kind: "CreateEnumeration", value: { id: id("002"), name: "Role" } }],
+    ["legacy embedded context", { kind: "CreateClass", packageId: id("001"), value: { id: id("002"), name: "User", packageId: id("001") } }],
     ["flat value", { kind: "AddAttribute", classId: id("001"), id: id("002"), name: "email" }],
     ["partial value", { kind: "AddAttribute", classId: id("001"), value: { kind: "attribute", id: id("002") } }],
     ["unknown spread field", { ...command, unexpected: true }],
     ["map", new Map([["kind", "RenameClass"]])],
+    ["null", null],
+    ["string", "CreateClass"],
+    ["number", 1],
+    ["boolean", true],
+    ["array", []],
     ["generic path patch", { kind: "UpdateAttribute", path: "name", value: "email" }],
     ["field value patch", { kind: "RenameClass", classId: id("001"), field: "name", value: "User" }],
     ["callback", { kind: "RenameClass", classId: id("001"), name: () => "User" }],

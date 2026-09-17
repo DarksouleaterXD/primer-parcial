@@ -7,6 +7,11 @@ debilitar las referencias explicitas ni permitir eliminaciones en cascada.
 
 ## What Changes
 
+- Corregir los envelopes de Create/Add: todo ownership o contexto es obligatorio
+  y externo a `value`; `CreatePackage` usa `parentPackageId: string | null`
+  (`null` para raiz), y `CreateClass` y `CreateEnumeration` usan
+  `packageId: string`. Sus valores contienen solo campos intrinsecos e ID.
+
 - Incorporar `UmlCommand` y `UmlCommandBus` como unica ruta publica de mutacion
   local, con el catalogo cerrado preexistente de exactamente 27 comandos.
 - Definir payloads completos y tipados para cada creacion y actualizacion, con
@@ -31,12 +36,17 @@ debilitar las referencias explicitas ni permitir eliminaciones en cascada.
 ## Capabilities
 
 The payload decision is normative: every `Create*` and `Add*` uses the closed
-nested envelope `{kind, <parent/context IDs>, value: CompleteValue}`. The
-complete `value` includes its stable caller-supplied ID and all parent/context
-IDs stay outside it. There are no flat fields, `Partial`, spreads, maps, paths,
-or executor-generated IDs, timestamps, or random values. `DUPLICATE_NAME` has
-only the exact scopes defined by the capability; generalization duplicate
-structure continues to use its existing appropriate code, not a name namespace.
+nested envelope `{kind, <parent/context IDs>, value: CompleteValue}`. Context
+is required externally, including `CreatePackage.parentPackageId: string | null`
+(`null` only for a root package), `CreateClass.packageId: string`, and
+`CreateEnumeration.packageId: string`; their values contain only intrinsic
+fields and the stable caller-supplied ID. No ownership is duplicated in `value`.
+Legacy embedded context, absent external context, flat, extra, or unknown shapes
+are rejected at runtime. The executor combines envelope context only internally.
+There are no `Partial`, spreads, maps, paths, or executor-generated IDs,
+timestamps, or random values. `DUPLICATE_NAME` has only the exact scopes defined
+by the capability; generalization duplicate structure continues to use its
+existing appropriate code, not a name namespace.
 
 ### New Capabilities
 - `uml-command-history`: limite local de comandos UML cerrados y atomicos sobre

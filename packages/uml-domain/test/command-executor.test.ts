@@ -27,28 +27,28 @@ describe("private UML command executor", () => {
   it("executes each of the 27 closed commands without changing revision or timestamps", () => {
     let document = emptyDocument();
     const commands: readonly UmlCommand[] = [
-      { kind: "CreatePackage", value: { kind: "package", id: id("020"), name: "Domain" } },
+      { kind: "CreatePackage", parentPackageId: null, value: { id: id("020"), name: "Domain" } },
       { kind: "RenamePackage", packageId: id("020"), name: "Core" },
-      { kind: "CreateClass", value: { kind: "class", id: id("021"), name: "User", packageId: id("020"), attributes: [], operations: [] } },
+      { kind: "CreateClass", packageId: id("020"), value: { id: id("021"), name: "User" } },
       { kind: "RenameClass", classId: id("021"), name: "Account" },
-      { kind: "AddAttribute", classId: id("021"), value: { kind: "attribute", id: id("022"), name: "email", visibility: "private", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
+      { kind: "AddAttribute", classId: id("021"), value: { id: id("022"), name: "email", visibility: "private", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
       { kind: "UpdateAttribute", classId: id("021"), attributeId: id("022"), name: "address", visibility: "public", type: primitiveType("string"), multiplicity: multiplicity(0, 1) },
-      { kind: "AddOperation", classId: id("021"), value: { kind: "operation", id: id("023"), name: "rename", visibility: "public", parameters: [] } },
+      { kind: "AddOperation", classId: id("021"), value: { id: id("023"), name: "rename", visibility: "public", parameters: [] } },
       { kind: "UpdateOperation", classId: id("021"), operationId: id("023"), name: "changeName", visibility: "private", parameters: [], returnType: primitiveType("boolean") },
-      { kind: "AddParameter", classId: id("021"), operationId: id("023"), value: { kind: "parameter", id: id("024"), name: "name", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
+      { kind: "AddParameter", classId: id("021"), operationId: id("023"), value: { id: id("024"), name: "name", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
       { kind: "UpdateParameter", classId: id("021"), operationId: id("023"), parameterId: id("024"), name: "newName", type: primitiveType("string"), multiplicity: multiplicity(0, 1) },
-      { kind: "CreateEnumeration", value: { kind: "enumeration", id: id("025"), name: "Role", packageId: id("020"), literals: [] } },
+      { kind: "CreateEnumeration", packageId: id("020"), value: { id: id("025"), name: "Role" } },
       { kind: "RenameEnumeration", enumerationId: id("025"), name: "Kind" },
-      { kind: "AddEnumerationLiteral", enumerationId: id("025"), value: { kind: "enumeration-literal", id: id("026"), name: "PRIMARY" } },
-      { kind: "CreateAssociation", value: { kind: "association", id: id("027"), name: "accountKind", ends: [
-        { kind: "association-end", id: id("028"), classifierId: id("021"), multiplicity: multiplicity(1, 1), aggregation: "none" },
-        { kind: "association-end", id: id("029"), classifierId: id("025"), multiplicity: multiplicity(0, "*"), aggregation: "none" },
+      { kind: "AddEnumerationLiteral", enumerationId: id("025"), value: { id: id("026"), name: "PRIMARY" } },
+      { kind: "CreateAssociation", value: { id: id("027"), name: "accountKind", ends: [
+        { id: id("028"), classifierId: id("021"), multiplicity: multiplicity(1, 1), aggregation: "none" },
+        { id: id("029"), classifierId: id("025"), multiplicity: multiplicity(0, "*"), aggregation: "none" },
       ] } },
       { kind: "UpdateAssociation", associationId: id("027"), ends: [
         { kind: "association-end", id: id("028"), classifierId: id("021"), multiplicity: multiplicity(0, "*"), aggregation: "shared" },
         { kind: "association-end", id: id("029"), classifierId: id("025"), multiplicity: multiplicity(1, 1), aggregation: "none" },
       ] },
-      { kind: "CreateGeneralization", value: { kind: "generalization", id: id("030"), specificId: id("021"), generalId: id("025") } },
+      { kind: "CreateGeneralization", value: { id: id("030"), specificId: id("021"), generalId: id("025") } },
       { kind: "MoveNode", elementId: id("021"), x: 100, y: 200 },
       { kind: "UpdateGenerationProfile", classes: [{ classId: id("021"), entity: true }], attributes: [{ attributeId: id("022"), required: true }], defaultSort: [{ classId: id("021"), attributeId: id("022"), direction: "asc" }] },
       { kind: "DeleteGeneralization", generalizationId: id("030") },
@@ -97,14 +97,14 @@ describe("private UML command executor", () => {
   it("uses exact precondition codes for ownership, duplicates, compatibility, and rejects without mutating inputs", () => {
     const document = createValidProjectDocumentFixture();
     const before = clone(document);
-    rejectedCode(document, { kind: "AddAttribute", classId: id("099"), value: { kind: "attribute", id: id("040"), name: "x", visibility: "public", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } }, "PARENT_NOT_FOUND");
+    rejectedCode(document, { kind: "AddAttribute", classId: id("099"), value: { id: id("040"), name: "x", visibility: "public", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } }, "PARENT_NOT_FOUND");
     rejectedCode(document, { kind: "RemoveAttribute", classId: ids.adminClass, attributeId: ids.emailAttribute }, "PARENT_MISMATCH");
     rejectedCode(document, { kind: "RenameClass", classId: id("099"), name: "x" }, "TARGET_NOT_FOUND");
-    rejectedCode(document, { kind: "CreatePackage", value: { kind: "package", id: ids.userClass, name: "Other" } }, "DUPLICATE_ID");
-    rejectedCode(document, { kind: "CreateClass", value: { kind: "class", id: id("041"), name: " role ", packageId: ids.packageDomain, attributes: [], operations: [] } }, "DUPLICATE_NAME");
-    rejectedCode(document, { kind: "CreateAssociation", value: { kind: "association", id: id("042"), ends: [
-      { kind: "association-end", id: id("043"), classifierId: ids.userClass, multiplicity: multiplicity(1, 1), aggregation: "none" },
-      { kind: "association-end", id: id("044"), classifierId: id("099"), multiplicity: multiplicity(1, 1), aggregation: "none" },
+    rejectedCode(document, { kind: "CreatePackage", parentPackageId: null, value: { id: ids.userClass, name: "Other" } }, "DUPLICATE_ID");
+    rejectedCode(document, { kind: "CreateClass", packageId: ids.packageDomain, value: { id: id("041"), name: " role " } }, "DUPLICATE_NAME");
+    rejectedCode(document, { kind: "CreateAssociation", value: { id: id("042"), ends: [
+      { id: id("043"), classifierId: ids.userClass, multiplicity: multiplicity(1, 1), aggregation: "none" },
+      { id: id("044"), classifierId: id("099"), multiplicity: multiplicity(1, 1), aggregation: "none" },
     ] } }, "INCOMPATIBLE_REFERENCE");
     expect(document).toEqual(before);
   });
@@ -112,22 +112,22 @@ describe("private UML command executor", () => {
   it("enforces only the declared duplicate-name namespaces and ownership chains", () => {
     const document = createValidProjectDocumentFixture();
     const collisions: readonly UmlCommand[] = [
-      { kind: "CreatePackage", value: { kind: "package", id: id("045"), name: " domain " } },
-      { kind: "AddAttribute", classId: ids.userClass, value: { kind: "attribute", id: id("046"), name: "EMAIL", visibility: "public", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
-      { kind: "AddOperation", classId: ids.userClass, value: { kind: "operation", id: id("047"), name: "RENAME", visibility: "public", parameters: [] } },
-      { kind: "AddParameter", classId: ids.userClass, operationId: ids.renameOperation, value: { kind: "parameter", id: id("048"), name: "NAME", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
-      { kind: "AddEnumerationLiteral", enumerationId: ids.roleEnum, value: { kind: "enumeration-literal", id: id("049"), name: "admin" } },
-      { kind: "CreateAssociation", value: { kind: "association", id: id("050"), name: " USERROLE ", ends: [
-        { kind: "association-end", id: id("051"), classifierId: ids.userClass, multiplicity: multiplicity(1, 1), aggregation: "none" },
-        { kind: "association-end", id: id("052"), classifierId: ids.roleEnum, multiplicity: multiplicity(1, 1), aggregation: "none" },
+      { kind: "CreatePackage", parentPackageId: null, value: { id: id("045"), name: " domain " } },
+      { kind: "AddAttribute", classId: ids.userClass, value: { id: id("046"), name: "EMAIL", visibility: "public", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
+      { kind: "AddOperation", classId: ids.userClass, value: { id: id("047"), name: "RENAME", visibility: "public", parameters: [] } },
+      { kind: "AddParameter", classId: ids.userClass, operationId: ids.renameOperation, value: { id: id("048"), name: "NAME", type: primitiveType("string"), multiplicity: multiplicity(1, 1) } },
+      { kind: "AddEnumerationLiteral", enumerationId: ids.roleEnum, value: { id: id("049"), name: "admin" } },
+      { kind: "CreateAssociation", value: { id: id("050"), name: " USERROLE ", ends: [
+        { id: id("051"), classifierId: ids.userClass, multiplicity: multiplicity(1, 1), aggregation: "none" },
+        { id: id("052"), classifierId: ids.roleEnum, multiplicity: multiplicity(1, 1), aggregation: "none" },
       ] } },
     ];
     for (const command of collisions) rejectedCode(document, command, "DUPLICATE_NAME");
     rejectedCode(document, { kind: "UpdateOperation", classId: ids.adminClass, operationId: ids.renameOperation, name: "x", visibility: "public", parameters: [] }, "PARENT_MISMATCH");
     rejectedCode(document, { kind: "UpdateParameter", classId: ids.userClass, operationId: id("099"), parameterId: ids.renameParameter, name: "x", type: primitiveType("string"), multiplicity: multiplicity(1, 1) }, "TARGET_NOT_FOUND");
-    const independent = accepted(document, { kind: "CreateAssociation", value: { kind: "association", id: id("053"), ends: [
-      { kind: "association-end", id: id("054"), classifierId: ids.userClass, multiplicity: multiplicity(1, 1), aggregation: "none" },
-      { kind: "association-end", id: id("055"), classifierId: ids.roleEnum, multiplicity: multiplicity(1, 1), aggregation: "none" },
+    const independent = accepted(document, { kind: "CreateAssociation", value: { id: id("053"), ends: [
+        { id: id("054"), classifierId: ids.userClass, multiplicity: multiplicity(1, 1), aggregation: "none" },
+        { id: id("055"), classifierId: ids.roleEnum, multiplicity: multiplicity(1, 1), aggregation: "none" },
     ] } });
     expect(independent.uml.associations).toHaveLength(2);
   });

@@ -28,8 +28,13 @@ the local mutation boundary specified in `uml-command-history`; see
 ### Closed contracts and public failures
 
 `UmlCommand` is an exhaustive 27-member discriminated union. Each variant is a
-dedicated readonly payload; creation/addition carries all created IDs, full
-values, and expected owners. Rename contains target ID plus name only. Updates
+dedicated readonly payload. Every Create/Add has exactly `{kind,
+<external context IDs>, value: IntrinsicValue}`: `CreatePackage` has required
+`parentPackageId: string | null` (`null` for root), `CreateClass` and
+`CreateEnumeration` each have required `packageId: string`, and their values
+contain only intrinsic fields plus the caller-supplied ID. Other Create/Add
+commands follow the same external-context rule; `value` never duplicates
+ownership. Rename contains target ID plus name only. Updates
 replace all declared editable fields: attribute and parameter values with their
 full ownership chain; operation values and complete parameter collection;
 association `name?` and both complete ends; and the profile's three complete
@@ -37,9 +42,12 @@ collections. No `Partial`, record/map, path, field/value, callback, spread of
 unknown properties, or generic patch crosses the public boundary.
 
 Every Create/Add is exactly `{kind, <parent/context IDs>, value: CompleteValue}`.
-The full new domain object, including its caller-provided stable ID, resides in
-`value`; all parent/context IDs remain outside it. The executor generates no
-IDs, timestamps, or random values. `DUPLICATE_NAME` is limited to root/sibling
+The full intrinsic domain value, including its caller-provided stable ID, resides
+in `value`; all parent/context IDs remain outside it. Runtime shape validation
+rejects legacy embedded context, a missing required external context, flat,
+extra, or unknown shapes before candidate construction. The executor combines
+the envelope context only internally and generates no IDs, timestamps, or random
+values. `DUPLICATE_NAME` is limited to root/sibling
 packages, the shared Class/Enumeration namespace per package, attributes and
 non-overloaded operations per Class, parameters per Operation, literals per
 Enumeration, and nonempty association names globally. Unnamed associations are
@@ -150,10 +158,11 @@ complete profile replacement/preservation, MoveNode missing-node failure,
 partial-mutation prevention, state tuple invariants, all command kinds and
 history boundaries. No external integration tests or adapters are added.
 
-The test matrix also exercises missing/flat/partial/unknown Create/Add
-envelopes, every declared name collision and independent namespace, nonempty
-association-name collision, serializable/parseable accepted documents, and
-exact tuple preservation at every error point.
+The test matrix also exercises missing external context, legacy embedded context,
+flat/partial/extra/unknown Create/Add envelopes, every declared name collision
+and isolated duplicate namespace, nonempty association-name collision,
+serializable/parseable accepted documents, explicit delete blockers, unknown
+values submitted to `submit`, and exact tuple preservation at every error point.
 
 ## Risks / Trade-offs
 

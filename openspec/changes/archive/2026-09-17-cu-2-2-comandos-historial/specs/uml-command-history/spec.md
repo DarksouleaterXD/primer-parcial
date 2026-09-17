@@ -18,15 +18,20 @@ these 27 kinds and no others: `CreatePackage`, `RenamePackage`,
 `UpdateAssociation`, `DeleteAssociation`; `CreateGeneralization`,
 `DeleteGeneralization`; `MoveNode`; and `UpdateGenerationProfile`.
 
-Every Create/Add command SHALL receive caller-supplied IDs, its complete value,
-and every expected owner ID: package `{id,name,parentPackageId?}`;
-class `{id,name,packageId?}`; attribute
-`{id,name,visibility,type,multiplicity}` with `classId`; operation
-`{id,name,visibility,parameters,returnType?}` with `classId` and caller-supplied
-IDs for all initial parameters; parameter `{id,name,type,multiplicity}` with
-`classId,operationId`; enumeration `{id,name,packageId?}`; literal `{id,name}`
-with `enumerationId`; association `{id,name?,ends}` with complete two ends and
-caller-supplied end IDs; and generalization `{id,specificId,generalId}`.
+Every Create/Add command SHALL receive caller-supplied IDs, a complete intrinsic
+`value`, and every expected owner/context ID in the envelope. `CreatePackage`
+SHALL be exactly `{kind:'CreatePackage', parentPackageId: string | null,
+value:{id,name}}`, where `null` means root. `CreateClass` SHALL be exactly
+`{kind:'CreateClass', packageId:string, value:{id,name}}`, and
+`CreateEnumeration` SHALL be exactly `{kind:'CreateEnumeration', packageId:string,
+value:{id,name}}`. Their `value` objects SHALL NOT contain ownership/context
+properties. Attribute value `{id,name,visibility,type,multiplicity}` has external
+`classId`; operation value `{id,name,visibility,parameters,returnType?}` has
+external `classId` and caller-supplied IDs for all initial parameters; parameter
+value `{id,name,type,multiplicity}` has external `classId,operationId`; literal
+value `{id,name}` has external `enumerationId`; association value `{id,name?,ends}`
+has complete two ends and caller-supplied end IDs; and generalization value
+`{id,specificId,generalId}` has no ownership duplicated in a value.
 
 `RenamePackage`, `RenameClass`, and `RenameEnumeration` SHALL contain only the
 target ID and replacement `name`. `UpdateAttribute` SHALL contain
@@ -45,11 +50,12 @@ objects, timestamps, UUID/random requests, or external state.
 
 For avoidance of doubt, every `Create*` and `Add*` SHALL use exactly the closed
 nested envelope `{kind, <parent/context IDs>, value: CompleteValue}`. `value`
-contains the full new domain value including its caller-supplied stable ID, and
-all parent/context IDs remain outside `value`. Missing envelopes, flat value
-fields, partial values, unknown properties, maps, paths, field/value pairs,
-callbacks, and spreads are invalid runtime shapes. The executor SHALL generate
-no IDs, timestamps, or random values.
+contains the complete intrinsic new domain value including its caller-supplied
+stable ID, and all parent/context IDs remain outside `value`. Runtime validation
+SHALL reject legacy embedded context, a missing required external context, flat,
+extra, or unknown shapes, as well as partial values, maps, paths, field/value
+pairs, callbacks, and spreads. The executor SHALL combine envelope context only
+internally and SHALL generate no IDs, timestamps, or random values.
 
 #### Scenario: Caller supplies a complete update
 - **WHEN** a caller submits an attribute, operation, parameter, association, or profile update
@@ -60,8 +66,9 @@ no IDs, timestamps, or random values.
 - **THEN** the command can change only the named target's `name`
 
 #### Scenario: Create or add rejects a malformed envelope
-- **WHEN** a caller submits a Create/Add payload with a missing `value`, flat
-  value fields, a partial value, or unknown properties
+- **WHEN** a caller submits a Create/Add payload with a missing required external
+  context, legacy ownership embedded in `value`, missing `value`, flat value
+  fields, a partial value, extra fields, or unknown properties
 - **THEN** the bus returns `unsupported-command` before candidate construction
   and does not generate or infer any domain value
 
@@ -230,9 +237,11 @@ kinds, explicit IDs, public precondition codes, deterministic outcomes, the
 exact 100-snapshot boundary, Undo/Redo branching, and validator diagnostics.
 
 The focused tests SHALL additionally cover malformed Create/Add envelopes
-(missing, flat, partial, and unknown properties), each duplicate-name collision
-and independent domain, nonempty association-name collision, serializable and
-parseable accepted documents, and exact tuple preservation on every error.
+(missing external context, legacy embedded context, missing, flat, partial,
+extra, and unknown properties), each duplicate-name collision and isolated
+independent namespace, nonempty association-name collision, every listed delete
+blocker, unknown values submitted to `submit`, serializable and parseable accepted
+documents, and exact tuple preservation on every error.
 
 The capability SHALL NOT render a canvas; introduce D3, SVG, ELK, toolbox,
 inspector, or UI Undo/Redo; persist or reopen projects; use PostgreSQL,

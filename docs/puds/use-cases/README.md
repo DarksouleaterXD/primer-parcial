@@ -1,6 +1,6 @@
 # Plan maestro PUDS â€” Primer Parcial
 
-Planificacion definitiva: **12 casos de uso en 3 ciclos**, con uno a tres incrementos por CU. Define cobertura futura; el avance real esta en [STATUS](../../STATUS.md). CU-0 y CU-1 estan terminados y archivados; CU-2.1 conserva su evidencia vigente. CU-2.2 está implementado con 19/20 tareas y pendiente de verificación final; CU-2.3 no está iniciado.
+Planificacion definitiva: **12 casos de uso en 3 ciclos**, con uno a tres incrementos por CU. Define cobertura futura; el avance real esta en [STATUS](../../STATUS.md). CU-0 y CU-1 estan terminados y archivados; CU-2.1 conserva su evidencia vigente. CU-2.2 está implementado con 20/20 tareas y evidencia técnica registrada; CU-2.3 no está iniciado.
 
 El proceso es dirigido por casos de uso, centrado en arquitectura, iterativo e incremental. Cada CU se prueba, documenta y cierra antes del siguiente; una excepciÃ³n requiere aprobaciÃ³n trazable. La reagrupaciÃ³n no adelanta canvas, realtime, generaciÃ³n o IA respecto del modelo canÃ³nico, validador y Command Bus.
 
@@ -92,7 +92,7 @@ El visitante registra credenciales vÃ¡lidas, inicia sesiÃ³n y accede al Ã¡
 ### Incrementos
 
 1. **Modelo y validaciÃ³n:** `CanonicalUmlModel`, `ProjectDocument`, `DiagramLayout`, fÃ¡bricas, IDs, UUID/metadatos/revisiÃ³n/timestamps y serializaciÃ³n versionada. UML 2.5.1: clases, atributos/propiedades, operaciones, visibilidad, tipos, enums, paquetes, asociaciones/agregaciÃ³n/composiciÃ³n/generalizaciÃ³n, extremos y multiplicidades. Perfil de generaciÃ³n separado de UML: `entity`, `auditable`, `readOnly`, `searchable`, `crud`, `required`, `unique`, `sortable`, `defaultSort`. Motor Ãºnico y diagnÃ³stico con severity, code, mensaje, path lÃ³gico y elemento; reglas/polÃ­ticas de ediciÃ³n, guardado, importaciÃ³n y generaciÃ³n.
-2. **Comandos e historial:** contratos desacoplados del transporte, `UmlCommandBus`/executor para clases, atributos, enums, relaciones, multiplicidades, herencia, movimiento y metadatos. Implementado con snapshots privados y límite exacto de 100; la verificación final permanece pendiente.
+2. **Comandos e historial:** contratos desacoplados del transporte, `UmlCommandBus`/executor para clases, atributos, enums, relaciones, multiplicidades, herencia, movimiento y metadatos. Implementado con snapshots privados y límite exacto de 100; evidencia técnica registrada.
 3. **Workspace:** shell CASE, grid, nodos custom D3/SVG, zoom/pan/selecciÃ³n/ajuste a contenido, auto-layout ELK; toolbox e inspector de clases, atributos, operaciones, enums y perfil. Relaciones UML, multiplicidades, handles, `MoveNode`, diagnÃ³sticos navegables, menÃºs contextuales y Undo/Redo visible.
 
 ### Flujo, alternativas y errores

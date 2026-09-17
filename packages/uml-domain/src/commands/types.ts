@@ -46,7 +46,8 @@ export type UmlCommandKind =
 
 export interface CreatePackageCommand {
   readonly kind: "CreatePackage";
-  readonly value: UmlPackage;
+  readonly parentPackageId: UmlElementId | null;
+  readonly value: Readonly<Pick<UmlPackage, "id" | "name">>;
 }
 
 export interface RenamePackageCommand {
@@ -62,7 +63,8 @@ export interface DeletePackageCommand {
 
 export interface CreateClassCommand {
   readonly kind: "CreateClass";
-  readonly value: UmlClass;
+  readonly packageId: UmlElementId;
+  readonly value: Readonly<Pick<UmlClass, "id" | "name">>;
 }
 
 export interface RenameClassCommand {
@@ -79,7 +81,7 @@ export interface DeleteClassCommand {
 export interface AddAttributeCommand {
   readonly kind: "AddAttribute";
   readonly classId: UmlElementId;
-  readonly value: UmlAttribute;
+  readonly value: Readonly<Omit<UmlAttribute, "kind">>;
 }
 
 export interface UpdateAttributeCommand {
@@ -101,7 +103,9 @@ export interface RemoveAttributeCommand {
 export interface AddOperationCommand {
   readonly kind: "AddOperation";
   readonly classId: UmlElementId;
-  readonly value: UmlOperation;
+  readonly value: Readonly<Omit<UmlOperation, "kind" | "parameters">> & {
+    readonly parameters: readonly Readonly<Omit<UmlParameter, "kind">>[];
+  };
 }
 
 export interface UpdateOperationCommand {
@@ -124,7 +128,7 @@ export interface AddParameterCommand {
   readonly kind: "AddParameter";
   readonly classId: UmlElementId;
   readonly operationId: UmlElementId;
-  readonly value: UmlParameter;
+  readonly value: Readonly<Omit<UmlParameter, "kind">>;
 }
 
 export interface UpdateParameterCommand {
@@ -146,7 +150,8 @@ export interface RemoveParameterCommand {
 
 export interface CreateEnumerationCommand {
   readonly kind: "CreateEnumeration";
-  readonly value: UmlEnumeration;
+  readonly packageId: UmlElementId;
+  readonly value: Readonly<Pick<UmlEnumeration, "id" | "name">>;
 }
 
 export interface RenameEnumerationCommand {
@@ -163,7 +168,7 @@ export interface DeleteEnumerationCommand {
 export interface AddEnumerationLiteralCommand {
   readonly kind: "AddEnumerationLiteral";
   readonly enumerationId: UmlElementId;
-  readonly value: UmlEnumerationLiteral;
+  readonly value: Readonly<Omit<UmlEnumerationLiteral, "kind">>;
 }
 
 export interface RemoveEnumerationLiteralCommand {
@@ -174,7 +179,12 @@ export interface RemoveEnumerationLiteralCommand {
 
 export interface CreateAssociationCommand {
   readonly kind: "CreateAssociation";
-  readonly value: UmlAssociation;
+  readonly value: Readonly<Omit<UmlAssociation, "kind" | "ends">> & {
+    readonly ends: readonly [
+      Readonly<Omit<UmlAssociation["ends"][0], "kind">>,
+      Readonly<Omit<UmlAssociation["ends"][1], "kind">>,
+    ];
+  };
 }
 
 export interface UpdateAssociationCommand {
@@ -191,7 +201,7 @@ export interface DeleteAssociationCommand {
 
 export interface CreateGeneralizationCommand {
   readonly kind: "CreateGeneralization";
-  readonly value: UmlGeneralization;
+  readonly value: Readonly<Omit<UmlGeneralization, "kind">>;
 }
 
 export interface DeleteGeneralizationCommand {

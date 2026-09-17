@@ -136,7 +136,7 @@ CU-1 quedó terminado y archivado el 2026-09-14. CU-2 comienza por CU-2.1 para e
 1. Leer completos `AGENTS.md`, este contexto, `STATUS`, producto, plan maestro y benchmarks; después el documento del CU activo y ADR-0001.
 2. Comprobar `git status --short --branch` y `git branch --show-current`. La rama de CU-2.2 es `feature/cu-2-2-comandos-historial`.
 3. CU-0 y CU-1 están terminados y archivados.
-4. CU-2 está activo porque CU-2.3 sigue pendiente. CU-2.1 conserva su evidencia vigente; CU-2.2 está implementado con 19/20 tareas OpenSpec y requiere verify final.
+4. CU-2 está activo porque CU-2.3 sigue pendiente. CU-2.1 conserva su evidencia vigente; CU-2.2 tiene 20/20 tareas OpenSpec completadas y requiere verify final antes de `sync/archive`.
 5. La evidencia conductual vigente de CU-2.1 es el snapshot `ca12e3fc8ca5f7df1b8a35d89556456a1bd1fd9b`; `ec30194` está en su ancestry y `uml-domain` tiene 37/37 tests post-remediación.
 6. La verificación de comportamiento autorizada ya fue completada correctamente mediante `reproduce-clean`; resta repetir el verify final antes de `sync/archive`.
 7. No iniciar CU-2.3 ni CU-3 antes del cierre formal de CU-2.2.
@@ -156,19 +156,20 @@ Las comprobaciones operativas están en [desarrollo](development/README.md); el 
 
 ## Estado actual CU-2.2
 
-CU-2.2 — Comandos e historial está implementado con 19/20 tareas. Su alcance añade el catálogo cerrado de 27 `UmlCommand`, executor interno, `UmlCommandBus`, revisión local y snapshots privados de 100 para Undo/Redo. Canvas, persistencia, realtime, XMI, generación e IA permanecen fuera de CU-2.2.
+CU-2.2 — Comandos e historial completó la remediación de los envelopes Create/Add: `CreatePackage` requiere `parentPackageId: string | null` externo (`null` raíz), y `CreateClass` y `CreateEnumeration` requieren `packageId: string` externo; `value` contiene solo campos intrínsecos e ID, sin ownership duplicado. El runtime rechaza contexto legacy embebido, contexto externo faltante y formas flat/extra/desconocidas; el executor combina contexto solo internamente. El catálogo cerrado de 27 `UmlCommand`, executor interno, `UmlCommandBus`, revisión local y snapshots privados de 100 para Undo/Redo se preservan. Canvas, persistencia, realtime, XMI, generación e IA permanecen fuera de CU-2.2.
 
 Evidencia vigente:
 - rama: `feature/cu-2-2-comandos-historial`;
-- OpenSpec: 19/20;
-- `uml-domain`: 69/69 tests en la integración final;
+- OpenSpec: 20/20; tareas remediadas: 1.1, 2.1, 2.6 y 5.2.
+- `uml-domain`: 78/78 tests correctos tras la remediación;
 - typecheck raíz correcto; lint raíz correcto;
 - test raíz bloqueado por ausencia del rol PostgreSQL local `primer_parcial_local` (14 tests API fallidos); web 19 correctos/1 omitido y contracts 4/4;
 - `openspec validate cu-2-2-comandos-historial --strict` y `git diff --check` correctos;
-- ni build ni `reproduce-clean` se ejecutaron para CU-2.2 por restricción explícita.
+- reproducción limpia posterior al snapshot `fedb59247aec93936e23c941afdb8c74b9187243` correcta: directorio temporal `C:\Users\brand\AppData\Local\Temp\primer-parcial-clean-f6aa052723c24bf9b7b91fe7fb98a856`; Compose `primer-parcial-clean-5a07494313ca`; PostgreSQL host port `55432`; health `available`; contenedor `primer-parcial-clean-5a07494313ca-postgres-1` en `Stopped` durante la limpieza. El aislamiento evita depender del rol PostgreSQL local `primer_parcial_local`.
+- no se ejecutó build ni reproducción durante la remediación; no se atribuyen a la reproducción checks individuales no especificados.
 
 El snapshot `3c030ef6674f82b674bd48823a95e2623c22f8d1` es histórico y precede a la remediación runtime.
 
 ## Gate vigente CU-2.2
 
-La tarea 5.4 de CU-2.2 queda pendiente: faltan resolver el entorno PostgreSQL para la regresión raíz y los checks build/reproducción limpia que no se pueden ejecutar bajo la restricción actual. No se declara `sync/archive`; CU-2.3 continúa bloqueado hasta el cierre formal de CU-2.2.
+Las cuatro tareas de remediación de CU-2.2 están completas. No se declara `sync/archive` ni se inicia CU-2.3: CU-2.3 permanece bloqueado hasta el verify final y cierre formal de CU-2.2.

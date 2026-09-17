@@ -101,8 +101,8 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
 
   switch (command.kind) {
     case "CreatePackage": {
-      const value = clone(command.value);
-      if (value.parentPackageId !== undefined && !model.packages.some((item) => item.id === value.parentPackageId)) return rejected("PARENT_NOT_FOUND");
+      const value = { kind: "package" as const, ...clone(command.value), ...(command.parentPackageId === null ? {} : { parentPackageId: command.parentPackageId }) };
+      if (command.parentPackageId !== null && !model.packages.some((item) => item.id === command.parentPackageId)) return rejected("PARENT_NOT_FOUND");
       if (!idAvailable(value.id)) return rejected("DUPLICATE_ID");
       if (packageNameExists(model, value.name, value.parentPackageId)) return rejected("DUPLICATE_NAME");
       return accepted(candidate(current, { ...model, packages: [...model.packages, value] }));
@@ -120,8 +120,8 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
       return accepted(candidate(current, { ...model, packages: without(model.packages, target.id) }));
     }
     case "CreateClass": {
-      const value = clone(command.value);
-      if (value.packageId !== undefined && !model.packages.some((item) => item.id === value.packageId)) return rejected("PARENT_NOT_FOUND");
+      if (!model.packages.some((item) => item.id === command.packageId)) return rejected("PARENT_NOT_FOUND");
+      const value: UmlClass = { kind: "class", ...clone(command.value), packageId: command.packageId, attributes: [], operations: [] };
       const nestedIds = [value.id, ...value.attributes.map((item) => item.id), ...value.operations.flatMap((item) => [item.id, ...item.parameters.map((parameter) => parameter.id)])];
       if (!idAvailable(...nestedIds)) return rejected("DUPLICATE_ID");
       if (classifierNameExists(model, value.name, value.packageId)) return rejected("DUPLICATE_NAME");
@@ -144,7 +144,7 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
     }
     case "AddAttribute": {
       const owner = findClass(model, command.classId); if (owner === undefined) return rejected("PARENT_NOT_FOUND");
-      const value = clone(command.value); if (!idAvailable(value.id)) return rejected("DUPLICATE_ID");
+      const value = { kind: "attribute" as const, ...clone(command.value) }; if (!idAvailable(value.id)) return rejected("DUPLICATE_ID");
       if (memberNameExists(owner.attributes, value.name)) return rejected("DUPLICATE_NAME");
       if (!typeCompatible(model, value.type)) return rejected("INCOMPATIBLE_REFERENCE");
       return accepted(candidate(current, { ...model, classes: replace(model.classes, owner.id, { ...owner, attributes: [...owner.attributes, value] }) }));
@@ -163,7 +163,7 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
       return accepted(candidate(current, { ...model, classes: replace(model.classes, owner.id, { ...owner, attributes: replace(owner.attributes, target.attribute.id, value) }) }));
     }
     case "AddOperation": {
-      const owner = findClass(model, command.classId); if (owner === undefined) return rejected("PARENT_NOT_FOUND"); const value = clone(command.value);
+      const owner = findClass(model, command.classId); if (owner === undefined) return rejected("PARENT_NOT_FOUND"); const value: UmlOperation = { kind: "operation", ...clone(command.value), parameters: command.value.parameters.map((parameter) => ({ kind: "parameter", ...clone(parameter) })) };
       if (!idAvailable(value.id, ...value.parameters.map((item) => item.id))) return rejected("DUPLICATE_ID");
       if (memberNameExists(owner.operations, value.name) || hasDuplicateIds(value.parameters.map((item) => named(item.name)))) return rejected("DUPLICATE_NAME");
       if (!typeCompatible(model, value.returnType) || value.parameters.some((item) => !typeCompatible(model, item.type))) return rejected("INCOMPATIBLE_REFERENCE");
@@ -188,7 +188,7 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
     case "AddParameter": {
       const owner = findClass(model, command.classId); if (owner === undefined) return rejected("PARENT_NOT_FOUND"); const operation = owner.operations.find((item) => item.id === command.operationId);
       if (operation === undefined) return model.classes.some((item) => item.operations.some((candidate) => candidate.id === command.operationId)) ? rejected("PARENT_MISMATCH") : rejected("TARGET_NOT_FOUND");
-      const value = clone(command.value); if (!idAvailable(value.id)) return rejected("DUPLICATE_ID"); if (memberNameExists(operation.parameters, value.name)) return rejected("DUPLICATE_NAME"); if (!typeCompatible(model, value.type)) return rejected("INCOMPATIBLE_REFERENCE");
+      const value = { kind: "parameter" as const, ...clone(command.value) }; if (!idAvailable(value.id)) return rejected("DUPLICATE_ID"); if (memberNameExists(operation.parameters, value.name)) return rejected("DUPLICATE_NAME"); if (!typeCompatible(model, value.type)) return rejected("INCOMPATIBLE_REFERENCE");
       return accepted(candidate(current, { ...model, classes: replace(model.classes, owner.id, { ...owner, operations: replace(owner.operations, operation.id, { ...operation, parameters: [...operation.parameters, value] }) }) }));
     }
     case "UpdateParameter": case "RemoveParameter": {
@@ -202,7 +202,7 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
       return accepted(candidate(current, { ...model, classes: replace(model.classes, owner.id, { ...owner, operations: replace(owner.operations, operation.id, { ...operation, parameters: replace(operation.parameters, value.id, value) }) }) }));
     }
     case "CreateEnumeration": {
-      const value = clone(command.value); if (value.packageId !== undefined && !model.packages.some((item) => item.id === value.packageId)) return rejected("PARENT_NOT_FOUND"); if (!idAvailable(value.id, ...value.literals.map((item) => item.id))) return rejected("DUPLICATE_ID"); if (classifierNameExists(model, value.name, value.packageId) || hasDuplicateIds(value.literals.map((item) => named(item.name)))) return rejected("DUPLICATE_NAME");
+      if (!model.packages.some((item) => item.id === command.packageId)) return rejected("PARENT_NOT_FOUND"); const value: UmlEnumeration = { kind: "enumeration", ...clone(command.value), packageId: command.packageId, literals: [] }; if (!idAvailable(value.id, ...value.literals.map((item) => item.id))) return rejected("DUPLICATE_ID"); if (classifierNameExists(model, value.name, value.packageId) || hasDuplicateIds(value.literals.map((item) => named(item.name)))) return rejected("DUPLICATE_NAME");
       return accepted(candidate(current, { ...model, enumerations: [...model.enumerations, value] }));
     }
     case "RenameEnumeration": {
@@ -214,19 +214,19 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
       if (target.literals.length > 0 || referenced || hasLayoutReference(current, target.id) || hasProfileReference(current.generationProfile, target.id)) return rejected("DEPENDENCIES_EXIST"); return accepted(candidate(current, { ...model, enumerations: without(model.enumerations, target.id) }));
     }
     case "AddEnumerationLiteral": {
-      const owner = findEnumeration(model, command.enumerationId); if (owner === undefined) return rejected("PARENT_NOT_FOUND"); const value = clone(command.value); if (!idAvailable(value.id)) return rejected("DUPLICATE_ID"); if (memberNameExists(owner.literals, value.name)) return rejected("DUPLICATE_NAME"); return accepted(candidate(current, { ...model, enumerations: replace(model.enumerations, owner.id, { ...owner, literals: [...owner.literals, value] }) }));
+      const owner = findEnumeration(model, command.enumerationId); if (owner === undefined) return rejected("PARENT_NOT_FOUND"); const value = { kind: "enumeration-literal" as const, ...clone(command.value) }; if (!idAvailable(value.id)) return rejected("DUPLICATE_ID"); if (memberNameExists(owner.literals, value.name)) return rejected("DUPLICATE_NAME"); return accepted(candidate(current, { ...model, enumerations: replace(model.enumerations, owner.id, { ...owner, literals: [...owner.literals, value] }) }));
     }
     case "RemoveEnumerationLiteral": {
       const owner = findEnumeration(model, command.enumerationId); if (owner === undefined) return rejected("PARENT_NOT_FOUND"); const target = model.enumerations.flatMap((item) => item.literals.map((literal) => ({ item, literal }))).find((item) => item.literal.id === command.literalId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); if (target.item.id !== owner.id) return rejected("PARENT_MISMATCH"); if (hasLayoutReference(current, target.literal.id) || hasProfileReference(current.generationProfile, target.literal.id)) return rejected("DEPENDENCIES_EXIST"); return accepted(candidate(current, { ...model, enumerations: replace(model.enumerations, owner.id, { ...owner, literals: without(owner.literals, target.literal.id) }) }));
     }
     case "CreateAssociation": {
-      const value = clone(command.value); if (!idAvailable(value.id, ...value.ends.map((item) => item.id))) return rejected("DUPLICATE_ID"); if (associationNameExists(model, value.name)) return rejected("DUPLICATE_NAME"); if (!associationCompatible(model, value)) return rejected("INCOMPATIBLE_REFERENCE"); return accepted(candidate(current, { ...model, associations: [...model.associations, value] }));
+      const value: UmlAssociation = { kind: "association", ...clone(command.value), ends: command.value.ends.map((end) => ({ kind: "association-end", ...clone(end) })) as UmlAssociation["ends"] }; if (!idAvailable(value.id, ...value.ends.map((item) => item.id))) return rejected("DUPLICATE_ID"); if (associationNameExists(model, value.name)) return rejected("DUPLICATE_NAME"); if (!associationCompatible(model, value)) return rejected("INCOMPATIBLE_REFERENCE"); return accepted(candidate(current, { ...model, associations: [...model.associations, value] }));
     }
     case "UpdateAssociation": {
       const target = model.associations.find((item) => item.id === command.associationId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); const ids = command.ends.map((item) => item.id); const original = new Set(target.ends.map((item) => item.id)); if (hasDuplicateIds(ids) || ids.some((item) => !original.has(item) && allIds.has(item))) return rejected("DUPLICATE_ID"); if (associationNameExists(model, command.name, target.id)) return rejected("DUPLICATE_NAME"); const value: UmlAssociation = { kind: "association", id: target.id, ...(command.name === undefined ? {} : { name: command.name }), ends: clone(command.ends) }; if (!associationCompatible(model, value)) return rejected("INCOMPATIBLE_REFERENCE"); return accepted(candidate(current, { ...model, associations: replace(model.associations, target.id, value) }));
     }
     case "DeleteAssociation": { const target = model.associations.find((item) => item.id === command.associationId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); if (hasLayoutReference(current, target.id)) return rejected("DEPENDENCIES_EXIST"); return accepted(candidate(current, { ...model, associations: without(model.associations, target.id) })); }
-    case "CreateGeneralization": { const value = clone(command.value); if (!idAvailable(value.id)) return rejected("DUPLICATE_ID"); if (!classifierIds(model).has(value.specificId) || !classifierIds(model).has(value.generalId)) return rejected("INCOMPATIBLE_REFERENCE"); if (model.generalizations.some((item) => item.specificId === value.specificId && item.generalId === value.generalId)) return rejected("DUPLICATE_ID"); return accepted(candidate(current, { ...model, generalizations: [...model.generalizations, value] })); }
+    case "CreateGeneralization": { const value = { kind: "generalization" as const, ...clone(command.value) }; if (!idAvailable(value.id)) return rejected("DUPLICATE_ID"); if (!classifierIds(model).has(value.specificId) || !classifierIds(model).has(value.generalId)) return rejected("INCOMPATIBLE_REFERENCE"); if (model.generalizations.some((item) => item.specificId === value.specificId && item.generalId === value.generalId)) return rejected("DUPLICATE_ID"); return accepted(candidate(current, { ...model, generalizations: [...model.generalizations, value] })); }
     case "DeleteGeneralization": { const target = model.generalizations.find((item) => item.id === command.generalizationId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); if (hasLayoutReference(current, target.id)) return rejected("DEPENDENCIES_EXIST"); return accepted(candidate(current, { ...model, generalizations: without(model.generalizations, target.id) })); }
     case "MoveNode": { const target = current.layout.nodes.find((item) => item.elementId === command.elementId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); return accepted(candidate(current, model, { nodes: current.layout.nodes.map((item) => item.elementId === target.elementId ? { ...item, x: command.x, y: command.y } : item) })); }
     case "UpdateGenerationProfile": { const profile = { classes: clone(command.classes), attributes: clone(command.attributes), defaultSort: clone(command.defaultSort) }; if (!profileCompatible(model, profile)) return rejected("INCOMPATIBLE_REFERENCE"); return accepted(candidate(current, model, current.layout, profile)); }

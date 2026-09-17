@@ -53,8 +53,7 @@ const isTypeReference = (value: unknown): boolean => {
 
 const isAttribute = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "name", "visibility", "type", "multiplicity"]) &&
-  value.kind === "attribute" &&
+  hasExactKeys(value, ["id", "name", "visibility", "type", "multiplicity"]) &&
   isString(value.id) &&
   isString(value.name) &&
   ["public", "protected", "private", "package"].includes(value.visibility as string) &&
@@ -62,6 +61,14 @@ const isAttribute = (value: unknown): boolean =>
   isMultiplicity(value.multiplicity);
 
 const isParameter = (value: unknown): boolean =>
+  isRecord(value) &&
+  hasExactKeys(value, ["id", "name", "type", "multiplicity"]) &&
+  isString(value.id) &&
+  isString(value.name) &&
+  isTypeReference(value.type) &&
+  isMultiplicity(value.multiplicity);
+
+const isDomainParameter = (value: unknown): boolean =>
   isRecord(value) &&
   hasExactKeys(value, ["kind", "id", "name", "type", "multiplicity"]) &&
   value.kind === "parameter" &&
@@ -72,8 +79,7 @@ const isParameter = (value: unknown): boolean =>
 
 const isOperation = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "name", "visibility", "parameters"], ["returnType"]) &&
-  value.kind === "operation" &&
+  hasExactKeys(value, ["id", "name", "visibility", "parameters"], ["returnType"]) &&
   isString(value.id) &&
   isString(value.name) &&
   ["public", "protected", "private", "package"].includes(value.visibility as string) &&
@@ -83,42 +89,38 @@ const isOperation = (value: unknown): boolean =>
 
 const isPackage = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "name"], ["parentPackageId"]) &&
-  value.kind === "package" &&
+  hasExactKeys(value, ["id", "name"]) &&
   isString(value.id) &&
-  isString(value.name) &&
-  (!hasOwn(value, "parentPackageId") || isString(value.parentPackageId));
+  isString(value.name);
 
 const isClass = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "name", "attributes", "operations"], ["packageId"]) &&
-  value.kind === "class" &&
+  hasExactKeys(value, ["id", "name"]) &&
   isString(value.id) &&
-  isString(value.name) &&
-  Array.isArray(value.attributes) &&
-  value.attributes.every(isAttribute) &&
-  Array.isArray(value.operations) &&
-  value.operations.every(isOperation) &&
-  (!hasOwn(value, "packageId") || isString(value.packageId));
+  isString(value.name);
 
 const isEnumerationLiteral = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "name"]) &&
-  value.kind === "enumeration-literal" &&
+  hasExactKeys(value, ["id", "name"]) &&
   isString(value.id) &&
   isString(value.name);
 
 const isEnumeration = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "name", "literals"], ["packageId"]) &&
-  value.kind === "enumeration" &&
+  hasExactKeys(value, ["id", "name"]) &&
   isString(value.id) &&
-  isString(value.name) &&
-  Array.isArray(value.literals) &&
-  value.literals.every(isEnumerationLiteral) &&
-  (!hasOwn(value, "packageId") || isString(value.packageId));
+  isString(value.name);
 
 const isAssociationEnd = (value: unknown): boolean =>
+  isRecord(value) &&
+  hasExactKeys(value, ["id", "classifierId", "multiplicity", "aggregation"], ["roleName"]) &&
+  isString(value.id) &&
+  isString(value.classifierId) &&
+  isMultiplicity(value.multiplicity) &&
+  ["none", "shared", "composite"].includes(value.aggregation as string) &&
+  (!hasOwn(value, "roleName") || isString(value.roleName));
+
+const isDomainAssociationEnd = (value: unknown): boolean =>
   isRecord(value) &&
   hasExactKeys(value, ["kind", "id", "classifierId", "multiplicity", "aggregation"], ["roleName"]) &&
   value.kind === "association-end" &&
@@ -131,18 +133,19 @@ const isAssociationEnd = (value: unknown): boolean =>
 const isAssociationEnds = (value: unknown): boolean =>
   Array.isArray(value) && value.length === 2 && value.every(isAssociationEnd);
 
+const isDomainAssociationEnds = (value: unknown): boolean =>
+  Array.isArray(value) && value.length === 2 && value.every(isDomainAssociationEnd);
+
 const isAssociation = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "ends"], ["name"]) &&
-  value.kind === "association" &&
+  hasExactKeys(value, ["id", "ends"], ["name"]) &&
   isString(value.id) &&
   isAssociationEnds(value.ends) &&
   (!hasOwn(value, "name") || isString(value.name));
 
 const isGeneralization = (value: unknown): boolean =>
   isRecord(value) &&
-  hasExactKeys(value, ["kind", "id", "specificId", "generalId"]) &&
-  value.kind === "generalization" &&
+  hasExactKeys(value, ["id", "specificId", "generalId"]) &&
   isString(value.id) &&
   isString(value.specificId) &&
   isString(value.generalId);
@@ -187,13 +190,13 @@ export const isUmlCommand = (value: unknown): value is UmlCommand => {
 
   switch (value.kind) {
     case "CreatePackage":
-      return hasExactKeys(value, ["kind", "value"]) && isPackage(value.value);
+      return hasExactKeys(value, ["kind", "parentPackageId", "value"]) && (value.parentPackageId === null || isString(value.parentPackageId)) && isPackage(value.value);
     case "RenamePackage":
       return hasExactKeys(value, ["kind", "packageId", "name"]) && isString(value.packageId) && isString(value.name);
     case "DeletePackage":
       return hasExactKeys(value, ["kind", "packageId"]) && isString(value.packageId);
     case "CreateClass":
-      return hasExactKeys(value, ["kind", "value"]) && isClass(value.value);
+      return hasExactKeys(value, ["kind", "packageId", "value"]) && isString(value.packageId) && isClass(value.value);
     case "RenameClass":
       return hasExactKeys(value, ["kind", "classId", "name"]) && isString(value.classId) && isString(value.name);
     case "DeleteClass":
@@ -207,7 +210,7 @@ export const isUmlCommand = (value: unknown): value is UmlCommand => {
     case "AddOperation":
       return hasExactKeys(value, ["kind", "classId", "value"]) && isString(value.classId) && isOperation(value.value);
     case "UpdateOperation":
-      return hasExactKeys(value, ["kind", "classId", "operationId", "name", "visibility", "parameters"], ["returnType"]) && isString(value.classId) && isString(value.operationId) && isString(value.name) && ["public", "protected", "private", "package"].includes(value.visibility as string) && Array.isArray(value.parameters) && value.parameters.every(isParameter) && (!hasOwn(value, "returnType") || isTypeReference(value.returnType));
+      return hasExactKeys(value, ["kind", "classId", "operationId", "name", "visibility", "parameters"], ["returnType"]) && isString(value.classId) && isString(value.operationId) && isString(value.name) && ["public", "protected", "private", "package"].includes(value.visibility as string) && Array.isArray(value.parameters) && value.parameters.every(isDomainParameter) && (!hasOwn(value, "returnType") || isTypeReference(value.returnType));
     case "RemoveOperation":
       return hasExactKeys(value, ["kind", "classId", "operationId"]) && isString(value.classId) && isString(value.operationId);
     case "AddParameter":
@@ -217,7 +220,7 @@ export const isUmlCommand = (value: unknown): value is UmlCommand => {
     case "RemoveParameter":
       return hasExactKeys(value, ["kind", "classId", "operationId", "parameterId"]) && isString(value.classId) && isString(value.operationId) && isString(value.parameterId);
     case "CreateEnumeration":
-      return hasExactKeys(value, ["kind", "value"]) && isEnumeration(value.value);
+      return hasExactKeys(value, ["kind", "packageId", "value"]) && isString(value.packageId) && isEnumeration(value.value);
     case "RenameEnumeration":
       return hasExactKeys(value, ["kind", "enumerationId", "name"]) && isString(value.enumerationId) && isString(value.name);
     case "DeleteEnumeration":
@@ -229,7 +232,7 @@ export const isUmlCommand = (value: unknown): value is UmlCommand => {
     case "CreateAssociation":
       return hasExactKeys(value, ["kind", "value"]) && isAssociation(value.value);
     case "UpdateAssociation":
-      return hasExactKeys(value, ["kind", "associationId", "ends"], ["name"]) && isString(value.associationId) && isAssociationEnds(value.ends) && (!hasOwn(value, "name") || isString(value.name));
+      return hasExactKeys(value, ["kind", "associationId", "ends"], ["name"]) && isString(value.associationId) && isDomainAssociationEnds(value.ends) && (!hasOwn(value, "name") || isString(value.name));
     case "DeleteAssociation":
       return hasExactKeys(value, ["kind", "associationId"]) && isString(value.associationId);
     case "CreateGeneralization":
