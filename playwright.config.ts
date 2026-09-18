@@ -1,7 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const apiOrigin = "http://127.0.0.1:3101";
-const webOrigin = "http://localhost:4322";
+const webOrigin = "http://127.0.0.1:4322";
+const webServerTimeout = 180_000;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -21,6 +22,8 @@ export default defineConfig({
       command: "npm run dev --workspace @primer-parcial/api",
       url: `${apiOrigin}/api/docs-json`,
       reuseExistingServer: false,
+      timeout: webServerTimeout,
+      stdout: "pipe",
       env: {
         API_PORT: "3101",
         WEB_ORIGIN: webOrigin,
@@ -33,6 +36,8 @@ export default defineConfig({
       command: "npm run dev --workspace @primer-parcial/web -- --host 127.0.0.1 --port 4322",
       url: webOrigin,
       reuseExistingServer: false,
+      timeout: webServerTimeout,
+      stdout: "pipe",
       env: {
         PUBLIC_API_ORIGIN: apiOrigin,
       },
