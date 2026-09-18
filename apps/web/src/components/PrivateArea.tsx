@@ -1,6 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 
 import { createAuthClient } from "../auth/auth-client";
+import { UmlWorkspace } from "../uml-workspace/UmlWorkspace";
 import type { Account } from "@primer-parcial/contracts";
 
 interface PrivateAreaProps {
@@ -73,7 +74,7 @@ export function PrivateArea({ apiOrigin, onNavigate = navigate }: PrivateAreaPro
       <p class="eyebrow">Sesión confirmada</p>
       <h1>Área privada</h1>
       <p>Conectado como <strong>{accountLabel(state.account)}</strong>.</p>
-      <p class="form-intro">Todavía no hay proyectos ni herramientas de modelado en esta etapa.</p>
+      <UmlWorkspace ownerId={state.account.id} />
       <button type="button" onClick={logout}>Cerrar sesión</button>
     </section>
   );

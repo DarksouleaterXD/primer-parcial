@@ -63,3 +63,326 @@ button:disabled { cursor: wait; opacity: 0.7; }
   .hero, .principles { grid-template-columns: 1fr; }
   .hero h1 { max-width: 12ch; }
 }
+
+/* UML Workspace Shell */
+
+.uml-workspace {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.uml-workspace__toolbar {
+  align-items: center;
+  background: #f8f2e5;
+  border-bottom: 2px solid #213432;
+  display: flex;
+  gap: 0.5rem;
+  min-height: 2.8rem;
+  padding: 0.35rem 0.75rem;
+}
+
+.uml-workspace__label {
+  color: #213432;
+  font-family: "Space Grotesk", Arial, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.uml-workspace__toolbar-spacer {
+  flex: 1;
+}
+
+.uml-workspace__body {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(10rem, 15rem) minmax(20rem, 1fr) minmax(12rem, 15rem);
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.uml-workspace__toolbox {
+  background: #f8f2e5;
+  border-right: 2px solid #213432;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 10rem;
+  padding: 0.5rem;
+}
+
+.uml-workspace__toolbox-title {
+  color: #213432;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+}
+
+.uml-workspace__toolbox button {
+  font-size: 0.78rem;
+  margin-top: 0;
+  min-height: 2.4rem;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  width: 100%;
+}
+
+.uml-workspace__canvas {
+  background: #fffaf0;
+  border: none;
+  display: block;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  overflow: auto;
+  padding: 0;
+  width: 100%;
+}
+
+.uml-workspace__canvas:focus-visible {
+  outline: 3px solid #bd5a2b;
+  outline-offset: -3px;
+}
+
+.uml-workspace__inspector {
+  background: #f8f2e5;
+  border-left: 2px solid #213432;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 12rem;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.uml-workspace__inspector-title {
+  color: #213432;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.25rem;
+  text-transform: uppercase;
+}
+
+.uml-workspace__inspector-field {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.uml-workspace__inspector-field strong {
+  color: #213432;
+}
+
+.uml-workspace__member-list {
+  border-top: 1px solid #8b978e;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  list-style: none;
+  margin: 0.2rem 0 0;
+  padding: 0.25rem 0 0;
+}
+
+.uml-workspace__member-list li {
+  margin: 0;
+  padding: 0.1rem 0;
+}
+
+.uml-workspace__feedback {
+  background: #f8ded4;
+  border-left: 4px solid #a7351d;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  margin: 0;
+  max-height: 8rem;
+  overflow-y: auto;
+  padding: 0.5rem 0.75rem;
+}
+
+.uml-workspace__diagram-empty {
+  color: #52645d;
+  font-size: 0.85rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.uml-workspace__node-header {
+  font-weight: 700;
+}
+
+.uml-workspace__node {
+  cursor: pointer;
+  outline: none;
+}
+
+.uml-workspace__node:focus-visible {
+  outline: 2px solid #bd5a2b;
+  outline-offset: 2px;
+}
+
+.uml-workspace__node--selected .uml-workspace__node-card {
+  stroke: #bd5a2b;
+  stroke-width: 2;
+}
+
+.uml-workspace__node--selected .uml-workspace__node-header {
+  fill: #bd5a2b;
+}
+
+.uml-workspace__member-item {
+  font-size: 11px;
+}
+
+.uml-workspace__relation {
+  pointer-events: none;
+}
+
+.uml-workspace__relation-label {
+  font-size: 10px;
+}
+
+.uml-workspace__toolbox-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.uml-workspace__toolbox-input {
+  font-size: 0.78rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.4rem;
+  width: 100%;
+}
+
+.uml-workspace__inspector-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.uml-workspace__inspector-editor label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.uml-workspace__inspector-editor input {
+  font-size: 0.78rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.4rem;
+}
+
+.uml-workspace__inspector-editor button {
+  font-size: 0.75rem;
+  margin-top: 0;
+  min-height: 2.2rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.uml-workspace__feedback-region {
+  min-height: 0;
+}
+
+.uml-workspace__feedback-line {
+  margin: 0;
+}
+
+.uml-workspace__feedback-diagnostics {
+  font-size: 0.75rem;
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.uml-workspace__feedback-dismiss {
+  font-size: 0.72rem;
+  margin-top: 0.4rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.6rem;
+}
+
+@media (max-width: 44rem) {
+  .uml-workspace__toolbar {
+    flex-wrap: wrap;
+  }
+
+  .uml-workspace__toolbar-spacer {
+    display: none;
+  }
+
+  .uml-workspace__body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
+
+  .uml-workspace__toolbox-label,
+  .uml-workspace__toolbox-input {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .uml-workspace__toolbox {
+    border-right: none;
+    border-bottom: 2px solid #213432;
+    flex-direction: row;
+    flex-wrap: wrap;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .uml-workspace__toolbox-title {
+    width: 100%;
+  }
+
+  .uml-workspace__toolbox button {
+    flex: 0 0 auto;
+    width: auto;
+  }
+
+  .uml-workspace__inspector {
+    border-left: none;
+    border-top: 2px solid #213432;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* Workspace page: the CASE shell uses the full viewport on desktop instead of
+   being trapped inside the auth card (max-width 34rem). */
+
+.private-page--workspace {
+  max-width: none;
+  padding: 0;
+}
+
+.private-page--workspace .private-panel {
+  padding: 1rem 0 1.5rem;
+}
+
+.private-page--workspace .private-panel > :not(.uml-workspace):not(button) {
+  margin-inline: auto;
+  box-sizing: border-box;
+  max-width: 34rem;
+  padding-inline: 1rem;
+  width: 100%;
+}
+
+.private-page--workspace .private-panel > button {
+  display: block;
+  margin-inline: auto;
+  max-width: 34rem;
+  padding-inline: 1rem;
+  width: 100%;
+}
+
+.private-page--workspace .private-panel:not(:has(.uml-workspace)) {
+  max-width: 34rem;
+  margin: 0 auto;
+}

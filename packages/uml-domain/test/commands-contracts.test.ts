@@ -79,6 +79,9 @@ describe("UmlCommand public contracts", () => {
     ["generic path patch", { kind: "UpdateAttribute", path: "name", value: "email" }],
     ["field value patch", { kind: "RenameClass", classId: id("001"), field: "name", value: "User" }],
     ["callback", { kind: "RenameClass", classId: id("001"), name: () => "User" }],
+    ["MoveNode missing coordinates", { kind: "MoveNode", elementId: id("001"), x: 1 }],
+    ["MoveNode extra field", { kind: "MoveNode", elementId: id("001"), x: 1, y: 2, unexpected: true }],
+    ["MoveNode non-finite coordinates", { kind: "MoveNode", elementId: id("001"), x: Number.NaN, y: 2 }],
     ["unknown command", { kind: "PatchAnything" }],
   ])("rejects %s before execution", (_label, malformed) => {
     expect(isUmlCommand(malformed)).toBe(false);

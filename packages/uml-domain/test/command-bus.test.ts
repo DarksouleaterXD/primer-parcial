@@ -196,6 +196,31 @@ describe("UmlCommandBus", () => {
     expect(bus.redo()).toEqual({ kind: "restored", operation: "redo", document: afterProfile });
   });
 
+  it("materializes layout through MoveNode and restores the exact entry through history", async () => {
+    const validator = await import("../src/validation/validator.js");
+    const validate = vi.spyOn(validator, "validateProjectDocument");
+    const initial = createValidProjectDocumentFixture();
+    initial.layout.nodes = initial.layout.nodes.filter((node) => node.elementId !== ids.adminClass);
+    const bus = new UmlCommandBus(initial);
+
+    const moved = bus.submit({ kind: "MoveNode", elementId: ids.adminClass, x: 700, y: 800 });
+    const afterMove = bus.currentDocument;
+
+    expect(moved.kind).toBe("accepted");
+    expect(validate).toHaveBeenCalledTimes(1);
+    expect(validate).toHaveBeenCalledWith(expect.any(Object), "edit");
+    expect(afterMove.layout.nodes).toEqual([...initial.layout.nodes, { elementId: ids.adminClass, x: 700, y: 800 }]);
+    expect(afterMove.revision).toBe(initial.revision + 1);
+    expect(afterMove.createdAt).toBe(initial.createdAt);
+    expect(afterMove.updatedAt).toBe(initial.updatedAt);
+
+    expect(bus.undo()).toEqual({ kind: "restored", operation: "undo", document: initial });
+    expect(bus.currentDocument.revision).toBe(initial.revision);
+    expect(bus.redo()).toEqual({ kind: "restored", operation: "redo", document: afterMove });
+    expect(bus.currentDocument).toEqual(afterMove);
+    validate.mockRestore();
+  });
+
   it("preserves redo after rejection and clears it only after an accepted branch", () => {
     const bus = new UmlCommandBus(createValidProjectDocumentFixture());
     expect(bus.submit({ kind: "RenameClass", classId: ids.adminClass, name: "Administrator" }).kind).toBe("accepted");

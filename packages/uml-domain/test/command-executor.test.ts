@@ -186,4 +186,48 @@ describe("private UML command executor", () => {
     expect(profile.layout).toEqual(document.layout);
     expect(profile.generationProfile).toEqual({ classes: [{ classId: ids.adminClass, readOnly: true }], attributes: [], defaultSort: [] });
   });
+
+  it("moves existing diagrammable layout nodes without changing other document data", () => {
+    const document = createValidProjectDocumentFixture();
+    const moved = accepted(document, { kind: "MoveNode", elementId: ids.userClass, x: 999, y: 777 });
+
+    expect(moved.layout.nodes).toEqual([
+      { elementId: ids.packageDomain, x: 40, y: 40 },
+      { elementId: ids.userClass, x: 999, y: 777 },
+      { elementId: ids.adminClass, x: 420, y: 90 },
+      { elementId: ids.roleEnum, x: 120, y: 360 },
+    ]);
+    expect(moved.uml).toEqual(document.uml);
+    expect(moved.generationProfile).toEqual(document.generationProfile);
+  });
+
+  it.each([ids.packageDomain, ids.adminClass, ids.roleEnum])(
+    "materializes layout for a diagrammable target without an existing node",
+    (elementId) => {
+      const document = createValidProjectDocumentFixture();
+      document.layout.nodes = document.layout.nodes.filter((node) => node.elementId !== elementId);
+
+      const moved = accepted(document, { kind: "MoveNode", elementId, x: 999, y: 777 });
+
+      expect(moved.layout.nodes).toEqual([...document.layout.nodes, { elementId, x: 999, y: 777 }]);
+      expect(moved.uml).toEqual(document.uml);
+      expect(moved.generationProfile).toEqual(document.generationProfile);
+    },
+  );
+
+  it.each([
+    id("098"),
+    ids.emailAttribute,
+    ids.renameOperation,
+    ids.renameParameter,
+    ids.roleLiteralAdmin,
+    ids.association,
+    ids.generalization,
+  ])("rejects non-diagrammable MoveNode target %s without materializing layout", (elementId) => {
+    const document = createValidProjectDocumentFixture();
+    const before = clone(document);
+
+    rejectedCode(document, { kind: "MoveNode", elementId, x: 999, y: 777 }, "TARGET_NOT_FOUND");
+    expect(document).toEqual(before);
+  });
 });

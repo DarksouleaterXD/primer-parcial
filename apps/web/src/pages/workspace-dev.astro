@@ -1,0 +1,25 @@
+---
+import CaseLayout from "../layouts/CaseLayout.astro";
+import { WorkspaceDevHarness } from "../uml-workspace/WorkspaceDevHarness";
+
+const isDev = import.meta.env.DEV;
+---
+
+<CaseLayout title="Workspace de desarrollo">
+  <section class="private-page private-page--workspace">
+    {isDev ? (
+      <>
+        <p class="private-status">
+          Harness de verificación: documento de fixture con asociaciones,
+          composición y generalización. Solo existe en desarrollo.
+        </p>
+        <WorkspaceDevHarness client:load />
+      </>
+    ) : (
+      <p class="private-status" data-testid="workspace-dev-unavailable">
+        El harness de fixture de relaciones solo está disponible en modo
+        desarrollo.
+      </p>
+    )}
+  </section>
+</CaseLayout>

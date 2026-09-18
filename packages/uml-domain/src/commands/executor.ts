@@ -228,7 +228,17 @@ export const executeUmlCommand = (current: ProjectDocument, input: unknown): Uml
     case "DeleteAssociation": { const target = model.associations.find((item) => item.id === command.associationId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); if (hasLayoutReference(current, target.id)) return rejected("DEPENDENCIES_EXIST"); return accepted(candidate(current, { ...model, associations: without(model.associations, target.id) })); }
     case "CreateGeneralization": { const value = { kind: "generalization" as const, ...clone(command.value) }; if (!idAvailable(value.id)) return rejected("DUPLICATE_ID"); if (!classifierIds(model).has(value.specificId) || !classifierIds(model).has(value.generalId)) return rejected("INCOMPATIBLE_REFERENCE"); if (model.generalizations.some((item) => item.specificId === value.specificId && item.generalId === value.generalId)) return rejected("DUPLICATE_ID"); return accepted(candidate(current, { ...model, generalizations: [...model.generalizations, value] })); }
     case "DeleteGeneralization": { const target = model.generalizations.find((item) => item.id === command.generalizationId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); if (hasLayoutReference(current, target.id)) return rejected("DEPENDENCIES_EXIST"); return accepted(candidate(current, { ...model, generalizations: without(model.generalizations, target.id) })); }
-    case "MoveNode": { const target = current.layout.nodes.find((item) => item.elementId === command.elementId); if (target === undefined) return rejected("TARGET_NOT_FOUND"); return accepted(candidate(current, model, { nodes: current.layout.nodes.map((item) => item.elementId === target.elementId ? { ...item, x: command.x, y: command.y } : item) })); }
+    case "MoveNode": {
+      const diagrammable = model.packages.some((item) => item.id === command.elementId) ||
+        model.classes.some((item) => item.id === command.elementId) ||
+        model.enumerations.some((item) => item.id === command.elementId);
+      if (!diagrammable) return rejected("TARGET_NOT_FOUND");
+      const target = current.layout.nodes.find((item) => item.elementId === command.elementId);
+      const nodes = target === undefined
+        ? [...current.layout.nodes, { elementId: command.elementId, x: command.x, y: command.y }]
+        : current.layout.nodes.map((item) => item.elementId === target.elementId ? { ...item, x: command.x, y: command.y } : item);
+      return accepted(candidate(current, model, { nodes }));
+    }
     case "UpdateGenerationProfile": { const profile = { classes: clone(command.classes), attributes: clone(command.attributes), defaultSort: clone(command.defaultSort) }; if (!profileCompatible(model, profile)) return rejected("INCOMPATIBLE_REFERENCE"); return accepted(candidate(current, model, current.layout, profile)); }
   }
 };
