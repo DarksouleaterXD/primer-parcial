@@ -8,7 +8,7 @@
 - CU-0 — Inicializar la base ejecutable: **terminado y archivado**.
 - CU-1 — Gestionar cuenta y sesión: **terminado y archivado**.
 - CU-2 — Modelar diagramas UML manualmente: **terminado** en sus incrementos CU-2.1, CU-2.2 y CU-2.3; CU-2.3 quedó archivado y la reproducción limpia del snapshot `67f01a8bc4663cf45d1b363ea31c1347d017ca0b` terminó con health `available`.
-- CU-3 — Gestionar proyectos UML persistentes: **en cierre técnico**, 20/21 tareas después del precierre. Falta únicamente la evidencia de `reproduce-clean` de 5.3 antes de verify/sync/archive.
+- CU-3 — Gestionar proyectos UML persistentes: **implementado y listo para verificación**, 21/21 tareas. `reproduce-clean` pasó sobre el snapshot `c277946d0a9d6ab69f043fd20c2bf4b8592cb20e`; quedan verify/sync/archive.
 - CU-4 a CU-11: pendientes.
 
 ## CU-3 — Implementación vigente
@@ -48,21 +48,23 @@ Bloques 1–4 completaron:
 - concurrencia optimista y rollback;
 - no regresión de 27 comandos, Command Bus, Undo/Redo y workspace CU-2.3.
 
-## Precierre CU-3 — 2026-09-18
+## Cierre técnico CU-3 — 2026-09-18
 
-`CU-3-bloque5-preclose.ps1` verificó correctamente:
+`CU-3-bloque5-preclose.ps1` verificó correctamente auditoría de exports/fronteras, lint, typecheck, tests, build, OpenSpec strict y `git diff --check` usando PostgreSQL local en `127.0.0.1:5433`.
 
-- auditoría de exports/fronteras;
-- lint raíz;
-- typecheck raíz;
-- tests raíz;
-- build raíz;
-- OpenSpec strict;
-- `git diff --check`.
+La reproducción limpia final se ejecutó correctamente sobre un snapshot Git coherente:
 
-PostgreSQL de las pruebas locales fue publicado en `127.0.0.1:5433`.
+- snapshot: `c277946d0a9d6ab69f043fd20c2bf4b8592cb20e`;
+- Compose project aislado: `primer-parcial-clean-f65295ccce3a`;
+- PostgreSQL host port aislado: `55432`;
+- migraciones: correctas;
+- lint, typecheck y suites de tests: correctos;
+- Playwright E2E: `5/5`;
+- build raíz: correcto;
+- health final: `available`;
+- cleanup: contenedor PostgreSQL aislado detenido.
 
-No se atribuye todavía una reproducción limpia a CU-3. La tarea 5.3 permanece pendiente hasta ejecutar `scripts/reproduce-clean.ps1` sobre un commit coherente y registrar su evidencia.
+CU-3 queda implementado con 21/21 tareas y listo para `verify`; sync/archive permanecen pendientes hasta completar esa verificación.
 
 ## Progreso OpenSpec CU-3
 
@@ -72,8 +74,8 @@ No se atribuye todavía una reproducción limpia a CU-3. La tarea 5.3 permanece 
 | 2. API, ownership y concurrencia | 2.1–2.8 | Completo |
 | 3. Frontera web | 3.1–3.3 | Completo |
 | 4. Seguridad, round-trip y regresión | 4.1–4.3 | Completo |
-| 5. Integración y cierre | 5.1, 5.2 y 5.4 completos; 5.3 pendiente | En cierre |
-| **Total** | **20/21** | **Reproduce-clean pendiente** |
+| 5. Integración y cierre | 5.1–5.4 | Completo |
+| **Total** | **21/21** | **Listo para verify** |
 
 ## Fuera de alcance de CU-3
 

@@ -120,7 +120,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\scripts\reproduce-cle
 
 La receta verifica instalación limpia, migraciones, lint, typecheck, tests, E2E, build, health y cleanup.
 
-Para CU-3, `reproduce-clean` todavía está pendiente en el momento de este precierre. Debe ejecutarse después de crear el commit coherente y su salida real debe registrarse antes de marcar la tarea 5.3.
+Para CU-3, la reproducción limpia final se completó correctamente el 2026-09-18 sobre el snapshot `c277946d0a9d6ab69f043fd20c2bf4b8592cb20e`, con Compose project `primer-parcial-clean-f65295ccce3a`, PostgreSQL aislado en `127.0.0.1:55432`, Playwright `5/5`, build correcto, health `available` y cleanup del contenedor PostgreSQL confirmado.
 
 ## Seguridad de configuración local
 

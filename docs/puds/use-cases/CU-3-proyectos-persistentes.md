@@ -1,6 +1,6 @@
 # CU-3 — Gestionar proyectos UML persistentes
 
-**Estado:** En cierre técnico. Bloques 1–4 implementados y verificados; 20/21 tareas OpenSpec tras el precierre. La tarea 5.3 permanece pendiente hasta ejecutar `reproduce-clean` sobre un commit coherente y registrar esa evidencia.
+**Estado:** Implementado y listo para verificación. Las 21/21 tareas OpenSpec están completas y la reproducción limpia final quedó registrada.
 
 ## Objetivo
 
@@ -100,9 +100,9 @@ ProjectSnapshot API
 - Regresión API reportada al cerrar Bloque 2: 35/35.
 - OpenSpec strict y `git diff --check` quedaron correctos en los cierres de bloques previos.
 
-## Precierre de Bloque 5
+## Cierre de Bloque 5
 
-Resultado ejecutado por `CU-3-bloque5-preclose.ps1` el 2026-09-18:
+Resultado final registrado el 2026-09-18:
 
 - auditoría de exports y fronteras: correcta;
 - `npm run lint`: correcto;
@@ -111,9 +111,23 @@ Resultado ejecutado por `CU-3-bloque5-preclose.ps1` el 2026-09-18:
 - `npm run build`: correcto;
 - `openspec validate cu-3-persistencia-proyectos --strict`: correcto;
 - `git diff --check`: correcto;
-- PostgreSQL local usado para pruebas: `127.0.0.1:5433`.
+- PostgreSQL local usado para los checks normales: `127.0.0.1:5433`.
 
-`reproduce-clean` **todavía no se declara ejecutado** en este documento. Debe correrse después de crear un commit coherente del CU-3 y su resultado real debe registrarse antes de marcar la tarea 5.3.
+La reproducción limpia final también pasó:
+
+- snapshot: `c277946d0a9d6ab69f043fd20c2bf4b8592cb20e`;
+- directorio temporal: `C:\Users\brand\AppData\Local\Temp\primer-parcial-clean-06c0808872644a119041fd8d12488ecf`;
+- Compose project: `primer-parcial-clean-f65295ccce3a`;
+- PostgreSQL aislado: `127.0.0.1:55432`;
+- instalación limpia con `npm ci` y postinstall dual ESM/CJS: correcta;
+- migraciones: correctas;
+- lint, typecheck y tests: correctos;
+- Playwright E2E: `5/5`;
+- build: correcto;
+- health final: `available`;
+- cleanup: contenedor PostgreSQL aislado detenido.
+
+Con esta evidencia la tarea 5.3 queda satisfecha y CU-3 alcanza 21/21.
 
 ## Fuera de alcance confirmado
 
@@ -133,9 +147,8 @@ CU-3 no agrega:
 
 ## Gate de cierre
 
-1. Crear commit coherente con la implementación y este precierre.
-2. Ejecutar `scripts/reproduce-clean.ps1` sobre ese snapshot.
-3. Registrar snapshot, Compose project, puerto PostgreSQL, health y cleanup.
-4. Marcar 5.3 solo con esa evidencia.
-5. Ejecutar `/opsx-verify cu-3-persistencia-proyectos`.
-6. Resolver cualquier hallazgo crítico antes de sync/archive.
+1. Ejecutar `/opsx-verify cu-3-persistencia-proyectos`.
+2. Resolver cualquier hallazgo crítico.
+3. Sincronizar las specs aprobadas.
+4. Archivar el cambio OpenSpec.
+5. Integrar la rama según el flujo Git acordado.

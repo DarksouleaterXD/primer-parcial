@@ -2,7 +2,7 @@
 
 ## Estado
 
-CU-0, CU-1 y CU-2 están cerrados. CU-3 agrega persistencia durable privada sobre el mismo `ProjectDocument` canónico y se encuentra en cierre técnico; después del precierre quedan 20/21 tareas y falta únicamente `reproduce-clean` para 5.3.
+CU-0, CU-1 y CU-2 están cerrados. CU-3 agrega persistencia durable privada sobre el mismo `ProjectDocument` canónico, tiene 21/21 tareas completas y está listo para verificación.
 
 ## Capas
 
@@ -110,6 +110,6 @@ CU-3 no incorpora:
 
 Las regresiones cross-layer cubren round-trip, aislamiento, concurrencia y la independencia de CU-2/CU-2.3.
 
-En el precierre del 2026-09-18 pasaron lint, typecheck, tests, build, OpenSpec strict y `git diff --check`. PostgreSQL local fue `127.0.0.1:5433`.
+En el cierre técnico del 2026-09-18 pasaron lint, typecheck, tests, build, OpenSpec strict y `git diff --check`. PostgreSQL local fue `127.0.0.1:5433`.
 
-La reproducción limpia de CU-3 sigue pendiente y no debe declararse ejecutada hasta realizarla sobre un commit coherente.
+La reproducción limpia final también pasó sobre el snapshot `c277946d0a9d6ab69f043fd20c2bf4b8592cb20e`, con Compose project `primer-parcial-clean-f65295ccce3a`, PostgreSQL aislado en `127.0.0.1:55432`, E2E `5/5`, health `available` y cleanup correcto.

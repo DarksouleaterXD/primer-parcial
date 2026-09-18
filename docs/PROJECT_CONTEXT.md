@@ -22,7 +22,7 @@ CU-0, CU-1 y CU-2 están cerrados. CU-2 dejó:
 - workspace visual manual;
 - `MoveNode`, selección, Inspector, relaciones y routing visual.
 
-CU-3 está en cierre técnico. Después del precierre tiene **20/21 tareas**. La única tarea pendiente es 5.3, que requiere `reproduce-clean` real sobre un commit coherente.
+CU-3 está implementado con **21/21 tareas** y listo para verificación. La reproducción limpia final ya pasó sobre el snapshot `c277946d0a9d6ab69f043fd20c2bf4b8592cb20e`.
 
 ## Arquitectura CU-3
 
@@ -84,7 +84,7 @@ Evidencia ya observada durante implementación:
 - regresión API: 35/35 en el cierre del Bloque 2;
 - Bloque 4 agregó regresiones cross-layer sin modificar comportamiento productivo.
 
-Precierre Bloque 5, 2026-09-18:
+Cierre técnico Bloque 5, 2026-09-18:
 
 - auditoría de exports/fronteras: correcta;
 - lint raíz: correcto;
@@ -93,19 +93,23 @@ Precierre Bloque 5, 2026-09-18:
 - build raíz: correcto;
 - OpenSpec strict: correcto;
 - `git diff --check`: correcto;
-- PostgreSQL local de pruebas: `127.0.0.1:5433`.
-
-No afirmar todavía `reproduce-clean` de CU-3.
+- PostgreSQL local de pruebas: `127.0.0.1:5433`;
+- `reproduce-clean` final: correcto;
+- snapshot reproducido: `c277946d0a9d6ab69f043fd20c2bf4b8592cb20e`;
+- Compose project: `primer-parcial-clean-f65295ccce3a`;
+- PostgreSQL aislado: `127.0.0.1:55432`;
+- Playwright E2E: `5/5`;
+- health: `available`;
+- cleanup: PostgreSQL aislado detenido.
 
 ## Próximos pasos exactos
 
-1. Revisar `git status` y excluir de staging `compose.yaml` y `opencode.json`.
-2. Crear commit coherente de CU-3 con 5.3 todavía pendiente.
-3. Ejecutar `scripts/reproduce-clean.ps1` sobre ese snapshot.
-4. Registrar la evidencia real y marcar 5.3.
-5. Ejecutar `/opsx-verify cu-3-persistencia-proyectos`.
-6. Si no hay CRITICAL, continuar con sync/archive.
-7. Solo después iniciar CU-4.
+1. Ejecutar `/opsx-verify cu-3-persistencia-proyectos`.
+2. Resolver cualquier hallazgo crítico antes de continuar.
+3. Sincronizar las specs aprobadas.
+4. Archivar `cu-3-persistencia-proyectos`.
+5. Integrar la rama según el flujo Git acordado.
+6. Solo después iniciar CU-4.
 
 ## Acuerdo de trabajo
 

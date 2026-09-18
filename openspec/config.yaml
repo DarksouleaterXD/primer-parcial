@@ -5,7 +5,7 @@ context: |
   CU activo: CU-3 — Gestionar proyectos UML persistentes.
   Cambio OpenSpec activo: cu-3-persistencia-proyectos.
   Rama esperada: feature/cu-3-persistencia-proyectos.
-  Estado: bloques 1-4 implementados; bloque 5 en cierre técnico.
+  Estado: CU-3 implementado, 21/21 tareas completas y listo para verify; sync/archive pendientes.
   Arquitectura: monorepositorio npm workspaces; ProjectDocument canónico en @primer-parcial/uml-domain; persistencia privada mediante NestJS, TypeORM y PostgreSQL JSONB; web solo mediante API.
 
   Fuentes de verdad:
