@@ -1,8 +1,10 @@
 import { DataSource, type DataSourceOptions } from "typeorm";
 
 import { AddUserNames1736900000000 } from "../src/migrations/1736900000000-add-user-names.js";
+import { CreateUmlProjects1737000000000 } from "../src/migrations/1737000000000-create-uml-projects.js";
 import { CreateUsers1736800000000 } from "../src/migrations/1736800000000-create-users.js";
 import { User } from "../src/users/user.entity.js";
+import { UmlProjectEntity } from "../src/projects/uml-project.entity.js";
 
 export const testEnvironment = {
   API_PORT: "3000",
@@ -36,20 +38,27 @@ export async function prepareTestDatabase(): Promise<void> {
 
   const testDatabase = new DataSource({
     ...databaseOptions(testEnvironment.POSTGRES_DB),
-    entities: [User],
-    migrations: [CreateUsers1736800000000, AddUserNames1736900000000],
+    entities: [User, UmlProjectEntity],
+    migrations: [CreateUsers1736800000000, AddUserNames1736900000000, CreateUmlProjects1737000000000],
     synchronize: false,
   });
 
   await testDatabase.initialize();
   try {
     await testDatabase.runMigrations();
-    await testDatabase.query('TRUNCATE TABLE "users"');
+    await testDatabase.query('TRUNCATE TABLE "uml_projects", "users" RESTART IDENTITY CASCADE');
   } finally {
     await testDatabase.destroy();
   }
 }
 
+export function createTestDataSource(): DataSource {
+  return new DataSource({
+    ...databaseOptions(testEnvironment.POSTGRES_DB),
+    entities: [User, UmlProjectEntity],
+    synchronize: false,
+  });
+}
 export async function getStoredPasswordHash(email: string): Promise<string | undefined> {
   const dataSource = new DataSource(databaseOptions(testEnvironment.POSTGRES_DB));
 

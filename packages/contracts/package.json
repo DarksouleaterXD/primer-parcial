@@ -17,6 +17,7 @@
     "build": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
+    "@primer-parcial/uml-domain": "0.0.0",
     "zod": "4.1.13"
   }
 }

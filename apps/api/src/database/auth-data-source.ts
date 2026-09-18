@@ -5,6 +5,7 @@ import {
   API_CONFIGURATION,
   type ApiConfiguration,
 } from "../config/api-configuration.js";
+import { UmlProjectEntity } from "../projects/uml-project.entity.js";
 import { User } from "../users/user.entity.js";
 
 export class DatabaseUnavailableError extends Error {
@@ -43,7 +44,7 @@ export class AuthDataSource implements OnModuleDestroy {
   private async initialize(): Promise<DataSource> {
     const dataSource = new DataSource({
       ...this.configuration.database,
-      entities: [User],
+      entities: [User, UmlProjectEntity],
       migrations: [],
       synchronize: false,
     });

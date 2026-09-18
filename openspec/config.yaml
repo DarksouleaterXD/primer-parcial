@@ -2,61 +2,44 @@ schema: spec-driven
 
 context: |
   Proyecto: Primer Parcial.
-  CU activo: CU-2 â€” Modelar diagramas UML manualmente.
-  Incremento activo: CU-2.2 - Comandos e historial.
-  Cambio OpenSpec activo: cu-2-2-comandos-historial.
-  Arquitectura: monorepositorio con npm workspaces.
-  Stack aprobado: Node.js 24, Astro, TypeScript, Preact,
-  NestJS 11 sobre Express, TypeORM y PostgreSQL.
-  Antes de generar o modificar artefactos OpenSpec, el agente debe leer la documentaciÃ³n del caso de uso e incremento activo y los ADR aplicables.
+  CU activo: CU-3 — Gestionar proyectos UML persistentes.
+  Cambio OpenSpec activo: cu-3-persistencia-proyectos.
+  Rama esperada: feature/cu-3-persistencia-proyectos.
+  Estado: bloques 1-4 implementados; bloque 5 en cierre técnico.
+  Arquitectura: monorepositorio npm workspaces; ProjectDocument canónico en @primer-parcial/uml-domain; persistencia privada mediante NestJS, TypeORM y PostgreSQL JSONB; web solo mediante API.
 
-  Fuentes de verdad del proyecto:
-  - docs/puds/use-cases/README.md
-  - docs/puds/use-cases/CU-2-modelado-uml-manual.md
+  Fuentes de verdad:
+  - openspec/changes/cu-3-persistencia-proyectos/proposal.md
+  - openspec/changes/cu-3-persistencia-proyectos/specs/uml-project-persistence/spec.md
+  - openspec/changes/cu-3-persistencia-proyectos/design.md
+  - openspec/changes/cu-3-persistencia-proyectos/tasks.md
+  - docs/puds/use-cases/CU-3-proyectos-persistentes.md
   - docs/architecture/README.md
-  - docs/decisions/ADR-0001-initial-technical-boundaries.md
   - docs/STATUS.md
-  - docs/product/product-05-astro-nestjs.md
   - AGENTS.md
 
-  Un cambio OpenSpec corresponde exactamente a un incremento aprobado.
-  No se deben anticipar funcionalidades de otros incrementos o casos de uso.
-  Las ideas opcionales deben registrarse como fuera de alcance, no implementarse.
+  No anticipar CU-4. No ampliar CU-3 con autosave, realtime, colaboración, roles/share, historial persistido, XMI, generación o IA.
 
 rules:
   proposal:
-    - "Definir explÃ­citamente alcance y fuera de alcance."
+    - "Definir explícitamente alcance y fuera de alcance."
     - "No ampliar el cambio con mejoras opcionales o preventivas."
-    - "Identificar el incremento y caso de uso correspondiente."
-    - "Indicar quÃ© documentos existentes sustentan el cambio."
-
   specs:
-    - "Cada requisito debe describir un comportamiento observable."
-    - "Usar escenarios GIVEN, WHEN y THEN."
-    - "No incluir requisitos pertenecientes a otro incremento."
-    - "Cada requisito debe poder verificarse mediante una prueba."
-
+    - "Cada requisito debe describir comportamiento observable verificable."
+    - "No introducir requisitos de otros casos de uso."
   design:
-    - "Cada componente y dependencia debe estar justificado por un requisito."
-    - "No crear abstracciones preparadas para funcionalidades futuras."
-    - "Preferir la soluciÃ³n mÃ­nima que satisfaga los requisitos."
-    - "Registrar explÃ­citamente las alternativas descartadas."
-
+    - "Cada dependencia debe estar justificada por requisitos."
+    - "Mantener el ProjectDocument canónico como única semántica UML."
   tasks:
-    - "Cada tarea debe enlazarse con un requisito aprobado."
-    - "No incluir refactorizaciones ni mejoras opcionales."
-    - "Indicar archivos afectados y validaciÃ³n esperada."
-    - "La Ãºltima tarea debe comprobar que no exista trabajo fuera de alcance."
+    - "Cada tarea debe corresponder a requisitos aprobados."
+    - "No marcar evidencia que no haya sido ejecutada."
 
 operations:
   apply:
     guidance:
-      - "Implementar exclusivamente las tareas pendientes de tasks.md."
-      - "No agregar dependencias que no estÃ©n justificadas en design.md."
-      - "Si aparece una necesidad nueva, detenerse y solicitar actualizar los artefactos."
-      - "No comenzar el siguiente incremento ni otro caso de uso."
+      - "Implementar exclusivamente tareas pendientes."
       - "No ejecutar git add, commit o push."
-
+      - "Si aparece una necesidad pública nueva, detenerse antes de inventarla."
   archive:
     guidance:
-      - "Archivar solamente despuÃ©s de ejecutar verify y resolver hallazgos crÃ­ticos."
+      - "Archivar solamente después de verify y resolver hallazgos críticos."
