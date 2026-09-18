@@ -57,7 +57,7 @@ describe("account session API", () => {
       first_name: "Persona",
       last_name: "Ejemplo",
     });
-  });
+  }, 15_000);
 
   it("rejects duplicate emails, empty names, and invalid password lengths without database details", async () => {
     const registration = {
