@@ -37,6 +37,7 @@ export class AuthModule {
           useValue: configuration,
         },
       ],
+      exports: [AuthDataSource, JwtAuthGuard],
     };
   }
 }
